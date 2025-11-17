@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 ">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <Card className="mb-8">
           <CardContent className="pt-6">

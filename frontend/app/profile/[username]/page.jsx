@@ -339,7 +339,7 @@ export default function ProfilePage() {
 
       {/* Profile Header */}
       <div className="bg-white shadow-md mb-8">
-        <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 ">
           <motion.div
             className="flex flex-col md:flex-row items-center gap-8"
             initial={{ opacity: 0, y: 20 }}
@@ -404,9 +404,7 @@ export default function ProfilePage() {
                       <span>{profile?.data.address || "N/A"}</span>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex flex-wrap gap-3 justify-center md:justify-end mt-4 md:mt-0">
+                  <div className="flex flex-wrap gap-3 justify-start mt-4 md:mt-0">
                   {profile.role && (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-200 border-0">
                       {profile.role === "farmer" ? "Farmer" : "Contractor"}
@@ -416,6 +414,9 @@ export default function ProfilePage() {
                     Verified
                   </Badge>
                 </div>
+                </div>
+
+                
               </div>
 
               <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
@@ -552,7 +553,7 @@ export default function ProfilePage() {
       </Dialog>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-7xl px-4 ">
         {/* Tabbed Navigation */}
         <Tabs defaultValue="reviews" className="w-full">
           <div className="bg-white rounded-lg shadow-sm p-1 mb-6">

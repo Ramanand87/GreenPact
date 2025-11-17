@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from 'lucide-react';
+import Link from "next/link";
 
 export default function CTASection() {
   return (
@@ -26,7 +27,7 @@ export default function CTASection() {
         />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           className="text-center max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 40 }}
@@ -66,9 +67,11 @@ export default function CTASection() {
               whileTap={{ scale: 0.95 }}
               className="w-full sm:w-auto"
             >
+              <Link href="/market">
               <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-lime-600 hover:from-emerald-700 hover:to-lime-700 text-white px-8 sm:px-10 py-6 sm:py-7 text-base sm:text-lg rounded-full shadow-xl hover:shadow-2xl transition-all">
                 Get Started Now <ArrowRight className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
               </Button>
+              </Link>
             </motion.div>
             
           </motion.div>

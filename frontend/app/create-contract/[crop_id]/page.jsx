@@ -144,7 +144,7 @@ export default function CreateContractPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="mx-auto max-w-7xl px-4 py-8 ">
       <div className="mb-6">
         <Link href="/contracts" className="inline-flex items-center text-green-600 hover:text-green-700">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back to Contracts

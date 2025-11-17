@@ -73,7 +73,7 @@ export default function FeaturesSection() {
       <div className="absolute top-0 left-0 w-48 sm:w-96 h-48 sm:h-96 bg-emerald-200/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-48 sm:w-96 h-48 sm:h-96 bg-lime-200/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
-      <div className="container mx-auto px-4 sm:px-8 relative z-10">
+      <div className="mx-auto max-w-7xl px-4  relative z-10">
         <motion.div
           className="text-center mb-10 sm:mb-16"
           initial={{ opacity: 0, y: 20 }}

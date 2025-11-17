@@ -23,7 +23,7 @@ export default function CropDetailsPage() {
   if (error) return <p>Error loading crop data.</p>;
 
   return (
-    <div className="container mx-auto px-4 py-2">
+    <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
       <Button variant="ghost" className="mb-2" onClick={() => router.back()}>
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Market

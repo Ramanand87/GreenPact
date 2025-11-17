@@ -430,7 +430,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
   const progressPercentage = (paymentProgressPercentage + cropProgressPercentage) / 2
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="mx-auto max-w-7xl px-4 py-8 ">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contract Summary Card */}
         <div className="lg:col-span-2">

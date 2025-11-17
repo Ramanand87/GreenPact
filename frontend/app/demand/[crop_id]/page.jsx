@@ -34,7 +34,7 @@ export default function DemandCropDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[60vh]">
         <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
         <p className="mt-4 text-lg text-gray-600">Loading crop details...</p>
       </div>
@@ -43,7 +43,7 @@ export default function DemandCropDetailsPage() {
 
   if (isError || !demandDetails) {
     return (
-      <div className="container mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 flex flex-col items-center justify-center min-h-[60vh]">
         <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center max-w-md">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Demand Not Found</h2>
           <p className="text-gray-600 mb-6">The crop demand you're looking for doesn't exist or has been removed.</p>
@@ -57,7 +57,7 @@ export default function DemandCropDetailsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-5xl">
+    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex items-center mb-8">
         <Button 
           variant="ghost" 

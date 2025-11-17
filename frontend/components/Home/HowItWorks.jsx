@@ -63,7 +63,7 @@ export default function HowItWorks() {
         style={{ transform: "translate(-50%, -50%)" }}
       />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           className="text-center mb-10 sm:mb-16"
           initial={{ opacity: 0, y: 20 }}

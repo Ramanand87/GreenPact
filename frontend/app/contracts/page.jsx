@@ -437,7 +437,7 @@ export default function ContractsListPage() {
   const [filterOption, setFilterOption] = useState("all")
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="mx-auto max-w-7xl px-4 py-8 ">
       {/* Approval Confirmation Dialog */}
       <AlertDialog open={approvalDialogOpen} onOpenChange={setApprovalDialogOpen}>
         <AlertDialogContent>

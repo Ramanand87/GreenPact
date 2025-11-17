@@ -1,3 +1,4 @@
+import CTASection from '@/components/Home/cta-section'
 import FeaturesSection from '@/components/Home/FeatureSection'
 import HeroSection from '@/components/Home/HeroSection'
 import HowItWorks from '@/components/Home/HowItWorks'
@@ -9,7 +10,7 @@ const page = () => {
 <HeroSection/>
 <FeaturesSection/>
 <HowItWorks/>
-
+<CTASection/>
 </div>  
   )
 }

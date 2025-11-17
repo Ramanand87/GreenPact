@@ -123,7 +123,7 @@ export default function DemandCropsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
         <div>
           <h1 className="text-4xl font-bold text-green-800 mb-2">

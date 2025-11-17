@@ -155,7 +155,7 @@ export default function HelpAndSupport() {
   }
 
   return (
-    <div className="container px-4 py-8 mx-auto">
+    <div className="mx-auto max-w-7xl px-4 py-8 ">
       {/* Complaint Button at the top */}
       <div className="flex justify-end mb-4 gap-2">
         <Dialog open={complaintHistoryOpen} onOpenChange={setComplaintHistoryOpen}>

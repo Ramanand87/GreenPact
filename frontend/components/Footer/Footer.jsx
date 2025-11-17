@@ -27,7 +27,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-gradient-to-b from-white via-emerald-50/30 to-white border-t border-emerald-100">
-      <div className="container mx-auto px-4 sm:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12"
           variants={containerVariants}

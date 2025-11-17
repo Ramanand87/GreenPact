@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Leaf } from 'lucide-react';
+import Link from "next/link";
 
 export default function HeroSection() {
   const containerVariants = {
@@ -109,21 +110,25 @@ export default function HeroSection() {
             whileTap={{ scale: 0.95 }}
             className="w-full sm:w-auto"
           >
+            <Link href="/market">
             <Button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-full shadow-lg hover:shadow-xl transition-all">
               Get Started <ArrowRight className="ml-2 w-4 sm:w-5 h-4 sm:h-5" />
             </Button>
+            </Link>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-full sm:w-auto"
           >
+            <Link href="/about-us">
             <Button
               variant="outline"
               className="w-full sm:w-auto border-2 border-emerald-300 text-emerald-700 hover:bg-emerald-50 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-full"
             >
               Learn More
             </Button>
+            </Link>
           </motion.div>
         </motion.div>
 
