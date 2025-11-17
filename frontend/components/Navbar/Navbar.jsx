@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { logout } from "@/redux/features/authFeature"
 import FarmerLogo from "@/components/assets/FramerLogo"
 import { cn } from "@/lib/utils"
+import { useGetProfileQuery } from "@/redux/Service/profileApi"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,9 +20,16 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const dispatch = useDispatch()
-
+  
   const userInfo = useSelector((state) => state.auth.userInfo)
   const token = userInfo?.access
+  console.log("User Info in Navbar:", userInfo)
+  const username = userInfo?.data?.username
+  const {data:profile, isLoading,isError, refetch}=useGetProfileQuery(username, {
+    skip: !username,
+  })
+  console.log("Profile Data in Navbar:", profile?.data.image)  
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -199,15 +207,17 @@ export function Navbar() {
 
               {/* Mobile Profile Link */}
               <Link href={`/profile/${userInfo.data?.username || ""}`} className="flex md:hidden items-center">
-                {userInfo?.profile?.image ? (
+                {profile?.data?.image ? (
                   <img
-                    src={userInfo.profile.image || "/placeholder.svg"}
+                    src={profile.data.image}
                     alt="Profile"
                     className="h-8 w-8 rounded-full object-cover border-2 border-emerald-200"
                   />
                 ) : (
                   <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-100 to-lime-100 flex items-center justify-center border border-emerald-200">
-                    <span className="text-emerald-600 font-semibold">{userInfo.profile?.name?.charAt(0) || "U"}</span>
+                    <span className="text-emerald-600 font-semibold text-sm">
+                      {userInfo?.data?.username?.charAt(0)?.toUpperCase() || "U"}
+                    </span>
                   </div>
                 )}
               </Link>
@@ -255,21 +265,21 @@ export function Navbar() {
                           href={`/profile/${userInfo.data?.username || ""}`}
                           className="flex items-center gap-3 mb-4"
                         >
-                          {userInfo?.profile?.image ? (
+                          {profile?.data?.image ? (
                             <img
-                              src={userInfo.profile.image || "/placeholder.svg"}
+                              src={profile.data.image}
                               alt="Profile"
                               className="h-10 w-10 rounded-full object-cover border-2 border-emerald-200"
                             />
                           ) : (
                             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-100 to-lime-100 flex items-center justify-center border border-emerald-200">
                               <span className="text-emerald-600 font-semibold">
-                                {userInfo.profile?.name?.charAt(0) || "U"}
+                                {userInfo?.data?.username?.charAt(0)?.toUpperCase() || "U"}
                               </span>
                             </div>
                           )}
                           <div>
-                            <p className="font-medium text-emerald-600">{userInfo.profile?.name || "User"}</p>
+                            <p className="font-medium text-emerald-600">{profile?.data?.name || userInfo?.data?.username || "User"}</p>
                             <p className="text-sm text-gray-500">{userInfo.data?.username || ""}</p>
                           </div>
                         </Link>
@@ -300,19 +310,19 @@ export function Navbar() {
               <div className="hidden md:flex items-center gap-2 ml-1">
                 {userInfo?.data?.username && (
                   <Link href={`/profile/${userInfo.data.username}`} className="flex items-center gap-2 group hover:bg-emerald-50 px-3 py-2 rounded-lg transition-colors">
-                    {userInfo?.profile?.image ? (
+                    {profile?.data?.image ? (
                       <img
-                        src={userInfo.profile.image || "/placeholder.svg"}
+                        src={profile.data.image}
                         alt="Profile"
                         className="h-8 w-8 rounded-full object-cover border-2 border-emerald-200"
                       />
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-100 to-lime-100 flex items-center justify-center border border-emerald-200">
-                        <span className="text-emerald-600 font-semibold">{userInfo.profile?.name?.charAt(0) || "U"}</span>
+                        <span className="text-emerald-600 font-semibold">{userInfo?.data?.username?.charAt(0)?.toUpperCase() || "U"}</span>
                       </div>
                     )}
                     <span className="text-sm hidden md:block font-medium text-gray-700 group-hover:text-emerald-600 transition-colors">
-                      {userInfo.profile?.name || "User"}
+                      {profile?.data?.name || userInfo?.data?.username || "User"}
                     </span>
                   </Link>
                 )}

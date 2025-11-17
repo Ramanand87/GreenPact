@@ -85,7 +85,7 @@ export default function UsersPage() {
             <div className="absolute -bottom-12 left-6">
               <Avatar className="h-24 w-24 border-4 border-white shadow-md">
                 {user.image ? (
-                  <AvatarImage src={user.image || "/placeholder.svg"} alt={user.name} />
+                  <AvatarImage className="object-cover" src={user.image || "/placeholder.svg"} alt={user.name} />
                 ) : (
                   <AvatarFallback className="bg-emerald-100 text-emerald-800 text-xl">
                     {getInitials(user.name || "U N")}

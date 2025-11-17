@@ -12,9 +12,11 @@ export const profileApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ['Profile'],
   endpoints: (builder) => ({
     getProfile: builder.query({
       query: (username) => `/${username}`,  // Fetch user profile by username
+      providesTags: (result, error, username) => [{ type: 'Profile', id: username }],
     }),
     updateProfile: builder.mutation({
       query: (body) => ({
@@ -23,6 +25,7 @@ export const profileApi = createApi({
         body,  
        
       }),
+      invalidatesTags: ['Profile'],
     }),
   }),
 });
