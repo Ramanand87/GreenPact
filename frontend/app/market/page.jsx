@@ -18,6 +18,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 export default function MarketPage() {
   const { data: allCrops = [], isLoading, isError } = useGetAllCropsQuery()
+  console.log("All Crops Data:", allCrops)
   const router = useRouter()
   const cropsData = allCrops?.data || []
   const userInfo = useSelector((state) => state.auth.userInfo)

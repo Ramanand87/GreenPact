@@ -120,16 +120,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         validated_data["contract"] = contract
         return super().create(validated_data)
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        request = self.context.get("request")
-        if instance.receipt:
-            if request:
-                data["receipt"] = request.build_absolute_uri(instance.receipt.url)
-            else:
-                data["receipt"] = instance.receipt.url
-        return data
-
     def get_buyer(self, obj):
         return obj.contract.buyer.username if obj.contract and obj.contract.buyer else None
 
@@ -161,16 +151,6 @@ class FarmerProgressSerializer(serializers.ModelSerializer):
         validated_data["contract"] = contract
 
         return super().create(validated_data)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if instance.image:
-            request = self.context.get("request")
-            if request:
-                data["image"] = request.build_absolute_uri(instance.image.url)
-            else:
-                data["image"] = instance.image.url
-        return data
 
 
 class TransactionListSerializer(serializers.ModelSerializer):

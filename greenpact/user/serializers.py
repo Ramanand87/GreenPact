@@ -53,27 +53,10 @@ class FarmerProfileSerializer(ModelSerializer):
     class Meta:
         model = models.FarmerProfile 
         fields = '__all__'
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if instance.image:
-            data['image'] = instance.image.url
-        if instance.screenshot:
-            data['screenshot'] = instance.screenshot.url
-        request = self.context.get('request')
-        if instance.qr_code_image and request:
-            data['qr_code_image'] = request.build_absolute_uri(instance.qr_code_image.url)
-        return data
-
+        
 class ContractorProfileSerializer(ModelSerializer):
     user = userSerializers()
 
     class Meta: 
         model = models.ContractorProfile
         fields = '__all__'
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if instance.image:
-            data['image'] = instance.image.url
-        return data

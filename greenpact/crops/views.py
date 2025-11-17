@@ -18,14 +18,14 @@ class CropView(APIView):
         if pk is None:
             try:
                 crops=models.Crops.objects.all()
-                serial=serializers.CropsSerializer(crops,many=True)
+                serial=serializers.CropsSerializer(crops,many=True,context={'request': request})
                 return Response({'data':serial.data},status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             try: 
                 crops=get_object_or_404(models.Crops,crop_id=pk)
-                serial=serializers.CropsSerializer(crops)
+                serial=serializers.CropsSerializer(crops,context={'request': request})
                 return Response({'data':serial.data},status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -47,7 +47,7 @@ class CropView(APIView):
             print("Incoming request data:", request.data)
             
             crop = get_object_or_404(models.Crops, crop_id=pk)
-            serial = serializers.CropsSerializer(crop, data=request.data, partial=True)
+            serial = serializers.CropsSerializer(crop, data=request.data, partial=True,context={'request': request})
             
             if serial.is_valid():
                 serial.save()
