@@ -33,14 +33,219 @@ export default function DemandCropsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("all")
 
+  // AI Filter states
+  const [maxDistance, setMaxDistance] = useState(100)
+  const [isAiFiltering, setIsAiFiltering] = useState(false)
+  const [aiFilteredDemands, setAiFilteredDemands] = useState(null)
+  const [isAiFilterOpen, setIsAiFilterOpen] = useState(false)
+  const [aiLimitError, setAiLimitError] = useState(false)
+  const [userCoords, setUserCoords] = useState(null)
+  const [detectedLocation, setDetectedLocation] = useState("")
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false)
+  const [locationError, setLocationError] = useState("")
+  const [detectedLocationDetails, setDetectedLocationDetails] = useState({
+    full: "",
+    district: "",
+    state: "",
+  })
+
   // Get unique locations for filter dropdown
   const locations = demandsData ? [...new Set(demandsData.map((demand) => demand.location))].filter(Boolean) : []
+
+  // Detect user location
+  useEffect(() => {
+    if (!navigator?.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.")
+      return
+    }
+
+    let isCancelled = false
+    setIsDetectingLocation(true)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        if (isCancelled) return
+        setUserCoords({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+        setLocationError("")
+      },
+      (error) => {
+        if (isCancelled) return
+        setLocationError(error.message || "Unable to retrieve your location.")
+        setIsDetectingLocation(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    )
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
+  // Resolve location from coordinates
+  useEffect(() => {
+    if (!userCoords) return
+
+    let isCancelled = false
+
+    const resolveLocation = async () => {
+      try {
+        const params = new URLSearchParams({
+          format: "json",
+          lat: userCoords.latitude.toString(),
+          lon: userCoords.longitude.toString(),
+        })
+
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?${params.toString()}`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error("Unable to resolve your location.")
+        }
+
+        const data = await response.json()
+        if (isCancelled) return
+
+        const locality =
+          data?.address?.city ||
+          data?.address?.town ||
+          data?.address?.village ||
+          data?.address?.district ||
+          data?.address?.state_district ||
+          data?.address?.state ||
+          ""
+
+        const district =
+          data?.address?.district ||
+          data?.address?.state_district ||
+          data?.address?.county ||
+          ""
+
+        const state =
+          data?.address?.state ||
+          data?.address?.region ||
+          data?.address?.state_district ||
+          ""
+
+        const fullAddress = data?.display_name || ""
+
+        const resolvedLocation = locality || district || state || ""
+
+        setDetectedLocationDetails({
+          full: fullAddress,
+          district,
+          state,
+        })
+
+        if (resolvedLocation) {
+          setDetectedLocation(resolvedLocation)
+          setLocationError("")
+        } else {
+          setLocationError("Unable to determine your nearest city.")
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          setLocationError(error.message || "Unable to resolve your location.")
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsDetectingLocation(false)
+        }
+      }
+    }
+
+    resolveLocation()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [userCoords])
+
+  const fullAddress = detectedLocationDetails.full
+
+  // Function to handle AI filtering
+  const handleAiFilter = async () => {
+    if (!demands?.data?.length || !fullAddress) {
+      console.warn("Cannot apply AI filter: missing demands data or location")
+      return
+    }
+
+    setIsAiFiltering(true)
+    try {
+      console.log("All Demands Data before AI call:", demands)
+      console.log("User full address for AI call:", fullAddress)
+      console.log("Max distance:", maxDistance)
+
+      const filterRes = await fetch("/api/filter-demands", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          origin: fullAddress,
+          demands: demands.data,
+          maxDistance: maxDistance,
+        }),
+      })
+
+      if (!filterRes.ok) {
+        throw new Error(`HTTP error! status: ${filterRes.status}`)
+      }
+
+      const filteredData = await filterRes.json()
+      console.log("Filtered Demands Data from AI:", filteredData)
+
+      if (filteredData.fallback) {
+        console.warn("Using fallback: AI service unavailable")
+        // Check if it's an API limit error
+        if (filteredData.error && 
+            (filteredData.error.includes('empty') || 
+             filteredData.error.includes('limit') ||
+             filteredData.error.includes('429') ||
+             filteredData.error.includes('exhausted'))) {
+          setAiLimitError(true)
+          setAiFilteredDemands(null) // Show all demands by not setting filter
+          return
+        }
+      }
+
+      setAiLimitError(false)
+      // Only set filtered demands if we have results, otherwise show all demands
+      if (filteredData.matched && filteredData.matched.length > 0) {
+        setAiFilteredDemands(filteredData.matched)
+      } else {
+        setAiFilteredDemands(null) // Show all demands if no matches
+      }
+    } catch (error) {
+      console.log("Failed to fetch filtered demands:", error)
+      // Fallback to showing all demands when error occurs
+      setAiFilteredDemands(null) // null means show all demands
+      setAiLimitError(true)
+    } finally {
+      setIsAiFiltering(false)
+      setIsAiFilterOpen(false) // Close popup after filtering
+    }
+  }
 
   // Apply filters whenever dependencies change
   useEffect(() => {
     if (!demandsData.length) return
 
-    let filtered = [...demandsData]
+    // Use AI-filtered demands for "All Demands" tab only, otherwise use all demands
+    const baseData = aiFilteredDemands !== null ? aiFilteredDemands : demandsData
+    let filtered = [...baseData]
+    
+    // For user demands, always use all demandsData (not AI filtered)
     let userFiltered = []
 
     // Filter for user demands if contractor
@@ -85,7 +290,7 @@ export default function DemandCropsPage() {
 
     setFilteredDemands(filtered)
     setFilteredUserDemands(userFiltered)
-  }, [demandsData, searchQuery, priceRange, selectedLocation, currentUser, userRole])
+  }, [demandsData, searchQuery, priceRange, selectedLocation, currentUser, userRole, aiFilteredDemands])
 
   // Reset all filters
   const resetFilters = () => {
@@ -93,6 +298,9 @@ export default function DemandCropsPage() {
     setPriceRange([0, 10000])
     setSelectedLocation("")
     setIsFilterOpen(false)
+    setAiFilteredDemands(null)
+    setMaxDistance(100)
+    setAiLimitError(false)
   }
 
   // Get max price for slider
@@ -299,11 +507,131 @@ export default function DemandCropsPage() {
               </div>
             </PopoverContent>
           </Popover>
+
+          <Popover open={isAiFilterOpen} onOpenChange={setIsAiFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2 bg-emerald-50 border-emerald-300 hover:bg-emerald-100"
+              >
+                <MapPin className="h-4 w-4 text-emerald-600" />
+                <span className="text-emerald-700">AI Filter</span>
+                {aiFilteredDemands !== null && (
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 bg-emerald-600 text-white"
+                  >
+                    ✓
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-96">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-emerald-900">AI Location Filter</h3>
+                  {aiFilteredDemands !== null && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setAiFilteredDemands(null)
+                        setIsAiFilterOpen(false)
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <Label className="text-emerald-900 font-medium">Current Location</Label>
+                  <div className="text-sm text-emerald-700 bg-emerald-50 p-3 rounded-md">
+                    {isDetectingLocation ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Detecting your location...
+                      </span>
+                    ) : fullAddress ? (
+                      <div className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span className="break-words">{fullAddress}</span>
+                      </div>
+                    ) : (
+                      <span className="text-amber-600">Location not available</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-emerald-900 font-medium">Max Distance: {maxDistance} km</Label>
+                  <div className="pt-4">
+                    <Slider
+                      value={[maxDistance]}
+                      max={500}
+                      min={10}
+                      step={10}
+                      onValueChange={(value) => setMaxDistance(value[0])}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>10 km</span>
+                    <span>500 km</span>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleAiFilter}
+                  disabled={!fullAddress || isAiFiltering}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  {isAiFiltering ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Filtering...
+                    </>
+                  ) : (
+                    "Apply Filter"
+                  )}
+                </Button>
+
+                {aiFilteredDemands !== null && (
+                  <div className="text-sm text-emerald-700 bg-emerald-50 p-2 rounded-md">
+                    ✓ Showing {aiFilteredDemands.length} demands within {maxDistance}km
+                  </div>
+                )}
+
+                {!fullAddress && !isDetectingLocation && (
+                  <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded-md">
+                    ⚠ Location required for AI filter
+                  </div>
+                )}
+
+                {aiLimitError && (
+                  <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
+                    <strong>⚠ AI Limit Exceeded</strong>
+                    <p className="mt-1">The AI service limit has been reached. Please try again later or use the regular filters.</p>
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Active filters */}
-        {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+        {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice || aiFilteredDemands !== null) && (
           <div className="flex flex-wrap gap-2">
+            {aiFilteredDemands !== null && (
+              <Badge variant="default" className="flex items-center gap-1 bg-emerald-600">
+                AI Filter: {maxDistance}km ({aiFilteredDemands.length} demands)
+                <button onClick={() => setAiFilteredDemands(null)}>
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            )}
             {selectedLocation && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 Location: {selectedLocation}

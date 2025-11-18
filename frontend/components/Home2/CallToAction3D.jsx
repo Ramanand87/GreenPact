@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function CallToAction3D() {
   return (
@@ -37,13 +38,13 @@ export default function CallToAction3D() {
             className="relative"
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50 px-4 py-2 text-xs uppercase tracking-wider text-emerald-700">
-              <Zap className="h-4 w-4 text-emerald-600" /> Step into volumetric ops
+              <Zap className="h-4 w-4 text-emerald-600" /> Ready to Transform Your Farming?
             </div>
             <h2 className="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">
-              Launch the immersive GreenPact workspace today
+              Start Building Secure Contracts Today
             </h2>
             <p className="mt-4 text-base text-slate-600 sm:text-lg">
-              Blend contracts, insights, and communications inside an interactive 3D layer that upgrades collaboration across the value chain.
+              Join thousands of farmers and contractors who are already securing better deals, protecting their interests, and growing their businesses with trusted partnerships.
             </p>
           </motion.div>
 
@@ -54,16 +55,20 @@ export default function CallToAction3D() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           >
+            <Link href="/market">
             <Button className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 px-8 py-4 text-base font-semibold text-white shadow-[0_20px_60px_rgba(34,197,94,0.28)] transition sm:w-auto">
-              Schedule a guided tour
+              Get Started Now
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Button>
+            </Link>
+            <Link href="/about-us">
             <Button
               variant="outline"
               className="flex w-full items-center justify-center rounded-full border border-emerald-500/30 bg-white px-8 py-4 text-base text-emerald-600 transition hover:border-emerald-500/50 hover:bg-emerald-50 sm:w-auto"
             >
-              Download the playbook
+              Learn More
             </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </div>

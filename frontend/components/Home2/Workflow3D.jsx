@@ -5,32 +5,32 @@ import { UserCheck, MessageSquare, ScrollText, Truck, Award } from "lucide-react
 
 const phases = [
   {
-    title: "Precision onboarding",
-    description: "Biometric identity, land records, and compliance checks mapped into a secure holographic dossier.",
+    title: "Create Your Profile",
+    description: "Sign up as a farmer or contractor and complete verification",
     icon: UserCheck,
     gradient: "from-emerald-400 to-emerald-600",
   },
   {
-    title: "Immersive negotiation",
-    description: "Meet inside a spatial room that visualises timelines, yield expectations, and risk scenarios.",
+    title: "Browse & Connect",
+    description: "Explore available contracts or post your needs in the marketplace",
     icon: MessageSquare,
     gradient: "from-lime-400 to-lime-600",
   },
   {
-    title: "Adaptive contracting",
-    description: "Draft clauses in real time as the 3D contract scroll wraps around both parties for clarity.",
+    title: "Negotiate & Agree",
+    description: "Discuss terms and digitally sign secure contracts",
     icon: ScrollText,
     gradient: "from-cyan-400 to-cyan-600",
   },
   {
-    title: "Logistics sync",
-    description: "Live supply routes float across a map plane with milestone-based releases and alerts.",
+    title: "Transact Safely",
+    description: "Complete transactions with escrow protection for both parties",
     icon: Truck,
     gradient: "from-emerald-400 to-teal-500",
   },
   {
-    title: "Growth loop",
-    description: "Performance snapshots evolve into badges, reinforcing trusted relationships and better scores.",
+    title: "Grow Together",
+    description: "Build long-term relationships with verified, reliable partners",
     icon: Award,
     gradient: "from-lime-400 to-emerald-500",
   },
@@ -50,7 +50,7 @@ export default function Workflow3D() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center text-3xl font-semibold text-slate-900 sm:text-4xl"
         >
-          Navigate a 5-phase volumetric workflow
+          How It Works
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 30 }}
@@ -59,7 +59,7 @@ export default function Workflow3D() {
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
           className="mx-auto mt-4 max-w-2xl text-center text-base text-slate-600"
         >
-          Each stage orbits inside the experience cube, lighting up the path forward and accelerating trust between stakeholders.
+          A smooth, transparent process designed for trust and efficiency
         </motion.p>
 
         <div className="mt-16 flex flex-col gap-12" style={{ perspective: "1600px" }}>
@@ -105,7 +105,7 @@ export default function Workflow3D() {
                         Phase outcome
                       </div>
                       <p className="mt-2 text-sm text-slate-700">
-                        Visibility, accountability, and KPIs are materialised in this layer to align your teams with precision.
+                        Each step is designed to ensure transparency, security, and trust for all parties involved.
                       </p>
                     </motion.div>
                   </motion.div>

@@ -31,6 +31,7 @@ import { Label } from "@/components/ui/label";
 export default function YourCropsPage() {
   const { username } = useParams();
   const { data, isLoading, isError } = useGetCropsQuery(username);
+  console.log(data);
   const crops = Array.isArray(data) ? data : []; // Ensure crops is always an array
 
   const [addCrop, { isLoading: isAdding }] = useAddCropMutation();

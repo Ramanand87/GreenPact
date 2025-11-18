@@ -23,12 +23,10 @@ export function Navbar() {
   
   const userInfo = useSelector((state) => state.auth.userInfo)
   const token = userInfo?.access
-  console.log("User Info in Navbar:", userInfo)
   const username = userInfo?.data?.username
   const {data:profile, isLoading,isError, refetch}=useGetProfileQuery(username, {
     skip: !username,
   })
-  console.log("Profile Data in Navbar:", profile?.data.image)  
   
 
   useEffect(() => {

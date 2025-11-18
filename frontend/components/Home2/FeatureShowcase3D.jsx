@@ -6,38 +6,38 @@ import { Shield, Box , Layers, Workflow, Sparkles, Gauge } from "lucide-react";
 const features = [
   {
     icon: Shield,
-    title: "Multi-layered escrow",
-    description: "Dynamic escrow tiers that adapt to contract milestones with automated releases.",
+    title: "Guaranteed Protection",
+    description: "Legally binding digital contracts with escrow security for all parties",
     accent: "from-emerald-500 to-teal-400",
   },
   {
     icon: Box,
-    title: "Spatial contract viewer",
-    description: "Navigate agreements inside a 3D vault and surface clauses with natural gestures.",
+    title: "Fair & Transparent",
+    description: "AI-driven price recommendations ensuring equitable deals",
     accent: "from-lime-400 to-emerald-500",
   },
   {
     icon: Layers,
-    title: "Stacked intelligence",
-    description: "Layer demand analytics, soil data, and climate indices for richer decisions.",
+    title: "Verified Partners",
+    description: "Access to pre-screened farmers and contractors you can trust",
     accent: "from-cyan-400 to-emerald-500",
   },
   {
     icon: Workflow,
-    title: "Adaptive workflows",
-    description: "Orchestrate negotiation, verification, and logistics with branching automations.",
+    title: "Timely Payments",
+    description: "Secure escrow system guaranteeing on-time settlements",
     accent: "from-emerald-400 to-blue-400",
   },
   {
     icon: Sparkles,
-    title: "Predictive surfaces",
-    description: "AI agents project price swings and recommend interventions before risks surface.",
+    title: "Seamless Communication",
+    description: "Built-in chat and notifications for easy coordination",
     accent: "from-lime-500 to-emerald-400",
   },
   {
     icon: Gauge,
-    title: "Real-time health",
-    description: "Monitor performance metrics inside luminous gauges synced across devices.",
+    title: "Market Intelligence",
+    description: "AI-powered insights helping you make informed decisions",
     accent: "from-emerald-500 to-indigo-400",
   },
 ];
@@ -56,9 +56,9 @@ export default function FeatureShowcase3D() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Explore the layered command center</h2>
+          <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Powerful Features for Success</h2>
           <p className="mt-4 text-base text-slate-600 sm:text-lg">
-            Each module responds to movement and depth, letting your teams negotiate, execute, and learn inside a persistent 3D workspace.
+            Everything you need to build trust, manage contracts, and grow your agricultural business
           </p>
         </motion.div>
 
