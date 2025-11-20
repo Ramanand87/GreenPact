@@ -27,6 +27,7 @@ const AuthPage = () => {
   const [showSuccess, setShowSuccess] = useState(false)
   const [aadharDocument, setAadharDocument] = useState(null)
   const [verificationScreenshot, setVerificationScreenshot] = useState(null)
+  const [qrCodeImage, setQrCodeImage] = useState(null)
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [activeTab, setActiveTab] = useState("login") // Add this near your other state declarations
   const [showVerificationPopup, setShowVerificationPopup] = useState(false)
@@ -61,6 +62,7 @@ const AuthPage = () => {
     profileImage: null,
     aadharDocument: null,
     verificationScreenshot: null,
+    qrCodeImage: null,
   })
 
   const [register] = useRegisterMutation()
@@ -111,7 +113,20 @@ const AuthPage = () => {
 
   const removeVerificationScreenshot = () => {
     setFormData({ ...formData, verificationScreenshot: null })
-    setVerificationScreenshot(file)
+    setVerificationScreenshot(null)
+  }
+
+  const handleQrCodeImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setFormData({ ...formData, qrCodeImage: file })
+      setQrCodeImage(file)
+    }
+  }
+
+  const removeQrCodeImage = () => {
+    setFormData({ ...formData, qrCodeImage: null })
+    setQrCodeImage(null)
   }
 
   const handleSignupSubmit = async (e) => {
@@ -174,6 +189,10 @@ const AuthPage = () => {
       // Only append verification screenshot for farmers
       if (formData.role === "farmer" && formData.verificationScreenshot) {
         data.append("screenshot", formData.verificationScreenshot)
+      }
+      // Only append QR code image for farmers
+      if (formData.role === "farmer" && formData.qrCodeImage) {
+        data.append("qr_code_image", formData.qrCodeImage)
       }
 
       const response = await register(data).unwrap()
@@ -599,6 +618,59 @@ const AuthPage = () => {
                         )}
                       </div>
                     </div>
+
+                    {/* QR Code Image Upload for Farmers Only */}
+                    {formData.role === "farmer" && (
+                      <div className="space-y-2">
+                        <Label>QR Code Image *</Label>
+                        <div className="border-2 border-dashed border-green-200 rounded-lg p-4">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="qrCodeImage"
+                            onChange={handleQrCodeImageUpload}
+                          />
+                          <Label htmlFor="qrCodeImage" className="cursor-pointer block text-center">
+                            <Upload />
+                            <span className="mt-2 text-sm text-gray-600 block">Upload QR Code Image (Required)</span>
+                          </Label>
+
+                          {qrCodeImage && (
+                            <div className="mt-4 space-y-2">
+                              <div className="flex items-center justify-between bg-green-50 p-2 rounded">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm font-medium">{qrCodeImage.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    ({(qrCodeImage.size / 1024).toFixed(1)} KB)
+                                  </span>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => window.open(URL.createObjectURL(qrCodeImage))}
+                                    className="text-green-600 border-green-200"
+                                  >
+                                    View
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={removeQrCodeImage}
+                                    className="text-red-600 border-red-200"
+                                  >
+                                    <Trash />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

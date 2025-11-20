@@ -22,3 +22,11 @@ class CropsSerializer(ModelSerializer):
         if request and request.user:
             validated_data['publisher'] = request.user
         return super().create(validated_data)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if request:
+            image_url = representation['publisher_profile']['image']
+            if image_url and not image_url.startswith('http'):
+                representation['publisher_profile']['image'] = request.build_absolute_uri(image_url)
+        return representation

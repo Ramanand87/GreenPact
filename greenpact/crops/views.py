@@ -72,7 +72,7 @@ class CurrUserCrops(APIView):
     def get(self,request,pk):
         try:
             crops=get_list_or_404(models.Crops,publisher__username=pk)
-            serial=serializers.CropsSerializer(crops,many=True)
+            serial=serializers.CropsSerializer(crops,many=True,context={'request': request})
             return Response(serial.data,status=status.HTTP_200_OK)
         except Http404:
             return Response({'data':[]}, status=status.HTTP_200_OK)

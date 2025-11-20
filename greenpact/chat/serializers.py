@@ -33,6 +33,8 @@ class ChatRoomSerializer(ModelSerializer):
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             other_users = obj.participants.exclude(id=request.user.id)
+            if not other_users.exists():
+                return None
             role=other_users.first().type
             if role=="farmer":
                 prof=FarmerProfile.objects.get(user=other_users.first())
@@ -43,3 +45,13 @@ class ChatRoomSerializer(ModelSerializer):
                 serial=ContractorProfileSerializer(prof).data
                 return {"name":serial["name"],"image":serial["image"]}
         return None
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request")
+        if request:
+            profile_data = representation.get('profile')
+            if profile_data:
+                image_url = profile_data.get('image')
+                if image_url and not image_url.startswith('http'):
+                    profile_data['image'] = request.build_absolute_uri(image_url)
+        return representation
