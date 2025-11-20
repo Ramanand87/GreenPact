@@ -43,6 +43,8 @@ class userSerializers(ModelSerializer):
             profile_data["signature"] = self.initial_data.get("signature")
             if not self.initial_data.get("qr_code_image"):
                 raise ValidationError({'error': 'Farmer QR code image is required'})
+            else :
+                profile_data["qr_code_image"] = self.initial_data.get("qr_code_image")
             models.FarmerProfile.objects.create(**profile_data)
         elif user.type == "contractor":
             profile_data["gstin"] = self.initial_data.get("gstin")
