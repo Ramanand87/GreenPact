@@ -875,10 +875,10 @@ export default function ProfilePage() {
                                 <p>{rating.description}</p>
                               </div>
 
-                              {rating.images && (
+                              {rating.rating_images && (
                                 <div className="mt-4">
                                   <img
-                                    src={rating.images || "/placeholder.svg"}
+                                    src={rating.rating_images[0].image || "/placeholder.svg"}
                                     alt="Rating Image"
                                     className="rounded-lg max-h-64 object-cover border border-gray-200"
                                   />
