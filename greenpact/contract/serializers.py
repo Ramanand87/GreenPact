@@ -29,7 +29,7 @@ class ContractSerializer(serializers.ModelSerializer):
             "terms",
             "status",
             "qr_code",
-            "pdf_url",   # ✅ NEW
+            "pdf_url",
         ]
 
     def get_qr_code(self, obj):

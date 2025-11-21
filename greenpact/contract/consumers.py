@@ -91,7 +91,6 @@ class ContractConsumer(AsyncWebsocketConsumer):
                 qs = qs.filter(farmer=self.user)
             else:
                 qs = qs.filter(buyer=self.user)
-            # no request context here, but serializer still works
             return serializers.ContractSerializer(qs, many=True).data
         except Exception:
             return []
@@ -131,22 +130,22 @@ class ContractConsumer(AsyncWebsocketConsumer):
                 "customerSignature": contractor_profile.signature,
             }
 
-            response = requests.post(
-                "http://localhost:6000/api/contracts/create",
-                data=payload,
-                files=files,
-            )
+            # response = requests.post(
+            #     "http://localhost:6000/api/contracts/create",
+            #     data=payload,
+            #     files=files,
+            # )
 
-            if response.status_code != 200:
-                print("PDF generation failed:", response.text)
-                return False
+            # if response.status_code != 200:
+            #     print("PDF generation failed:", response.text)
+            #     return False
 
             contract.status = True
             contract.save()
 
             pdf_name = f"contract_{contract.contract_id}.pdf"
             contract_doc = models.ContractDoc(contract=contract)
-            contract_doc.document.save(pdf_name, ContentFile(response.content))
+            # contract_doc.document.save(pdf_name, ContentFile(response.content))
             contract_doc.save()
 
             return True
