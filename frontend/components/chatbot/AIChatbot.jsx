@@ -12,14 +12,13 @@ import { cn } from "@/lib/utils"
 
 const AIChatbot = () => {
   const [messages, setMessages] = useState([
-    { text: "Hello! I'm your farming assistant. How can I help you today?", sender: "ai" },
-    { text: "You can ask me about contracts, farming techniques, or market prices.", sender: "ai" },
+    { text: "Hello! I'm your GreenPact AI assistant. How can I help you today?", sender: "ai" },
+    { text: "You can ask me about contracts, crop listings, marketplace features, payments, or anything about the platform!", sender: "ai" },
   ])
   const [inputValue, setInputValue] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const messagesEndRef = useRef(null)
   const [isListening, setIsListening] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [minimized, setMinimized] = useState(false)
   const inputRef = useRef(null)
   const recognitionRef = useRef(null)
@@ -29,10 +28,10 @@ const AIChatbot = () => {
     {
       name: "General",
       items: [
-        "Tell me about the project",
+        "What is GreenPact?",
         "How do contracts work?",
-        "What crops are available?",
-        "How to create a farming contract?",
+        "How to list my crops?",
+        "How does payment work?",
       ],
     },
   ]
@@ -105,7 +104,7 @@ const AIChatbot = () => {
   // Function to fetch response from the chatbot API
   const fetchAIResponse = async (userMessage) => {
     try {
-      const response = await fetch("http://127.0.0.1:4000/message", {
+      const response = await fetch("/api/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,10 +127,9 @@ const AIChatbot = () => {
   const handleSend = async () => {
     if (inputValue.trim()) {
       // Add user message
-      setMessages((prev) => [...prev, { text: inputValue, sender: "user" }])
       const userInput = inputValue
+      setMessages((prev) => [...prev, { text: userInput, sender: "user" }])
       setInputValue("")
-      setIsLoading(false)
 
       try {
         // Get AI response
@@ -146,8 +144,6 @@ const AIChatbot = () => {
             sender: "ai",
           },
         ])
-      } finally {
-        setIsLoading(false)
       }
     }
   }
@@ -160,10 +156,9 @@ const AIChatbot = () => {
   }
 
   const handleSuggestion = async (suggestion) => {
-    setInputValue("")
     // Add user message
     setMessages((prev) => [...prev, { text: suggestion, sender: "user" }])
-    setIsLoading(false)
+    setInputValue("")
 
     try {
       // Get AI response
@@ -178,8 +173,6 @@ const AIChatbot = () => {
           sender: "ai",
         },
       ])
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -190,8 +183,8 @@ const AIChatbot = () => {
 
   const clearChat = () => {
     setMessages([
-      { text: "Hello! I'm your farming assistant. How can I help you today?", sender: "ai" },
-      { text: "You can ask me about contracts, farming techniques, or market prices.", sender: "ai" },
+      { text: "Hello! I'm your GreenPact AI assistant. How can I help you today?", sender: "ai" },
+      { text: "You can ask me about contracts, crop listings, marketplace features, payments, or anything about the platform!", sender: "ai" },
     ])
   }
 
@@ -250,8 +243,8 @@ const AIChatbot = () => {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="font-semibold text-sm">Farm Assistant</h3>
-                <p className="text-xs text-green-100">AI-powered farming expert</p>
+                <h3 className="font-semibold text-sm">GreenPact Assistant</h3>
+                <p className="text-xs text-green-100">AI-powered platform guide</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -331,33 +324,6 @@ const AIChatbot = () => {
                         )}
                       </motion.div>
                     ))}
-
-                    {isLoading && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex justify-start items-end gap-2"
-                      >
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="bg-green-600 text-white">
-                            <Bot className="h-3 w-3" />
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="max-w-[75%] rounded-2xl p-3 bg-white border border-gray-200 rounded-tl-none">
-                          <div className="flex space-x-2 items-center h-5">
-                            <div className="w-2 h-2 rounded-full bg-green-400 animate-bounce"></div>
-                            <div
-                              className="w-2 h-2 rounded-full bg-green-400 animate-bounce"
-                              style={{ animationDelay: "0.2s" }}
-                            ></div>
-                            <div
-                              className="w-2 h-2 rounded-full bg-green-400 animate-bounce"
-                              style={{ animationDelay: "0.4s" }}
-                            ></div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
                     <div ref={messagesEndRef} />
                   </AnimatePresence>
                 </div>
@@ -388,7 +354,6 @@ const AIChatbot = () => {
                       onKeyDown={handleKeyPress}
                       placeholder="Type your question..."
                       className="flex-1 border-green-100 focus-visible:ring-green-500"
-                      disabled={isLoading}
                     />
                     <TooltipProvider>
                       <Tooltip>
@@ -397,7 +362,6 @@ const AIChatbot = () => {
                             variant={isListening ? "destructive" : "outline"}
                             size="icon"
                             onClick={() => setIsListening(!isListening)}
-                            disabled={isLoading}
                             className={isListening ? "" : "border-green-100 text-green-600 hover:bg-green-50"}
                           >
                             <Mic className="h-4 w-4" />
@@ -411,7 +375,7 @@ const AIChatbot = () => {
 
                     <Button
                       onClick={handleSend}
-                      disabled={isLoading || !inputValue.trim()}
+                      disabled={!inputValue.trim()}
                       className="bg-green-600 hover:bg-green-700"
                     >
                       <Send className="h-4 w-4" />
