@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from utils.llama_client import call_llama
+from utils.llama_client import call_gpt_oss
 
 class GreenBotChatView(APIView):
     def post(self, request):
@@ -15,7 +15,7 @@ class GreenBotChatView(APIView):
         ]
 
         try:
-            reply = call_llama(messages)
+            reply = call_gpt_oss(messages)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

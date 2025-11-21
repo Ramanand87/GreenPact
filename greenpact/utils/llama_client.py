@@ -6,13 +6,13 @@ client = OpenAI(
     api_key=settings.GREENBOT_API_KEY,
 )
 
-def call_llama(messages):
+def call_gpt_oss(messages):
     completion = client.chat.completions.create(
-        model="meta-llama/llama-3.3-8b-instruct:free",
+        model="openai/gpt-oss-20b:free",
+        messages=messages,
         extra_headers={
             "HTTP-Referer": "http://localhost:8000",
-            "X-Title": "My Django DRF App",
-        },
-        messages=messages,
+            "X-Title": "GreenBot Chat API"
+        }
     )
     return completion.choices[0].message.content
