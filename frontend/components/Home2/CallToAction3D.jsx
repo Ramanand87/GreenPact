@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 export default function CallToAction3D() {
+  const userInfo = useSelector((state) => state.auth.userInfo);
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-white py-24 text-slate-900 sm:py-28">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(34,197,94,0.15),_transparent_65%)]" />
@@ -55,13 +57,13 @@ export default function CallToAction3D() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           >
-            <Link href="/market">
+            <Link href={userInfo ? "/market" : "/login"}>
             <Button className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 px-8 py-4 text-base font-semibold text-white shadow-[0_20px_60px_rgba(34,197,94,0.28)] transition sm:w-auto">
               Get Started Now
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Button>
             </Link>
-            <Link href="/about-us">
+            <Link href={userInfo ? "/about-us" : "/login"}>
             <Button
               variant="outline"
               className="flex w-full items-center justify-center rounded-full border border-emerald-500/30 bg-white px-8 py-4 text-base text-emerald-600 transition hover:border-emerald-500/50 hover:bg-emerald-50 sm:w-auto"

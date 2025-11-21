@@ -133,38 +133,40 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-4 lg:gap-6">
-          {navItems.map((item, index) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-            >
-              <Link
-                href={item.href}
-                className={cn(
-                  "text-xs sm:text-sm font-medium transition-colors relative group py-1",
-                  pathname === item.href 
-                    ? "text-emerald-600 font-semibold" 
-                    : "text-gray-700 hover:text-emerald-600",
-                )}
+        {userInfo && (
+          <div className="hidden md:flex md:items-center md:gap-4 lg:gap-6">
+            {navItems.map((item, index) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                {item.name}
-                {pathname === item.href && (
-                  <motion.div
-                    layoutId="navbar-indicator"
-                    className="absolute -bottom-[5px] left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-lime-400 rounded-lg"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "text-xs sm:text-sm font-medium transition-colors relative group py-1",
+                    pathname === item.href 
+                      ? "text-emerald-600 font-semibold" 
+                      : "text-gray-700 hover:text-emerald-600",
+                  )}
+                >
+                  {item.name}
+                  {pathname === item.href && (
+                    <motion.div
+                      layoutId="navbar-indicator"
+                      className="absolute -bottom-[5px] left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-lime-400 rounded-lg"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  <span
+                    className="absolute -bottom-[5px] left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-lime-400 rounded-lg opacity-0 transform scale-x-0 group-hover:opacity-100 group-hover:scale-x-100 transition-all duration-200 origin-left"
                   />
-                )}
-                <span
-                  className="absolute -bottom-[5px] left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 to-lime-400 rounded-lg opacity-0 transform scale-x-0 group-hover:opacity-100 group-hover:scale-x-100 transition-all duration-200 origin-left"
-                />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
@@ -237,25 +239,27 @@ export function Navbar() {
                       </div>
                     </div>
 
-                    <div className="flex-1 overflow-auto py-4">
-                      <div className="flex flex-col gap-1 px-2">
-                        {navItems.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            onClick={() => setIsOpen(false)}
-                            className={cn(
-                              "flex items-center px-4 py-3 rounded-lg text-base font-medium transition-all",
-                              pathname === item.href
-                                ? "bg-emerald-50 text-emerald-600 font-semibold"
-                                : "text-gray-700 hover:bg-emerald-50/60 hover:text-emerald-600",
-                            )}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
+                    {userInfo && (
+                      <div className="flex-1 overflow-auto py-4">
+                        <div className="flex flex-col gap-1 px-2">
+                          {navItems.map((item) => (
+                            <Link
+                              key={item.name}
+                              href={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className={cn(
+                                "flex items-center px-4 py-3 rounded-lg text-base font-medium transition-all",
+                                pathname === item.href
+                                  ? "bg-emerald-50 text-emerald-600 font-semibold"
+                                  : "text-gray-700 hover:bg-emerald-50/60 hover:text-emerald-600",
+                              )}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {userInfo ? (
                       <div className="border-t border-emerald-100 p-4">
@@ -339,14 +343,9 @@ export function Navbar() {
               </div>
             </div>
           ) : (
-            <>
-              <Button variant="outline" className="hidden sm:flex border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs sm:text-sm px-2 sm:px-4">
-                <Link href="/login">Login</Link>
-              </Button>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button className="bg-gradient-to-r from-emerald-600 to-lime-500 hover:shadow-lg hover:shadow-emerald-300/50 text-white text-xs sm:text-sm px-3 sm:px-6 py-2 sm:py-3">Shop Now</Button>
-              </motion.div>
-            </>
+            <Button variant="outline" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs sm:text-sm px-2 sm:px-4">
+              <Link href="/login">Login</Link>
+            </Button>
           )}
         </div>
       </div>

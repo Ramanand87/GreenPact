@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 const stats = [
   { label: "Farmers", value: "50K+" },
@@ -12,6 +13,7 @@ const stats = [
 ];
 
 export default function Hero3D() {
+  const userInfo = useSelector((state) => state.auth.userInfo);
   return (
     <section className="relative overflow-hidden bg-white text-slate-900">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_65%)]" />
@@ -59,13 +61,13 @@ export default function Hero3D() {
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           className="mt-8 hidden md:flex flex-col gap-3 sm:flex-row"
         >
-          <Link href="/market">
+          <Link href={userInfo ? "/market" : "/login"}>
             <Button className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_40px_rgba(34,197,94,0.25)] transition sm:w-auto">
               Get Started
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href="/about-us">
+          <Link href={userInfo ? "/about-us" : "/login"}>
             <Button
               variant="outline"
               className="flex w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-white px-6 py-4 text-base text-emerald-600 transition hover:border-emerald-500/50 hover:bg-emerald-50 sm:w-auto"
@@ -98,13 +100,13 @@ export default function Hero3D() {
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           className="mt-8 flex md:hidden flex-col gap-3 sm:flex-row"
         >
-          <Link href="/market">
+          <Link href={userInfo ? "/market" : "/login"}>
             <Button className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_40px_rgba(34,197,94,0.25)] transition sm:w-auto">
               Get Started
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href="/about-us">
+          <Link href={userInfo ? "/about-us" : "/login"}>
             <Button
               variant="outline"
               className="flex w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-white px-6 py-4 text-base text-emerald-600 transition hover:border-emerald-500/50 hover:bg-emerald-50 sm:w-auto"
