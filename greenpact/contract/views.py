@@ -180,7 +180,7 @@ class FarmerProgressView(APIView):
         try:
             contract=get_object_or_404(models.Contract,contract_id=pk)
             progress=get_list_or_404(models.FarmerProgress,contract=contract)
-            serial=serializers.FarmerProgressSerializer(progress,many=True)
+            serial=serializers.FarmerProgressSerializer(progress,many=True,context={'request':request})
             return Response({'data':serial.data},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
