@@ -3,7 +3,7 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
 const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/user",
+  baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/user`,
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.userInfo?.access;
     if (token) {

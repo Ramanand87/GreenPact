@@ -8,7 +8,6 @@ import {
   useCreatePaymentMutation,
   useGetFramerProgressQuery,
   useCreateFarmerProgressMutation,
-  useGetContractPdfQuery,
 } from "@/redux/Service/contract"
 
 // Add this import
@@ -115,7 +114,6 @@ export default function ContractPage() {
   const cropImageRef = useRef(null)
   const userInfo = useSelector((state) => state.auth.userInfo)
   const userRole = userInfo?.role
-  const [contractPdfUrl, setContractPdfUrl] = useState(null)
   const [showQrPopup, setShowQrPopup] = useState(false)
   const [showReceiptPopup, setShowReceiptPopup] = useState(false);
 const [currentReceipt, setCurrentReceipt] = useState(null);
@@ -133,18 +131,6 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
   // Hardcoded farmer progress data
 
   const { data: farmerProgressData, isLoading: isLoadingProgress } = useGetFramerProgressQuery(contract_id)
-
-  const { data: contractPdf, isLoading: isLoadingPdf, error } = useGetContractPdfQuery(contract_id)
-  console.log(contractPdf)
-  console.log(error)
-
-  useEffect(() => {
-    if (contractPdf?.data?.document) {
-      setContractPdfUrl(contractPdf.data.document)
-    }
-  }, [contractPdf]) // Only runs when contractPdf changes
-
-  console.log(contractPdf)
 
   // Mock function for updating farmer progress
 
@@ -594,9 +580,9 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                 </ul>
               </div>
 
-              {contractPdfUrl && (
+              {contract.pdf_url && (
                 <div className="mt-6">
-                  <Button variant="outline" className="w-full" onClick={() => window.open(contractPdfUrl, "_blank")}>
+                  <Button variant="outline" className="w-full" onClick={() => window.open(contract.pdf_url, "_blank")}>
                     <FileTextIcon className="h-4 w-4 mr-2" />
                     View Contract PDF
                   </Button>

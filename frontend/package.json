@@ -35,7 +35,6 @@
     "@reduxjs/toolkit": "^2.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "contract_farm": "file:",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.0.6",
     "lucide-react": "^0.474.0",
