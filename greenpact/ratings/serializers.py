@@ -3,8 +3,22 @@ from rest_framework import serializers
 from . import models
 from user.models import CustomUser
 
+class RatingImageSerializer(ModelSerializer):
+    class Meta:
+        model=models.RatingImage
+        fields='__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if request:
+            image_url = representation['image']
+            if image_url and not image_url.startswith('http'):
+                representation['image'] = request.build_absolute_uri(image_url)
+        return representation
 
 class RatingSerializer(ModelSerializer):
+    rating_images = RatingImageSerializer(many=True, read_only=True)
     rated_user = SerializerMethodField()
     rating_user = SerializerMethodField()
     class Meta:
@@ -26,4 +40,8 @@ class RatingSerializer(ModelSerializer):
                 validated_data['rated_user'] = CustomUser.objects.get(username=rated_user_username)
             except CustomUser.DoesNotExist:
                 raise serializers.ValidationError({"rated_user": "User not found."})
-        return super().create(validated_data)
+            rating=super().create(validated_data)
+            images = request.FILES.getlist('images')
+            for image in images:
+                models.RatingImage.objects.create(rating=rating, image=image)
+            return rating

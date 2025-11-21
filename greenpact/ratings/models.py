@@ -14,10 +14,17 @@ class Rating(models.Model):
     rated_user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name="received_ratings")
     rating_user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name="given_ratings")
     description=models.TextField(blank=True)
-    image = models.ImageField(upload_to='rating/image/', null=True, blank=True)
     rate=models.IntegerField(choices=RATING_CHOICES)
 
     def __str__(self):
         return f'{self.rating_user.username} rated {self.rated_user.username}'
+    
+class RatingImage(models.Model):
+    id=models.UUIDField(default=uuid4,primary_key=True,editable=False)
+    rating=models.ForeignKey(Rating,on_delete=models.CASCADE,related_name="rating_images")
+    image=models.ImageField(upload_to='rating/image/')
+
+    def __str__(self):
+        return f'Image for rating {self.rating.id}'
 
 
