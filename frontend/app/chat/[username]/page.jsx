@@ -92,7 +92,7 @@ useEffect(() => {
 
   if (currentChat?.name) {
     console.log("Connecting to WebSocket for room:", currentChat.name);
-    ws = new WebSocket(`ws://localhost:5000/ws/chat/${currentChat.name}/`);
+    ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/chat/${currentChat.name}/`);
 
     ws.onopen = () => console.log("WebSocket Connected!");
     ws.onmessage = (event) => {

@@ -3,6 +3,7 @@ const nextConfig = {
   images: {
     domains: ['res.cloudinary.com', '127.0.0.1', 'localhost'], // combine both here
   },
+  output: 'standalone',
 };
 
 export default nextConfig;
