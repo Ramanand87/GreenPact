@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTranslate } from "@/lib/LanguageContext";
 import {
   Dialog,
   DialogTrigger,
@@ -30,6 +31,7 @@ import { Label } from "@/components/ui/label";
 
 export default function YourCropsPage() {
   const { username } = useParams();
+  const { t } = useTranslate();
   const { data, isLoading, isError } = useGetCropsQuery(username);
   console.log(data);
   const crops = Array.isArray(data) ? data : []; // Ensure crops is always an array
@@ -88,7 +90,7 @@ export default function YourCropsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 ">
-      <h1 className="text-3xl font-bold text-green-900 mb-8">Your Crops</h1>
+      <h1 className="text-3xl font-bold text-green-900 mb-8">{t('yourCrops', { en: 'Your Crops', hi: 'आपकी फसलें' })}</h1>
 
       {/* Add Crop Button */}
       <Dialog
@@ -104,7 +106,7 @@ export default function YourCropsPage() {
         <DialogTrigger asChild>
           <Button className="mb-8 bg-green-600 hover:bg-green-700">
             <Plus className="w-4 h-4 mr-2" />
-            Add New Crop
+            {t('addNewCrop', { en: 'Add New Crop', hi: 'नई फसल जोड़ें' })}
           </Button>
         </DialogTrigger>
 
@@ -112,7 +114,7 @@ export default function YourCropsPage() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {editingCrop ? "Edit Crop" : "Add New Crop"}
+              {editingCrop ? t('editCrop', { en: 'Edit Crop', hi: 'फसल संपादित करें' }) : t('addNewCrop', { en: 'Add New Crop', hi: 'नई फसल जोड़ें' })}
             </DialogTitle>
           </DialogHeader>
 
@@ -123,37 +125,37 @@ export default function YourCropsPage() {
           >
             <Input
               name="crop_name"
-              placeholder="Crop Name"
+              placeholder={t('cropName', { en: 'Crop Name', hi: 'फसल का नाम' })}
               defaultValue={editingCrop?.crop_name}
               required
             />
             <Input
               name="crop_price"
               type="number"
-              placeholder="Price (₹/kg)"
+              placeholder={t('pricePerKg', { en: 'Price (₹/kg)', hi: 'मूल्य (₹/किलो)' })}
               defaultValue={editingCrop?.crop_price}
               required
             />
             <Input
               name="quantity"
-              placeholder="Quantity(/Kg)"
+              placeholder={t('quantityKg', { en: 'Quantity(/Kg)', hi: 'मात्रा (/किलो)' })}
               defaultValue={editingCrop?.quantity}
               required
             />
             <Input
               name="Description"
-              placeholder="Description"
+              placeholder={t('description', { en: 'Description', hi: 'विवरण' })}
               defaultValue={editingCrop?.Description}
               required
             />
             <Input
               name="location"
-              placeholder="Location"
+              placeholder={t('location', { en: 'Location', hi: 'स्थान' })}
               defaultValue={editingCrop?.location}
               required
             />
            <div>
-           <label htmlFor="harvested_time" className="text-sm text-gray-700">Harvested Date</label>
+           <label htmlFor="harvested_time" className="text-sm text-gray-700">{t('harvestedDate', { en: 'Harvested Date', hi: 'कटाई की तारीख' })}</label>
             <Input
               id="harvested_time"
               name="harvested_time"
@@ -195,14 +197,14 @@ export default function YourCropsPage() {
                 {loading ? (
                   <Loader2 className="animate-spin w-4 h-4 mr-2" />
                 ) : null}
-                {editingCrop ? "Save Changes" : "Add Crop"}
+                {editingCrop ? t('saveChanges', { en: 'Save Changes', hi: 'परिवर्तन सहेजें' }) : t('addCrop', { en: 'Add Crop', hi: 'फसल जोड़ें' })}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpenDialog(false)}
               >
-                Cancel
+                {t('cancel', { en: 'Cancel', hi: 'रद्द करें' })}
               </Button>
             </div>
           </form>
@@ -211,20 +213,20 @@ export default function YourCropsPage() {
 
       {/* List of Crops */}
       {isLoading ? (
-        <div>Loading...</div>
+        <div>{t('loading', { en: 'Loading...', hi: 'लोड हो रहा है...' })}</div>
       ) : isError ? (
-        <div>Error fetching crops.</div>
+        <div>{t('errorFetchingCrops', { en: 'Error fetching crops.', hi: 'फसलें प्राप्त करने में त्रुटि।' })}</div>
       ) : crops.length === 0 ? (
         <div className="text-center mt-8">
           <p className="text-gray-600 mb-4">
-            No crops available. Please add a crop.
+            {t('noCropsAvailable', { en: 'No crops available. Please add a crop.', hi: 'कोई फसल उपलब्ध नहीं। कृपया एक फसल जोड़ें।' })}
           </p>
           <Button
             onClick={() => setOpenDialog(true)}
             className="bg-green-600 hover:bg-green-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add New Crop
+            {t('addNewCrop', { en: 'Add New Crop', hi: 'नई फसल जोड़ें' })}
           </Button>
         </div>
       ) : (
@@ -248,16 +250,16 @@ export default function YourCropsPage() {
                 <CardTitle className="text-xl">{crop.crop_name}</CardTitle>
                 <div className="space-y-2 mt-4">
                   <p className="text-green-600 font-semibold">
-                    ₹{crop.crop_price}/kg
+                    ₹{crop.crop_price}/{t('kg', { en: 'kg', hi: 'किलो' })}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Quantity: {crop.quantity} Kg
+                    {t('quantity', { en: 'Quantity:', hi: 'मात्रा:' })} {crop.quantity} {t('kg', { en: 'Kg', hi: 'किलो' })}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Location: {crop.location}
+                    {t('location', { en: 'Location:', hi: 'स्थान:' })} {crop.location}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Harvested: {crop.harvested_time}
+                    {t('harvested', { en: 'Harvested:', hi: 'कटाई:' })} {crop.harvested_time}
                   </p>
                   <p className="text-gray-700">{crop.Description}</p>
                 </div>
@@ -272,7 +274,7 @@ export default function YourCropsPage() {
                   }}
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Edit
+                  {t('edit', { en: 'Edit', hi: 'संपादित करें' })}
                 </Button>
                 <Button
                   variant="destructive"
@@ -284,7 +286,7 @@ export default function YourCropsPage() {
                   ) : (
                     <Trash className="w-4 h-4 mr-2" />
                   )}
-                  Delete
+                  {t('delete', { en: 'Delete', hi: 'हटाएं' })}
                 </Button>
               </CardFooter>
             </Card>

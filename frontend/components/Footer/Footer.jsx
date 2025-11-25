@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { useTranslate } from "@/lib/LanguageContext";
 
 export default function Footer() {
+  const { t } = useTranslate();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -38,25 +40,30 @@ export default function Footer() {
           {/* About Us */}
           <motion.div variants={itemVariants}>
             <h3 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-emerald-600 to-lime-500 bg-clip-text text-transparent mb-3 sm:mb-4">
-              About GreenPact
+              {t('aboutGreenPact', { en: 'About GreenPact', hi: 'GreenPact के बारे में' })}
             </h3>
             <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-              Bridging farmers with guaranteed buyers through transparent contracts and fair pricing.
-              Our mission is to empower agricultural communities with technology.
+              {t('aboutDesc', { en: 'Bridging farmers with guaranteed buyers through transparent contracts and fair pricing. Our mission is to empower agricultural communities with technology.', hi: 'पारदर्शी अनुबंधों और उचित मूल्य के माध्यम से किसानों को गारंटीड खरीदारों से जोड़ना। हमारा मिशन प्रौद्योगिकी के साथ कृषि समुदायों को सशक्त बनाना है।' })}
             </p>
           </motion.div>
 
           {/* Quick Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Links</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('quickLinks', { en: 'Quick Links', hi: 'तुरंत लिंक' })}</h3>
             <ul className="space-y-2">
-              {['Home', 'Features', 'How It Works', 'FAQs', 'Contact Us'].map((link) => (
-                <motion.li key={link} whileHover={{ x: 5 }}>
+              {[
+                { en: 'Home', hi: 'होम' },
+                { en: 'Features', hi: 'विशेषताएं' },
+                { en: 'How It Works', hi: 'यह कैसे काम करता है' },
+                { en: 'FAQs', hi: 'पूछे जाने वाले प्रश्न' },
+                { en: 'Contact Us', hi: 'संपर्क करें' }
+              ].map((link) => (
+                <motion.li key={link.en} whileHover={{ x: 5 }}>
                   <a 
                     href="#" 
                     className="text-gray-600 hover:text-emerald-600 transition-colors font-medium text-xs sm:text-sm"
                   >
-                    {link}
+                    {t(link.en.toLowerCase().replace(/\s+/g, ''), link)}
                   </a>
                 </motion.li>
               ))}
@@ -65,31 +72,35 @@ export default function Footer() {
 
           {/* Support & Newsletter */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Support & Help</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('supportHelp', { en: 'Support & Help', hi: 'सहायता और समर्थन' })}</h3>
             <ul className="space-y-2 mb-4 sm:mb-6">
-              {['Privacy Policy', 'Terms & Conditions', 'Help Center'].map((link) => (
-                <motion.li key={link} whileHover={{ x: 5 }}>
+              {[
+                { en: 'Privacy Policy', hi: 'गोपनीयता नीति' },
+                { en: 'Terms & Conditions', hi: 'नियम और शर्तें' },
+                { en: 'Help Center', hi: 'सहायता केंद्र' }
+              ].map((link) => (
+                <motion.li key={link.en} whileHover={{ x: 5 }}>
                   <a 
                     href="#" 
                     className="text-gray-600 hover:text-emerald-600 transition-colors font-medium text-xs sm:text-sm"
                   >
-                    {link}
+                    {t(link.en.toLowerCase().replace(/[&\s]+/g, ''), link)}
                   </a>
                 </motion.li>
               ))}
             </ul>
 
             <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Newsletter</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('newsletter', { en: 'Newsletter', hi: 'न्यूज़लेटर' })}</h3>
               <form className="flex flex-col sm:flex-row gap-2">
                 <Input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t('emailPlaceholder', { en: 'Enter your email', hi: 'अपना ईमेल दर्ज करें' })}
                   className="bg-emerald-50 border-emerald-200 text-gray-900 placeholder:text-gray-500 focus:bg-white focus:border-emerald-400 text-xs sm:text-sm"
                 />
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button className="bg-gradient-to-r from-emerald-600 to-lime-500 hover:shadow-lg hover:shadow-emerald-300/50 text-white whitespace-nowrap text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-3">
-                    Subscribe
+                    {t('subscribe', { en: 'Subscribe', hi: 'सब्सक्राइब करें' })}
                   </Button>
                 </motion.div>
               </form>
@@ -98,7 +109,7 @@ export default function Footer() {
 
           {/* Contact & Social */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Contact Us</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('contactUs', { en: 'Contact Us', hi: 'संपर्क करें' })}</h3>
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
               <motion.div className="flex items-center gap-2 sm:gap-3" whileHover={{ x: 5 }}>
                 <div className="p-1.5 sm:p-2 bg-emerald-100 rounded-lg flex-shrink-0">
@@ -121,7 +132,7 @@ export default function Footer() {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Join Community</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('joinCommunity', { en: 'Join Community', hi: 'समुदाय में शामिल हों' })}</h3>
               <div className="flex gap-2 sm:gap-3">
                 {[Facebook, Twitter, Linkedin, Instagram].map((Icon, index) => (
                   <motion.a
@@ -148,13 +159,13 @@ export default function Footer() {
           viewport={{ once: true }}
         >
           <p className="text-gray-600 text-xs sm:text-sm">
-            © 2025 GreenPact. All rights reserved. | 
+            {t('copyright', { en: '© 2025 GreenPact. All rights reserved.', hi: '© 2025 GreenPact। सर्वाधिकार सुरक्षित।' })} | 
             <motion.a 
               href="#" 
               className="hover:text-emerald-600 ml-1 sm:ml-2 font-medium transition-colors"
               whileHover={{ textDecoration: 'underline' }}
             >
-              Legal Disclaimer
+              {t('legalDisclaimer', { en: 'Legal Disclaimer', hi: 'कानूनी अस्वीकरण' })}
             </motion.a>
           </p>
         </motion.div>

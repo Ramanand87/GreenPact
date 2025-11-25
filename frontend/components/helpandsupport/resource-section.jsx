@@ -6,56 +6,58 @@ import { FileText, Video, Download, ExternalLink, BookOpen, Calendar, HelpCircle
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useTranslate } from "@/lib/LanguageContext"
 
 export function ResourcesSection({ userType }) {
+  const { t } = useTranslate();
   const [expandedCategory, setExpandedCategory] = useState("guides")
 
   const resources = {
     farmer: [
       {
         id: "guides",
-        title: "Guides & Tutorials",
+        title: t('guidesTutorials', { en: 'Guides & Tutorials', hi: 'गाइड और ट्यूटोरियल' }),
         icon: <BookOpen className="w-5 h-5" />, 
         items: [
-          { title: "Understanding Contract Farming", type: "PDF", new: true },
-          { title: "How to Negotiate Better Terms", type: "Video" },
-          { title: "Managing Your Farm Records", type: "PDF" },
-          { title: "Using the Mobile App", type: "Tutorial" },
+          { title: t('understandingContractFarming', { en: 'Understanding Contract Farming', hi: 'कॉन्ट्रैक्ट फार्मिंग को समझना' }), type: "PDF", new: true },
+          { title: t('negotiateBetterTerms', { en: 'How to Negotiate Better Terms', hi: 'बेहतर शर्तें कैसे तय करें' }), type: "Video" },
+          { title: t('managingFarmRecords', { en: 'Managing Your Farm Records', hi: 'अपने फार्म रिकॉर्ड प्रबंधित करना' }), type: "PDF" },
+          { title: t('usingMobileApp', { en: 'Using the Mobile App', hi: 'मोबाइल ऐप का उपयोग' }), type: "Tutorial" },
         ],
       },
       {
         id: "documents",
-        title: "Important Documents",
+        title: t('importantDocuments', { en: 'Important Documents', hi: 'महत्वपूर्ण दस्तावेज़' }),
         icon: <FileText className="w-5 h-5" />,
         items: [
-          { title: "Sample Contract Template", type: "PDF" },
-          { title: "Farmer Rights Document", type: "PDF", new: true },
-          { title: "Payment Schedule", type: "PDF" },
-          { title: "Quality Standards Guide", type: "PDF" },
+          { title: t('sampleContractTemplate', { en: 'Sample Contract Template', hi: 'नमूना अनुबंध टेम्प्लेट' }), type: "PDF" },
+          { title: t('farmerRightsDocument', { en: 'Farmer Rights Document', hi: 'किसान अधिकार दस्तावेज़' }), type: "PDF", new: true },
+          { title: t('paymentSchedule', { en: 'Payment Schedule', hi: 'भुगतान अनुसूची' }), type: "PDF" },
+          { title: t('qualityStandardsGuide', { en: 'Quality Standards Guide', hi: 'गुणवत्ता मानक गाइड' }), type: "PDF" },
         ],
       },
     ],
     contractor: [
       {
         id: "guides",
-        title: "Guides & Tutorials",
+        title: t('guidesTutorials', { en: 'Guides & Tutorials', hi: 'गाइड और ट्यूटोरियल' }),
         icon: <BookOpen className="w-5 h-5" />,
         items: [
-          { title: "Contractor Onboarding Guide", type: "PDF" },
-          { title: "Finding Reliable Farmers", type: "Video" },
-          { title: "Quality Control Best Practices", type: "PDF", new: true },
-          { title: "Using the Contractor Dashboard", type: "Tutorial" },
+          { title: t('contractorOnboardingGuide', { en: 'Contractor Onboarding Guide', hi: 'ठेकेदार ओनबोर्डिंग गाइड' }), type: "PDF" },
+          { title: t('findingReliableFarmers', { en: 'Finding Reliable Farmers', hi: 'विश्वसनीय किसान ढूंढना' }), type: "Video" },
+          { title: t('qualityControlBestPractices', { en: 'Quality Control Best Practices', hi: 'गुणवत्ता नियंत्रण सर्वोत्तम प्रथाएं' }), type: "PDF", new: true },
+          { title: t('usingContractorDashboard', { en: 'Using the Contractor Dashboard', hi: 'ठेकेदार डैशबोर्ड का उपयोग' }), type: "Tutorial" },
         ],
       },
       {
         id: "documents",
-        title: "Important Documents",
+        title: t('importantDocuments', { en: 'Important Documents', hi: 'महत्वपूर्ण दस्तावेज़' }),
         icon: <FileText className="w-5 h-5" />,
         items: [
-          { title: "Contract Templates", type: "PDF" },
-          { title: "Legal Compliance Guide", type: "PDF" },
-          { title: "Contractor Responsibilities", type: "PDF" },
-          { title: "Dispute Resolution Process", type: "PDF", new: true },
+          { title: t('contractTemplates', { en: 'Contract Templates', hi: 'अनुबंध टेम्प्लेट' }), type: "PDF" },
+          { title: t('legalComplianceGuide', { en: 'Legal Compliance Guide', hi: 'कानूनी अनुपालन गाइड' }), type: "PDF" },
+          { title: t('contractorResponsibilities', { en: 'Contractor Responsibilities', hi: 'ठेकेदार जिम्मेदारियां' }), type: "PDF" },
+          { title: t('disputeResolutionProcess', { en: 'Dispute Resolution Process', hi: 'विवाद समाधान प्रक्रिया' }), type: "PDF", new: true },
         ],
       },
     ],
@@ -105,7 +107,7 @@ export function ResourcesSection({ userType }) {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{item.title}</h3>
-                      {item.new && <Badge variant="outline" className="ml-2 bg-secondary/20">New</Badge>}
+                      {item.new && <Badge variant="outline" className="ml-2 bg-secondary/20">{t('new', { en: 'New', hi: 'नया' })}</Badge>}
                       <p className="text-sm text-muted-foreground">{item.type}</p>
                     </div>
                     <Button variant="ghost" size="icon">

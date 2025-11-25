@@ -27,6 +27,7 @@ import { toast } from "sonner"
 import Link from "next/link"
 import Webcam from "react-webcam"
 import { useUpdateProfileMutation } from "@/redux/Service/profileApi"
+import { useTranslate } from "@/lib/LanguageContext"
 
 const statusColors = {
   active: "bg-green-100 text-green-800 border-green-200",
@@ -35,6 +36,7 @@ const statusColors = {
 }
 
 export default function ContractsListPage() {
+  const { t } = useTranslate();
   const ws = useRef(null)
   const [showVerification, setShowVerification] = useState(false)
   const [verificationImage, setVerificationImage] = useState(null)
@@ -444,17 +446,17 @@ export default function ContractsListPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>
               {verificationStatus === null
-                ? "Identity Verification Required"
+                ? t('identityVerificationRequired', { en: 'Identity Verification Required', hi: 'पहचान सत्यापन आवश्यक' })
                 : verificationStatus
-                  ? "Confirm Contract Approval"
-                  : "Verification Failed"}
+                  ? t('confirmContractApproval', { en: 'Confirm Contract Approval', hi: 'अनुबंध अनुमोदन की पुष्टि करें' })
+                  : t('verificationFailed', { en: 'Verification Failed', hi: 'सत्यापन विफल' })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {verificationStatus === null
-                ? "Please verify your identity before approving this contract."
+                ? t('verifyIdentityBeforeApproval', { en: 'Please verify your identity before approving this contract.', hi: 'कृपया इस अनुबंध को अनुमोदित करने से पहले अपनी पहचान सत्यापित करें।' })
                 : verificationStatus
-                  ? "Are you sure you want to approve this contract? This action cannot be undone."
-                  : "Face doesn't match our records. Please try again."}
+                  ? t('confirmApprovalMessage', { en: 'Are you sure you want to approve this contract? This action cannot be undone.', hi: 'क्या आप वाकई इस अनुबंध को अनुमोदित करना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।' })
+                  : t('faceDoesntMatch', { en: 'Face doesn\'t match our records. Please try again.', hi: 'चेहरा हमारे रिकॉर्ड से मेल नहीं खाता। कृपया पुनः प्रयास करें।' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
@@ -473,7 +475,7 @@ export default function ContractsListPage() {
                   </div>
                   <Button onClick={captureImage} className="w-full">
                     <Camera className="h-4 w-4 mr-2" />
-                    Capture Photo
+                    {t('capturePhoto', { en: 'Capture Photo', hi: 'फोटो खींचें' })}
                   </Button>
                 </div>
               ) : (
@@ -483,7 +485,7 @@ export default function ContractsListPage() {
                   </div>
                   <div className="flex gap-2">
                     <Button onClick={retryVerification} variant="outline" className="w-full">
-                      Retake Photo
+                      {t('retakePhoto', { en: 'Retake Photo', hi: 'फिर से फोटो लें' })}
                     </Button>
                     <Button onClick={handleVerifyUser} className="w-full" disabled={isVerifying}>
                       {isVerifying ? (
@@ -491,7 +493,7 @@ export default function ContractsListPage() {
                       ) : (
                         <Check className="h-4 w-4 mr-2" />
                       )}
-                      Verify Identity
+                      {t('verifyIdentity', { en: 'Verify Identity', hi: 'पहचान सत्यापित करें' })}
                     </Button>
                   </div>
                 </div>
@@ -499,7 +501,7 @@ export default function ContractsListPage() {
             </div>
           ) : verificationStatus ? (
             <div className="my-4 space-y-4">
-              <h3 className="text-sm font-medium">Upload QR Code Image</h3>
+              <h3 className="text-sm font-medium">{t('uploadQrCodeImage', { en: 'Upload QR Code Image', hi: 'QR कोड छवि अपलोड करें' })}</h3>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                 <Input
                   type="file"
@@ -516,14 +518,14 @@ export default function ContractsListPage() {
                     <FileText className="h-6 w-6 text-gray-500" />
                   </div>
                   <span className="text-sm font-medium">
-                    {qrCodeUploaded ? "QR Code Uploaded ✓" : "Click to upload QR code"}
+                    {qrCodeUploaded ? t('qrCodeUploaded', { en: 'QR Code Uploaded ✓', hi: 'QR कोड अपलोड ✓' }) : t('clickToUploadQr', { en: 'Click to upload QR code', hi: 'QR कोड अपलोड करने के लिए क्लिक करें' })}
                   </span>
-                  <span className="text-xs text-gray-500">PNG, JPG up to 5MB</span>
+                  <span className="text-xs text-gray-500">{t('qrCodeFileSize', { en: 'PNG, JPG up to 5MB', hi: 'PNG, JPG 5MB तक' })}</span>
                 </label>
               </div>
 
               <div className="flex gap-2 mt-4">
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t('cancel', { en: 'Cancel', hi: 'रद्द करें' })}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleApprove}
                   className="bg-green-600 hover:bg-green-700"
@@ -532,17 +534,17 @@ export default function ContractsListPage() {
                   {qrCodeUploading ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Uploading...
+                      {t('uploading', { en: 'Uploading...', hi: 'अपलोड हो रहा है...' })}
                     </>
                   ) : (
-                    "Yes, Approve Contract"
+                    t('yesApproveContract', { en: 'Yes, Approve Contract', hi: 'हां, अनुबंध अनुमोदित करें' })
                   )}
                 </AlertDialogAction>
               </div>
             </div>
           ) : (
             <AlertDialogFooter>
-              <AlertDialogAction onClick={retryVerification}>Try Again</AlertDialogAction>
+              <AlertDialogAction onClick={retryVerification}>{t('tryAgain', { en: 'Try Again', hi: 'पुनः प्रयास करें' })}</AlertDialogAction>
             </AlertDialogFooter>
           )}
         </AlertDialogContent>
@@ -552,7 +554,7 @@ export default function ContractsListPage() {
       <Dialog open={viewOpen} onOpenChange={setViewOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Contract Details</DialogTitle>
+            <DialogTitle>{t('contractDetails', { en: 'Contract Details', hi: 'अनुबंध विवरण' })}</DialogTitle>
           </DialogHeader>
 
           {currentContract && (
@@ -567,47 +569,47 @@ export default function ContractsListPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="font-medium text-gray-500">Crop</h3>
+                    <h3 className="font-medium text-gray-500">{t('crop', { en: 'Crop', hi: 'फसल' })}</h3>
                     <p className="font-semibold">{currentContract.crop}</p>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-500">Quantity</h3>
-                    <p className="font-semibold">{currentContract.quantity} kg</p>
+                    <h3 className="font-medium text-gray-500">{t('quantity', { en: 'Quantity', hi: 'मात्रा' })}</h3>
+                    <p className="font-semibold">{currentContract.quantity} {t('kg', { en: 'kg', hi: 'किलो' })}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="font-medium text-gray-500">Negotiated Price</h3>
+                    <h3 className="font-medium text-gray-500">{t('negotiatedPrice', { en: 'Negotiated Price', hi: 'निर्धारित मूल्य' })}</h3>
                     <p className="font-semibold">₹{currentContract.price.toLocaleString()}</p>
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-500">Delivery Date</h3>
+                    <h3 className="font-medium text-gray-500">{t('deliveryDate', { en: 'Delivery Date', hi: 'डिलीवरी तिथि' })}</h3>
                     <p className="font-semibold">{new Date(currentContract.deliveryDate).toLocaleDateString()}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-500">Delivery Address</h3>
+                  <h3 className="font-medium text-gray-500">{t('deliveryAddress', { en: 'Delivery Address', hi: 'डिलीवरी पता' })}</h3>
                   <p className="font-semibold">{currentContract.delivery_address}</p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-500">Parties</h3>
+                  <h3 className="font-medium text-gray-500">{t('parties', { en: 'Parties', hi: 'पक्ष' })}</h3>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                      <h4 className="text-sm text-gray-500">Farmer</h4>
+                      <h4 className="text-sm text-gray-500">{t('farmer', { en: 'Farmer', hi: 'किसान' })}</h4>
                       <p className="font-semibold">{currentContract.farmer}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm text-gray-500">Buyer</h4>
+                      <h4 className="text-sm text-gray-500">{t('buyer', { en: 'Buyer', hi: 'खरीददार' })}</h4>
                       <p className="font-semibold">{currentContract.buyer}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-gray-500">Terms & Conditions</h3>
+                  <h3 className="font-medium text-gray-500">{t('termsConditions', { en: 'Terms & Conditions', hi: 'नियम और शर्तें' })}</h3>
                   <div className="mt-2 space-y-2 bg-gray-50 p-4 rounded-lg">
                     {currentContract.terms.length > 0 ? (
                       currentContract.terms.map((term, index) => (
@@ -617,7 +619,7 @@ export default function ContractsListPage() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm text-gray-500">No terms specified</p>
+                      <p className="text-sm text-gray-500">{t('noTermsSpecified', { en: 'No terms specified', hi: 'कोई शर्तें निर्दिष्ट नहीं' })}</p>
                     )}
                   </div>
                 </div>
@@ -639,11 +641,11 @@ export default function ContractsListPage() {
                     >
                       {approvingIds.includes(currentContract?.id) ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Processing...
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t('processing', { en: 'Processing...', hi: 'प्रसंस्करण हो रहा है...' })}
                         </>
                       ) : (
                         <>
-                          <Check className="h-4 w-4 mr-2" /> Approve Contract
+                          <Check className="h-4 w-4 mr-2" /> {t('approveContract', { en: 'Approve Contract', hi: 'अनुबंध अनुमोदित करें' })}
                         </>
                       )}
                     </Button>
@@ -659,22 +661,22 @@ export default function ContractsListPage() {
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Contract</DialogTitle>
+            <DialogTitle>{t('editContract', { en: 'Edit Contract', hi: 'अनुबंध संपादित करें' })}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Delivery Address</label>
+              <label className="block text-sm font-medium mb-1">{t('deliveryAddress', { en: 'Delivery Address', hi: 'डिलीवरी पता' })}</label>
               <Input
                 name="delivery_address"
                 value={formData.delivery_address}
                 onChange={handleFormChange}
-                placeholder="Enter delivery address"
+                placeholder={t('enterDeliveryAddress', { en: 'Enter delivery address', hi: 'डिलीवरी पता दर्ज करें' })}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Delivery Date</label>
+              <label className="block text-sm font-medium mb-1">{t('deliveryDate', { en: 'Delivery Date', hi: 'डिलीवरी तिथि' })}</label>
               <Input
                 type="date"
                 value={deliveryDate ? format(deliveryDate, "yyyy-MM-dd") : ""}
@@ -689,29 +691,29 @@ export default function ContractsListPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Quantity (kg)</label>
+                <label className="block text-sm font-medium mb-1">{t('quantity', { en: 'Quantity (kg)', hi: 'मात्रा (किलो)' })}</label>
                 <Input
                   type="number"
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleFormChange}
-                  placeholder="Enter quantity"
+                  placeholder={t('enterQuantity', { en: 'Enter quantity', hi: 'मात्रा दर्ज करें' })}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Negotiated Price (₹)</label>
+                <label className="block text-sm font-medium mb-1">{t('negotiatedPrice', { en: 'Negotiated Price (₹)', hi: 'निर्धारित मूल्य (₹)' })}</label>
                 <Input
                   type="number"
                   name="nego_price"
                   value={formData.nego_price}
                   onChange={handleFormChange}
-                  placeholder="Enter price"
+                  placeholder={t('enterPrice', { en: 'Enter price', hi: 'मूल्य दर्ज करें' })}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Terms</label>
+              <label className="block text-sm font-medium mb-1">{t('terms', { en: 'Terms', hi: 'शर्तें' })}</label>
               <div className="flex gap-2 mb-2">
                 <Input
                   value={formData.newTerm}
@@ -721,10 +723,10 @@ export default function ContractsListPage() {
                       newTerm: e.target.value,
                     }))
                   }
-                  placeholder="Add new term"
+                  placeholder={t('addNewTerm', { en: 'Add new term', hi: 'नई शर्त जोड़ें' })}
                 />
                 <Button onClick={addTerm} variant="outline">
-                  Add
+                  {t('add', { en: 'Add', hi: 'जोड़ें' })}
                 </Button>
               </div>
               <div className="space-y-2">
@@ -745,10 +747,10 @@ export default function ContractsListPage() {
               {isUpdating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  {t('saving', { en: 'Saving...', hi: 'सहेजा जा रहा है...' })}
                 </>
               ) : (
-                "Save Changes"
+                t('saveChanges', { en: 'Save Changes', hi: 'परिवर्तन सहेजें' })
               )}
             </Button>
           </DialogFooter>
@@ -758,8 +760,8 @@ export default function ContractsListPage() {
       {/* Main Content */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-green-800">Contracts</h1>
-          <p className="text-gray-600 mt-1">Manage your farming contracts</p>
+          <h1 className="text-3xl font-bold text-green-800">{t('contracts', { en: 'Contracts', hi: 'अनुबंध' })}</h1>
+          <p className="text-gray-600 mt-1">{t('manageContracts', { en: 'Manage your farming contracts', hi: 'अपने कृषि अनुबंधों का प्रबंधन करें' })}</p>
         </div>
 
         {/* Notifications Bell */}
@@ -840,7 +842,7 @@ export default function ContractsListPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Search contracts..."
+              placeholder={t('searchContracts', { en: 'Search contracts...', hi: 'अनुबंध खोजें...' })}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -850,27 +852,27 @@ export default function ContractsListPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
-                  <Filter className="h-4 w-4" /> Filter
+                  <Filter className="h-4 w-4" /> {t('filter', { en: 'Filter', hi: 'फ़िल्टर' })}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setFilterOption("all")}>All Contracts</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterOption("farmer")}>By Farmer</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterOption("buyer")}>By Buyer</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterOption("crop")}>By Crop</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterOption("all")}>{t('allContracts', { en: 'All Contracts', hi: 'सभी अनुबंध' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterOption("farmer")}>{t('byFarmer', { en: 'By Farmer', hi: 'किसान द्वारा' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterOption("buyer")}>{t('byBuyer', { en: 'By Buyer', hi: 'खरीददार द्वारा' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterOption("crop")}>{t('byCrop', { en: 'By Crop', hi: 'फसल द्वारा' })}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
-                  <ArrowUpDown className="h-4 w-4" /> Sort
+                  <ArrowUpDown className="h-4 w-4" /> {t('sort', { en: 'Sort', hi: 'क्रमबद्ध करें' })}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setSortOption("newest")}>Date: Newest</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortOption("oldest")}>Date: Oldest</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortOption("priceHigh")}>Price: High to Low</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortOption("priceLow")}>Price: Low to High</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("newest")}>{t('dateNewest', { en: 'Date: Newest', hi: 'तिथि: नवीनतम' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("oldest")}>{t('dateOldest', { en: 'Date: Oldest', hi: 'तिथि: पुरानी' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("priceHigh")}>{t('priceHighToLow', { en: 'Price: High to Low', hi: 'मूल्य: उच्च से निम्न' })}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("priceLow")}>{t('priceLowToHigh', { en: 'Price: Low to High', hi: 'मूल्य: निम्न से उच्च' })}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -878,23 +880,23 @@ export default function ContractsListPage() {
 
         <Tabs defaultValue="all" onValueChange={setActiveTab} value={activeTab}>
           <TabsList className="mb-6 overflow-x-auto w-full flex justify-start">
-            <TabsTrigger value="all">All Contracts</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="all">{t('allContracts', { en: 'All Contracts', hi: 'सभी अनुबंध' })}</TabsTrigger>
+            <TabsTrigger value="active">{t('active', { en: 'Active', hi: 'सक्रिय' })}</TabsTrigger>
             <TabsTrigger value="pending">
-              Pending
+              {t('pending', { en: 'Pending', hi: 'लंबित' })}
               {pendingCount > 0 && (
                 <span className="ml-1.5 bg-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {pendingCount}
                 </span>
               )}
             </TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
+            <TabsTrigger value="completed">{t('completed', { en: 'Completed', hi: 'पूर्ण' })}</TabsTrigger>
           </TabsList>
 
           {isLoading && (
             <div className="flex justify-center items-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-              <span className="ml-2 text-green-600">Loading contracts...</span>
+              <span className="ml-2 text-green-600">{t('loadingContracts', { en: 'Loading contracts...', hi: 'अनुबंध लोड हो रहे हैं...' })}</span>
             </div>
           )}
 
@@ -930,19 +932,19 @@ export default function ContractsListPage() {
                             <CardContent className="pb-2">
                               <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                                 <div>
-                                  <p className="text-gray-500">Farmer</p>
+                                  <p className="text-gray-500">{t('farmer', { en: 'Farmer', hi: 'किसान' })}</p>
                                   <p className="font-medium">{contract.farmer}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Quantity</p>
-                                  <p className="font-medium">{contract.quantity} kg</p>
+                                  <p className="text-gray-500">{t('quantity', { en: 'Quantity', hi: 'मात्रा' })}</p>
+                                  <p className="font-medium">{contract.quantity} {t('kg', { en: 'kg', hi: 'किलो' })}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Price</p>
+                                  <p className="text-gray-500">{t('price', { en: 'Price', hi: 'मूल्य' })}</p>
                                   <p className="font-medium">₹{contract.price.toLocaleString()}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Delivery</p>
+                                  <p className="text-gray-500">{t('delivery', { en: 'Delivery', hi: 'डिलीवरी' })}</p>
                                   <p className="font-medium">{new Date(contract.deliveryDate).toLocaleDateString()}</p>
                                 </div>
                               </div>
@@ -965,19 +967,19 @@ export default function ContractsListPage() {
                             <CardContent className="pb-2">
                               <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-4 gap-y-2 text-sm">
                                 <div>
-                                  <p className="text-gray-500">Farmer</p>
+                                  <p className="text-gray-500">{t('farmer', { en: 'Farmer', hi: 'किसान' })}</p>
                                   <p className="font-medium">{contract.farmer}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Quantity</p>
-                                  <p className="font-medium">{contract.quantity} kg</p>
+                                  <p className="text-gray-500">{t('quantity', { en: 'Quantity', hi: 'मात्रा' })}</p>
+                                  <p className="font-medium">{contract.quantity} {t('kg', { en: 'kg', hi: 'किलो' })}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Price</p>
+                                  <p className="text-gray-500">{t('price', { en: 'Price', hi: 'मूल्य' })}</p>
                                   <p className="font-medium">₹{contract.price.toLocaleString()}</p>
                                 </div>
                                 <div>
-                                  <p className="text-gray-500">Delivery</p>
+                                  <p className="text-gray-500">{t('delivery', { en: 'Delivery', hi: 'डिलीवरी' })}</p>
                                   <p className="font-medium">{new Date(contract.deliveryDate).toLocaleDateString()}</p>
                                 </div>
                               </div>
@@ -987,7 +989,7 @@ export default function ContractsListPage() {
 
                         <CardFooter className="flex justify-between pt-2">
                           <span className="text-xs text-gray-500">
-                            Created on {new Date(contract.createdAt).toLocaleDateString()}
+                            {t('createdOn', { en: 'Created on', hi: 'बनाया गया' })} {new Date(contract.createdAt).toLocaleDateString()}
                           </span>
                           <div className="flex gap-2">
                             <Button
@@ -1036,7 +1038,7 @@ export default function ContractsListPage() {
                                 {approvingIds.includes(contract.id) ? (
                                   <Loader2 className="h-4 w-4 mr-1 animate-spin" />
                                 ) : (
-                                  "Approve"
+                                  t('approve', { en: 'Approve', hi: 'अनुमोदित करें' })
                                 )}
                               </Button>
                             )}
@@ -1047,7 +1049,7 @@ export default function ContractsListPage() {
                   ))
                 : !isLoading && (
                     <div className="col-span-full text-center py-12">
-                      <p className="text-gray-500">No contracts found matching your criteria.</p>
+                      <p className="text-gray-500">{t('noContractsFound', { en: 'No contracts found matching your criteria.', hi: 'आपके मानदंडों से मेल खाते कोई अनुबंध नहीं मिले।' })}</p>
                     </div>
                   )}
             </div>

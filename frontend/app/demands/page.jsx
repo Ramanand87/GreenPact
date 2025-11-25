@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useGetAllDemandsQuery } from "@/redux/Service/demandApi"
+import { useTranslate } from "@/lib/LanguageContext"
+import { getTranslatedCropName } from "@/lib/cropTranslations"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Loader2, Calendar, MapPin, Phone, Package, Search, Filter, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -17,6 +19,7 @@ import { useSelector } from "react-redux"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 export default function DemandCropsPage() {
+  const { t, language } = useTranslate();
   const { data: demands = [], isLoading, isError } = useGetAllDemandsQuery()
   const router = useRouter()
   const demandsData = demands?.data || []
@@ -330,17 +333,17 @@ export default function DemandCropsPage() {
         {isLoading ? (
           <div className="col-span-full flex justify-center items-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-            <span className="ml-2">Loading demands...</span>
+            <span className="ml-2">{t('loadingDemands', { en: 'Loading demands...', hi: 'मांगें लोड हो रही हैं...' })}</span>
           </div>
         ) : isError ? (
           <div className="col-span-full text-center py-12 text-red-500">
-            Error fetching demands. Please try again later.
+            {t('errorFetchingDemands', { en: 'Error fetching demands. Please try again later.', hi: 'मांगें प्राप्त करने में त्रुटि। कृपया बाद में पुनः प्रयास करें।' })}
           </div>
         ) : demandsToRender.length === 0 ? (
           <div className="col-span-full text-center py-12">
-            <p className="text-lg text-muted-foreground">No demands found matching your criteria.</p>
+            <p className="text-lg text-muted-foreground">{t('noDemandsFound', { en: 'No demands found matching your criteria.', hi: 'आपके मानदंडों से मेल खाने वाली कोई मांग नहीं मिली।' })}</p>
             <Button variant="outline" onClick={resetFilters} className="mt-4">
-              Reset Filters
+              {t('resetFilters', { en: 'Reset Filters', hi: 'फ़िल्टर रीसेट करें' })}
             </Button>
           </div>
         ) : (
@@ -355,17 +358,17 @@ export default function DemandCropsPage() {
                   className={`w-full h-48 rounded-t-lg flex items-center justify-center bg-gradient-to-br ${generateColor(demand.crop_name)} text-white`}
                 >
                   <div className="text-center p-4">
-                    <h2 className="text-3xl font-bold tracking-tight mb-1">{demand.crop_name}</h2>
-                    <p className="text-lg opacity-90 font-medium">Premium Quality</p>
+                    <h2 className="text-3xl font-bold tracking-tight mb-1">{getTranslatedCropName(demand.crop_name, language)}</h2>
+                    <p className="text-lg opacity-90 font-medium">{t('premiumQuality', { en: 'Premium Quality', hi: 'प्रीमियम गुणवत्ता' })}</p>
                     <div className="mt-2 px-4 py-1 bg-white/20 rounded-full inline-block backdrop-blur-sm text-sm">
-                      Fresh Harvest
+                      {t('freshHarvest', { en: 'Fresh Harvest', hi: 'ताज़ा फसल' })}
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-6 pb-4">
                 <div className="flex justify-between items-start mb-4">
-                  <CardTitle className="text-2xl text-green-800">{demand.crop_name}</CardTitle>
+                  <CardTitle className="text-2xl text-green-800">{getTranslatedCropName(demand.crop_name, language)}</CardTitle>
                   <div className="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full font-medium">
                     ₹{demand.crop_price}/Kg
                   </div>
@@ -375,28 +378,28 @@ export default function DemandCropsPage() {
                   <div className="flex items-start">
                     <Package className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Quantity: <span className="font-medium">{demand.quantity}/Kg</span>
+                      {t('quantity', { en: 'Quantity', hi: 'मात्रा' })}: <span className="font-medium">{demand.quantity}/Kg</span>
                     </p>
                   </div>
 
                   <div className="flex items-start">
                     <Phone className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Contact: <span className="font-medium">{demand.contact_no}</span>
+                      {t('contact', { en: 'Contact', hi: 'संपर्क' })}: <span className="font-medium">{demand.contact_no}</span>
                     </p>
                   </div>
 
                   <div className="flex items-start">
                     <MapPin className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Location: <span className="font-medium">{demand.location}</span>
+                      {t('location', { en: 'Location', hi: 'स्थान' })}: <span className="font-medium">{demand.location}</span>
                     </p>
                   </div>
 
                   <div className="flex items-start">
                     <Calendar className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Harvested: <span className="font-medium">{demand.harvested_time}</span>
+                      {t('harvested', { en: 'Harvested', hi: 'कटाई की गई' })}: <span className="font-medium">{demand.harvested_time}</span>
                     </p>
                   </div>
 
@@ -415,14 +418,14 @@ export default function DemandCropsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 ">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-green-900">Demand Crops</h1>
+        <h1 className="text-3xl font-bold text-green-900">{t('demandCrops', { en: 'Demand Crops', hi: 'फसल की मांग' })}</h1>
         {userRole === "contractor" && (
           <Button 
             onClick={() => router.push(`/crop-demand/${currentUser}`)}
             variant="outline"
             className="bg-green-600 text-white hover:bg-green-700"
           >
-            Manage Your Demands
+            {t('manageYourDemands', { en: 'Manage Your Demands', hi: 'अपनी मांगें प्रबंधित करें' })}
           </Button>
         )}
       </div>
@@ -433,7 +436,7 @@ export default function DemandCropsPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search demands by crop name, description, location..."
+              placeholder={t('searchDemandsPlaceholder', { en: 'Search demands by crop name, description, location...', hi: 'फसल के नाम, विवरण, स्थान से मांगें खोजें...' })}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-4 py-2 w-full"
@@ -452,7 +455,7 @@ export default function DemandCropsPage() {
             <PopoverTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                <span>Filters</span>
+                <span>{t('filters', { en: 'Filters', hi: 'फ़िल्टर' })}</span>
                 {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
                   <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
                     {(selectedLocation ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)}
@@ -463,16 +466,16 @@ export default function DemandCropsPage() {
             <PopoverContent className="w-80">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium">Filters</h3>
+                  <h3 className="font-medium">{t('filters', { en: 'Filters', hi: 'फ़िल्टर' })}</h3>
                   <Button variant="ghost" size="sm" onClick={resetFilters}>
-                    Reset
+                    {t('reset', { en: 'Reset', hi: 'रीसेट करें' })}
                   </Button>
                 </div>
 
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label>Price Range (₹)</Label>
+                  <Label>{t('priceRange', { en: 'Price Range (₹)', hi: 'मूल्य सीमा (₹)' })}</Label>
                   <div className="pt-4">
                     <Slider
                       defaultValue={[0, maxPrice]}
@@ -489,13 +492,13 @@ export default function DemandCropsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Location</Label>
+                  <Label>{t('location', { en: 'Location', hi: 'स्थान' })}</Label>
                   <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select location" />
+                      <SelectValue placeholder={t('selectLocation', { en: 'Select location', hi: 'स्थान चुनें' })} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Locations</SelectItem>
+                      <SelectItem value="all">{t('allLocations', { en: 'All Locations', hi: 'सभी स्थान' })}</SelectItem>
                       {locations.map((location) => (
                         <SelectItem key={location} value={location}>
                           {location}
@@ -515,7 +518,7 @@ export default function DemandCropsPage() {
                 className="flex items-center gap-2 bg-emerald-50 border-emerald-300 hover:bg-emerald-100"
               >
                 <MapPin className="h-4 w-4 text-emerald-600" />
-                <span className="text-emerald-700">AI Filter</span>
+                <span className="text-emerald-700">{t('aiFilter', { en: 'AI Filter', hi: 'AI फ़िल्टर' })}</span>
                 {aiFilteredDemands !== null && (
                   <Badge
                     variant="secondary"
@@ -529,7 +532,7 @@ export default function DemandCropsPage() {
             <PopoverContent className="w-96">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-emerald-900">AI Location Filter</h3>
+                  <h3 className="font-medium text-emerald-900">{t('aiLocationFilter', { en: 'AI Location Filter', hi: 'AI स्थान फ़िल्टर' })}</h3>
                   {aiFilteredDemands !== null && (
                     <Button 
                       variant="ghost" 
@@ -539,7 +542,7 @@ export default function DemandCropsPage() {
                         setIsAiFilterOpen(false)
                       }}
                     >
-                      Clear
+                      {t('clear', { en: 'Clear', hi: 'सायफ़ करें' })}
                     </Button>
                   )}
                 </div>
@@ -547,12 +550,12 @@ export default function DemandCropsPage() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label className="text-emerald-900 font-medium">Current Location</Label>
+                  <Label className="text-emerald-900 font-medium">{t('currentLocation', { en: 'Current Location', hi: 'वर्तमान स्थान' })}</Label>
                   <div className="text-sm text-emerald-700 bg-emerald-50 p-3 rounded-md">
                     {isDetectingLocation ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Detecting your location...
+                        {t('detectingLocation', { en: 'Detecting your location...', hi: 'आपका स्थान खोजा जा रहा है...' })}
                       </span>
                     ) : fullAddress ? (
                       <div className="flex items-start gap-2">
@@ -560,13 +563,13 @@ export default function DemandCropsPage() {
                         <span className="break-words">{fullAddress}</span>
                       </div>
                     ) : (
-                      <span className="text-amber-600">Location not available</span>
+                      <span className="text-amber-600">{t('locationNotAvailable', { en: 'Location not available', hi: 'स्थान उपलब्ध नहीं' })}</span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-emerald-900 font-medium">Max Distance: {maxDistance} km</Label>
+                  <Label className="text-emerald-900 font-medium">{t('maxDistance', { en: 'Max Distance', hi: 'अधिकतम दूरी' })}: {maxDistance} km</Label>
                   <div className="pt-4">
                     <Slider
                       value={[maxDistance]}
@@ -591,29 +594,29 @@ export default function DemandCropsPage() {
                   {isAiFiltering ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Filtering...
+                      {t('filtering', { en: 'Filtering...', hi: 'फ़िल्टर किया जा रहा है...' })}
                     </>
                   ) : (
-                    "Apply Filter"
+                    t('applyFilter', { en: 'Apply Filter', hi: 'फ़िल्टर लागू करें' })
                   )}
                 </Button>
 
                 {aiFilteredDemands !== null && (
                   <div className="text-sm text-emerald-700 bg-emerald-50 p-2 rounded-md">
-                    ✓ Showing {aiFilteredDemands.length} demands within {maxDistance}km
+                    ✓ {t('showing', { en: 'Showing', hi: 'दिखाया जा रहा है' })} {aiFilteredDemands.length} {t('demandsWithin', { en: 'demands within', hi: 'मांगें' })} {maxDistance}km
                   </div>
                 )}
 
                 {!fullAddress && !isDetectingLocation && (
                   <div className="text-sm text-amber-600 bg-amber-50 p-2 rounded-md">
-                    ⚠ Location required for AI filter
+                    ⚠ {t('locationRequired', { en: 'Location required for AI filter', hi: 'AI फ़िल्टर के लिए स्थान आवश्यक है' })}
                   </div>
                 )}
 
                 {aiLimitError && (
                   <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
-                    <strong>⚠ AI Limit Exceeded</strong>
-                    <p className="mt-1">The AI service limit has been reached. Please try again later or use the regular filters.</p>
+                    <strong>⚠ {t('aiLimitExceeded', { en: 'AI Limit Exceeded', hi: 'AI सीमा पार' })}</strong>
+                    <p className="mt-1">{t('aiLimitMessage', { en: 'The AI service limit has been reached. Please try again later or use the regular filters.', hi: 'AI सेवा की सीमा पहुंच गई है। कृपया बाद में पुनः प्रयास करें या नियमित फ़िल्टर का उपयोग करें।' })}</p>
                   </div>
                 )}
               </div>
@@ -626,7 +629,7 @@ export default function DemandCropsPage() {
           <div className="flex flex-wrap gap-2">
             {aiFilteredDemands !== null && (
               <Badge variant="default" className="flex items-center gap-1 bg-emerald-600">
-                AI Filter: {maxDistance}km ({aiFilteredDemands.length} demands)
+                {t('aiFilter', { en: 'AI Filter', hi: 'AI फ़िल्टर' })}: {maxDistance}km ({aiFilteredDemands.length} {t('demands', { en: 'demands', hi: 'मांगें' })})
                 <button onClick={() => setAiFilteredDemands(null)}>
                   <X className="h-3 w-3" />
                 </button>
@@ -634,7 +637,7 @@ export default function DemandCropsPage() {
             )}
             {selectedLocation && (
               <Badge variant="secondary" className="flex items-center gap-1">
-                Location: {selectedLocation}
+                {t('location', { en: 'Location', hi: 'स्थान' })}: {selectedLocation}
                 <button onClick={() => setSelectedLocation("")}>
                   <X className="h-3 w-3" />
                 </button>
@@ -642,14 +645,14 @@ export default function DemandCropsPage() {
             )}
             {(priceRange[0] > 0 || priceRange[1] < maxPrice) && (
               <Badge variant="secondary" className="flex items-center gap-1">
-                Price: ₹{priceRange[0]} - ₹{priceRange[1]}
+                {t('price', { en: 'Price', hi: 'मूल्य' })}: ₹{priceRange[0]} - ₹{priceRange[1]}
                 <button onClick={() => setPriceRange([0, maxPrice])}>
                   <X className="h-3 w-3" />
                 </button>
               </Badge>
             )}
             <Button variant="ghost" size="sm" onClick={resetFilters} className="h-6">
-              Clear all
+              {t('clearAll', { en: 'Clear all', hi: 'सब साफ़ करें' })}
             </Button>
           </div>
         )}
@@ -659,9 +662,9 @@ export default function DemandCropsPage() {
       <div className="mb-4 text-muted-foreground">
         {!isLoading && (
           <p>
-            Showing {activeTab === "all" ? filteredDemands.length : filteredUserDemands.length} 
-            {activeTab === "all" ? filteredDemands.length === 1 ? " demand" : " demands" : filteredUserDemands.length === 1 ? " your demand" : " your demands"}
-            {searchQuery && ` for "${searchQuery}"`}
+            {t('showing', { en: 'Showing', hi: 'दिखाया जा रहा है' })} {activeTab === "all" ? filteredDemands.length : filteredUserDemands.length} 
+            {activeTab === "all" ? filteredDemands.length === 1 ? t('demand', { en: ' demand', hi: ' मांग' }) : t('demands', { en: ' demands', hi: ' मांगें' }) : filteredUserDemands.length === 1 ? t('yourDemand', { en: ' your demand', hi: ' आपकी मांग' }) : t('yourDemands', { en: ' your demands', hi: ' आपकी मांगें' })}
+            {searchQuery && ` ${t('for', { en: 'for', hi: 'के लिए' })} "${searchQuery}"`}
           </p>
         )}
       </div>
@@ -669,8 +672,8 @@ export default function DemandCropsPage() {
       {userRole === "contractor" ? (
         <Tabs defaultValue="all" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="all">All Demands</TabsTrigger>
-            <TabsTrigger value="your">Your Demands</TabsTrigger>
+            <TabsTrigger value="all">{t('allDemands', { en: 'All Demands', hi: 'सभी मांगें' })}</TabsTrigger>
+            <TabsTrigger value="your">{t('yourDemands', { en: 'Your Demands', hi: 'आपकी मांगें' })}</TabsTrigger>
           </TabsList>
           <TabsContent value="all">
             {renderDemandCards(filteredDemands)}

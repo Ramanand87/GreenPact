@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "home": "Home",
+    "market": "Market",
+    "demands": "Demands",
+    "contracts": "Contracts",
+    "discover": "Discover",
+    "helpSupport": "Help & Support",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "language": "Language"
+  },
+  "footer": {
+    "copyright": "© 2024 GreenPact. All rights reserved.",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions"
+  }
+}

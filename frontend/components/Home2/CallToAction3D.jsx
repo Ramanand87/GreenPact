@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import { useTranslate } from "@/lib/LanguageContext";
 
 export default function CallToAction3D() {
+  const { t } = useTranslate();
   const userInfo = useSelector((state) => state.auth.userInfo);
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-white py-24 text-slate-900 sm:py-28">
@@ -40,13 +42,16 @@ export default function CallToAction3D() {
             className="relative"
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50 px-4 py-2 text-xs uppercase tracking-wider text-emerald-700">
-              <Zap className="h-4 w-4 text-emerald-600" /> Ready to Transform Your Farming?
+              <Zap className="h-4 w-4 text-emerald-600" /> {t('ctaBadge', { en: 'Ready to Transform Your Farming?', hi: 'अपनी खेती को बदलने के लिए तैयार हैं?' })}
             </div>
             <h2 className="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">
-              Start Building Secure Contracts Today
+              {t('ctaHeading', { en: 'Start Building Secure Contracts Today', hi: 'आज ही सुरक्षित अनुबंध बनाना शुरू करें' })}
             </h2>
             <p className="mt-4 text-base text-slate-600 sm:text-lg">
-              Join thousands of farmers and contractors who are already securing better deals, protecting their interests, and growing their businesses with trusted partnerships.
+              {t('ctaDescription', { 
+                en: 'Join thousands of farmers and contractors who are already securing better deals, protecting their interests, and growing their businesses with trusted partnerships.', 
+                hi: 'हजारों किसानों और ठेकेदारों के साथ जुड़ें जो पहले से ही बेहतर सौदे सुरक्षित कर रहे हैं, अपने हितों की रक्षा कर रहे हैं, और विश्वसनीय साझेदारी के साथ अपने व्यवसाय को बढ़ा रहे हैं।' 
+              })}
             </p>
           </motion.div>
 
@@ -59,7 +64,7 @@ export default function CallToAction3D() {
           >
             <Link href={userInfo ? "/market" : "/login"}>
             <Button className="group relative flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-lime-500 px-8 py-4 text-base font-semibold text-white shadow-[0_20px_60px_rgba(34,197,94,0.28)] transition sm:w-auto">
-              Get Started Now
+              {t('getStartedNow', { en: 'Get Started Now', hi: 'अभी शुरू करें' })}
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Button>
             </Link>
@@ -68,7 +73,7 @@ export default function CallToAction3D() {
               variant="outline"
               className="flex w-full items-center justify-center rounded-full border border-emerald-500/30 bg-white px-8 py-4 text-base text-emerald-600 transition hover:border-emerald-500/50 hover:bg-emerald-50 sm:w-auto"
             >
-              Learn More
+              {t('learnMore', { en: 'Learn More', hi: 'और जानें' })}
             </Button>
             </Link>
           </motion.div>

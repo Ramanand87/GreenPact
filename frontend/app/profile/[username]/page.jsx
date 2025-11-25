@@ -78,8 +78,11 @@ import Link from "next/link";
 import { useGetCropsQuery } from "@/redux/Service/cropApi";
 import { useGetAllDemandsQuery } from "@/redux/Service/demandApi";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/lib/LanguageContext";
+import { getTranslatedCropName } from "@/lib/cropTranslations";
 
 export default function ProfilePage() {
+  const { t, language } = useTranslate();
   const router = useRouter();
   const { username } = useParams();
   const { data, isLoading: cropLoading } = useGetCropsQuery(username);
@@ -303,7 +306,7 @@ export default function ProfilePage() {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-lg text-green-800 font-medium">
-            Loading profile...
+            {t('loadingProfile', { en: 'Loading profile...', hi: 'प्रोफ़ाइल लोड हो रही है...' })}
           </p>
         </div>
       </div>
@@ -316,17 +319,17 @@ export default function ProfilePage() {
         <div className="text-center max-w-md p-8 bg-white rounded-xl shadow-lg">
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-red-600 mb-2">
-            Profile Not Found
+            {t('profileNotFound', { en: 'Profile Not Found', hi: 'प्रोफ़ाइल नहीं मिला' })}
           </h2>
           <p className="text-gray-600 mb-6">
-            We couldn't find the profile you're looking for.
+            {t('profileNotFoundDesc', { en: 'We couldn\'t find the profile you\'re looking for.', hi: 'हम आपके द्वारा खोजी जा रही प्रोफ़ाइल नहीं पा सके।' })}
           </p>
           <Button
             onClick={() => router.back()}
             className="bg-red-600 hover:bg-red-700"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Go Back
+            {t('goBack', { en: 'Go Back', hi: 'वापस जाएं' })}
           </Button>
         </div>
       </div>
@@ -367,7 +370,7 @@ export default function ProfilePage() {
                   onClick={handleEditClick}
                 >
                   <Camera className="w-4 h-4 mr-2" />
-                  Change
+                  {t('change', { en: 'Change', hi: 'बदलें' })}
                 </Button>
               )}
 
@@ -407,11 +410,11 @@ export default function ProfilePage() {
                   <div className="flex flex-wrap gap-3 justify-start mt-4 md:mt-0">
                   {profile.role && (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-200 border-0">
-                      {profile.role === "farmer" ? "Farmer" : "Contractor"}
+                      {profile.role === "farmer" ? t('farmer', { en: 'Farmer', hi: 'किसान' }) : t('contractor', { en: 'Contractor', hi: 'ठेकेदार' })}
                     </Badge>
                   )}
                   <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-0">
-                    Verified
+                    {t('verified', { en: 'Verified', hi: 'सत्यापित' })}
                   </Badge>
                 </div>
                 </div>
@@ -426,7 +429,7 @@ export default function ProfilePage() {
                     onClick={handleEditClick}
                   >
                     <Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
+                    {t('editProfile', { en: 'Edit Profile', hi: 'प्रोफ़ाइल संपादित करें' })}
                   </Button>
                 )}
                 {currentUser===username &&(
@@ -436,7 +439,7 @@ export default function ProfilePage() {
                     onClick={() => router.push(`/your-crops/${currentUser}`)}
                   >
                     <Crop className="w-4 h-4 mr-2" />
-                    Your Crops
+                    {t('yourCrops', { en: 'Your Crops', hi: 'आपकी फसलें' })}
                   </Button>
                 ) : (
                   <Button
@@ -444,7 +447,7 @@ export default function ProfilePage() {
                     onClick={() => router.push(`/crop-demand/${currentUser}`)}
                   >
                     <Crop className="w-4 h-4 mr-2" />
-                    Your Demands
+                    {t('yourDemands', { en: 'Your Demands', hi: 'आपकी मांगें' })}
                   </Button>
                 ))}
                 {currentUser !== username && (
@@ -453,7 +456,7 @@ export default function ProfilePage() {
                     className="bg-green-600 hover:bg-green-700 shadow-sm"
                   >
                     <MessageSquare className="w-4 h-4 mr-2" />
-                    Chat
+                    {t('chat', { en: 'Chat', hi: 'चैट' })}
                   </Button>
                 )}
               </div>
@@ -466,32 +469,32 @@ export default function ProfilePage() {
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogTitle>{t('editProfile', { en: 'Edit Profile', hi: 'प्रोफ़ाइल संपादित करें' })}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Phone Number
+                {t('phoneNumber', { en: 'Phone Number', hi: 'फ़ोन नंबर' })}
               </label>
               <Input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Enter phone number"
+                placeholder={t('enterPhoneNumber', { en: 'Enter phone number', hi: 'फ़ोन नंबर दर्ज करें' })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Address</label>
+              <label className="block text-sm font-medium mb-1">{t('address', { en: 'Address', hi: 'पता' })}</label>
               <Input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter address"
+                placeholder={t('enterAddress', { en: 'Enter address', hi: 'पता दर्ज करें' })}
               />
             </div>
             <div className="flex flex-col items-center">
               <label className="block text-sm font-medium mb-2">
-                Profile Picture
+                {t('profilePicture', { en: 'Profile Picture', hi: 'प्रोफ़ाइल चित्र' })}
               </label>
               <Webcam
                 ref={webcamRef}
@@ -502,7 +505,7 @@ export default function ProfilePage() {
                 onClick={handleCapture}
                 className="bg-blue-600 hover:bg-blue-700 mb-2"
               >
-                Capture Photo
+                {t('capturePhoto', { en: 'Capture Photo', hi: 'फोटो खींचें' })}
               </Button>
               {profilePic && (
                 <img
@@ -542,10 +545,10 @@ export default function ProfilePage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Saving...
+                  {t('saving', { en: 'Saving...', hi: 'सहेजा जा रहा है...' })}
                 </>
               ) : (
-                "Save Changes"
+                t('saveChanges', { en: 'Save Changes', hi: 'परिवर्तन सहेजें' })
               )}
             </Button>
           </DialogFooter>
@@ -564,28 +567,28 @@ export default function ProfilePage() {
                   className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                 >
                   <Star className="w-4 h-4 mr-2" />
-                  Reviews
+                  {t('reviews', { en: 'Reviews', hi: 'समीक्षाएं' })}
                 </TabsTrigger>
                 <TabsTrigger
                   value="documents"
                   className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                 >
                   <Shield className="w-4 h-4 mr-2" />
-                  Documents
+                  {t('documents', { en: 'Documents', hi: 'दस्तावेज़' })}
                 </TabsTrigger>
                 <TabsTrigger
                   value="contracts"
                   className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Contracts
+                  {t('contracts', { en: 'Contracts', hi: 'अनुबंध' })}
                 </TabsTrigger>
                 <TabsTrigger
                   value="payments"
                   className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                 >
                   <CreditCard className="w-4 h-4 mr-2" />
-                  Payments
+                  {t('payments', { en: 'Payments', hi: 'भुगतान' })}
                 </TabsTrigger>
               </TabsList>
             ) : (
@@ -595,7 +598,7 @@ export default function ProfilePage() {
                   className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                 >
                   <Star className="w-4 h-4 mr-2" />
-                  Reviews
+                  {t('reviews', { en: 'Reviews', hi: 'समीक्षाएं' })}
                 </TabsTrigger>
 
                 {profile.role === "farmer" ? (
@@ -604,7 +607,7 @@ export default function ProfilePage() {
                     className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                   >
                     <Crop className="w-4 h-4 mr-2" />
-                    Crops
+                    {t('crops', { en: 'Crops', hi: 'फसलें' })}
                   </TabsTrigger>
                 ) : (
                   <TabsTrigger
@@ -612,7 +615,7 @@ export default function ProfilePage() {
                     className="data-[state=active]:bg-green-50 data-[state=active]:text-green-800"
                   >
                     <Crop className="w-4 h-4 mr-2" />
-                    Demands
+                    {t('demands', { en: 'Demands', hi: 'मांगें' })}
                   </TabsTrigger>
                 )}
               </TabsList>
@@ -627,7 +630,7 @@ export default function ProfilePage() {
                 <CardHeader className="bg-green-50 border-b border-green-100">
                   <CardTitle className="flex items-center text-green-800">
                     <Star className="w-5 h-5 mr-2 fill-yellow-400 stroke-yellow-500" />
-                    Rating Summary
+                    {t('ratingSummary', { en: 'Rating Summary', hi: 'रेटिंग सारांश' })}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
@@ -651,7 +654,7 @@ export default function ProfilePage() {
                             ))}
                           </div>
                           <p className="text-gray-500 mt-2">
-                            {ratings.data.length} reviews
+                            {ratings.data.length} {t('reviewsCount', { en: 'reviews', hi: 'समीक्षाएं' })}
                           </p>
                         </div>
                       </div>
@@ -677,7 +680,7 @@ export default function ProfilePage() {
                   ) : (
                     <div className="text-center py-6">
                       <Star className="w-12 h-12 mx-auto stroke-gray-300 mb-2" />
-                      <p className="text-gray-500">No ratings yet</p>
+                      <p className="text-gray-500">{t('noRatingsYet', { en: 'No ratings yet', hi: 'अभी कोई रेटिंग नहीं' })}</p>
                     </div>
                   )}
                 </CardContent>
@@ -690,17 +693,17 @@ export default function ProfilePage() {
                   <Card className="border-0 shadow-md overflow-hidden">
                     <CardHeader className="bg-green-50 border-b border-green-100">
                       <CardTitle className="text-green-800">
-                        Write a Review
+                        {t('writeReview', { en: 'Write a Review', hi: 'समीक्षा लिखें' })}
                       </CardTitle>
                       <CardDescription>
-                        Share your experience with {profile?.data.name}
+                        {t('shareExperience', { en: 'Share your experience with', hi: 'के साथ अपना अनुभव साझा करें' })} {profile?.data.name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-6">
                       <div className="space-y-6">
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-gray-700">
-                            Your Rating
+                            {t('yourRating', { en: 'Your Rating', hi: 'आपकी रेटिंग' })}
                           </label>
                           <div className="flex items-center space-x-2">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -722,11 +725,11 @@ export default function ProfilePage() {
                                     </button>
                                   </TooltipTrigger>
                                   <TooltipContent>
-                                    {star === 1 && "Poor"}
-                                    {star === 2 && "Fair"}
-                                    {star === 3 && "Average"}
-                                    {star === 4 && "Good"}
-                                    {star === 5 && "Excellent"}
+                                    {star === 1 && t('poor', { en: 'Poor', hi: 'खराब' })}
+                                    {star === 2 && t('fair', { en: 'Fair', hi: 'ठीक' })}
+                                    {star === 3 && t('average', { en: 'Average', hi: 'सामान्य' })}
+                                    {star === 4 && t('good', { en: 'Good', hi: 'अच्छा' })}
+                                    {star === 5 && t('excellent', { en: 'Excellent', hi: 'उत्कृष्ट' })}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
@@ -736,19 +739,19 @@ export default function ProfilePage() {
 
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-gray-700">
-                            Your Review
+                            {t('yourReview', { en: 'Your Review', hi: 'आपकी समीक्षा' })}
                           </label>
                           <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Share details of your experience with this person..."
+                            placeholder={t('shareDetails', { en: 'Share details of your experience with this person...', hi: 'इस व्यक्ति के साथ अपने अनुभव का विवरण साझा करें...' })}
                             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none min-h-[120px]"
                           />
                         </div>
 
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-gray-700">
-                            Add Photo (Optional)
+                            {t('addPhotoOptional', { en: 'Add Photo (Optional)', hi: 'फ़ोटो जोड़ें (वैकल्पिक)' })}
                           </label>
                           <div className="flex items-center space-x-4">
                             <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors bg-gray-50 hover:bg-green-50">
@@ -760,7 +763,7 @@ export default function ProfilePage() {
                               />
                               <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
                               <span className="text-sm text-gray-500">
-                                Add Image
+                                {t('addImage', { en: 'Add Image', hi: 'चित्र जोड़ें' })}
                               </span>
                             </label>
                             {images.length > 0 && (
@@ -793,7 +796,7 @@ export default function ProfilePage() {
                         disabled={rating === 0 || !description.trim()}
                       >
                         <Star className="w-4 h-4 mr-2" />
-                        Submit Review
+                        {t('submitReview', { en: 'Submit Review', hi: 'समीक्षा जमा करें' })}
                       </Button>
                     </CardFooter>
                   </Card>
@@ -891,12 +894,12 @@ export default function ProfilePage() {
                           {editingRatingId === rating.id && (
                             <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
                               <h4 className="font-medium text-green-800">
-                                Edit Your Review
+                                {t('editYourReview', { en: 'Edit Your Review', hi: 'अपनी समीक्षा संपादित करें' })}
                               </h4>
 
                               <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
-                                  Update Rating
+                                  {t('updateRating', { en: 'Update Rating', hi: 'रेटिंग अपडेट करें' })}
                                 </label>
                                 <div className="flex items-center space-x-2">
                                   {[1, 2, 3, 4, 5].map((star) => (
@@ -920,7 +923,7 @@ export default function ProfilePage() {
 
                               <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
-                                  Update Description
+                                  {t('updateDescription', { en: 'Update Description', hi: 'विवरण अपडेट करें' })}
                                 </label>
                                 <textarea
                                   value={description}
@@ -934,7 +937,7 @@ export default function ProfilePage() {
 
                               <div className="space-y-2">
                                 <label className="block text-sm font-medium text-gray-700">
-                                  Update Image (Optional)
+                                  {t('updateImageOptional', { en: 'Update Image (Optional)', hi: 'चित्र अपडेट करें (वैकल्पिक)' })}
                                 </label>
                                 <div className="flex items-center space-x-4">
                                   <label className="flex items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors">
@@ -966,13 +969,13 @@ export default function ProfilePage() {
                                   onClick={() => setEditingRatingId(null)}
                                   className="border-gray-300"
                                 >
-                                  Cancel
+                                  {t('cancel', { en: 'Cancel', hi: 'रद्द करें' })}
                                 </Button>
                                 <Button
                                   className="bg-green-600 hover:bg-green-700"
                                   onClick={() => handleUpdateRating(rating.id)}
                                 >
-                                  Update Review
+                                  {t('updateReview', { en: 'Update Review', hi: 'समीक्षा अपडेट करें' })}
                                 </Button>
                               </div>
                             </div>
@@ -986,11 +989,10 @@ export default function ProfilePage() {
                     <CardContent className="p-8 text-center">
                       <Star className="w-12 h-12 mx-auto stroke-gray-300 mb-4" />
                       <h3 className="text-xl font-medium text-gray-700 mb-2">
-                        No Reviews Yet
+                        {t('noReviewsYet', { en: 'No Reviews Yet', hi: 'अभी कोई समीक्षा नहीं' })}
                       </h3>
                       <p className="text-gray-500 max-w-md mx-auto">
-                        This user hasn't received any reviews yet. Be the first
-                        to share your experience!
+                        {t('noReviewsDesc', { en: 'This user hasn\'t received any reviews yet. Be the first to share your experience!', hi: 'इस उपयोगकर्ता को अभी तक कोई समीक्षा नहीं मिली है। अपना अनुभव साझा करने वाले पहले व्यक्ति बनें!' })}
                       </p>
                     </CardContent>
                   </Card>
@@ -1005,10 +1007,10 @@ export default function ProfilePage() {
               <CardHeader className="bg-green-50 border-b border-green-100">
                 <CardTitle className="flex items-center text-green-800">
                   <Shield className="w-5 h-5 mr-2" />
-                  Verification Documents
+                  {t('verificationDocuments', { en: 'Verification Documents', hi: 'सत्यापन दस्तावेज़' })}
                 </CardTitle>
                 <CardDescription>
-                  View and manage your verification documents
+                  {t('viewManageDocuments', { en: 'View and manage your verification documents', hi: 'अपने सत्यापन दस्तावेज़ों को देखें और प्रबंधित करें' })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -1018,7 +1020,7 @@ export default function ProfilePage() {
                       <CardHeader className="bg-blue-50 p-4">
                         <CardTitle className="text-lg flex items-center text-blue-800">
                           <FileText className="w-5 h-5 mr-2 text-blue-600" />
-                          Aadhar Card
+                          {t('aadharCard', { en: 'Aadhar Card', hi: 'आधार कार्ड' })}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-4">
@@ -1033,7 +1035,7 @@ export default function ProfilePage() {
                           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                             <Badge className="bg-green-500 hover:bg-green-600">
                               <CheckCircle className="w-3 h-3 mr-1" />
-                              Verified
+                              {t('verified', { en: 'Verified', hi: 'सत्यापित' })}
                             </Badge>
                           </div>
                         </div>
@@ -1049,12 +1051,12 @@ export default function ProfilePage() {
                       </CardHeader>
                       <CardContent className="p-6 text-center">
                         <p className="text-gray-500 mb-4">
-                          No Aadhar card uploaded
+                          {t('noAadharUploaded', { en: 'No Aadhar card uploaded', hi: 'कोई आधार कार्ड अपलोड नहीं किया गया' })}
                         </p>
                         {currentUser === username && (
                           <Button className="bg-green-600 hover:bg-green-700">
                             <Shield className="w-4 h-4 mr-2" />
-                            Upload Document
+                            {t('uploadDocument', { en: 'Upload Document', hi: 'दस्तावेज़़ अपलोड करें' })}
                           </Button>
                         )}
                       </CardContent>
@@ -1066,7 +1068,7 @@ export default function ProfilePage() {
                       <CardHeader className="bg-purple-50 p-4">
                         <CardTitle className="text-lg flex items-center text-purple-800">
                           <FileText className="w-5 h-5 mr-2 text-purple-600" />
-                          Screenshot
+                          {t('screenshot', { en: 'Screenshot', hi: 'स्क्रीनशॉट' })}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="p-4">
@@ -1095,7 +1097,7 @@ export default function ProfilePage() {
                       </CardHeader>
                       <CardContent className="p-6 text-center">
                         <p className="text-gray-500 mb-4">
-                          No screenshot uploaded
+                          {t('noScreenshotUploaded', { en: 'No screenshot uploaded', hi: 'कोई स्क्रीनशॉट अपलोड नहीं किया गया' })}
                         </p>
                         {currentUser === username && (
                           <Button className="bg-green-600 hover:bg-green-700">
@@ -1117,10 +1119,10 @@ export default function ProfilePage() {
               <CardHeader className="bg-green-50 border-b border-green-100">
                 <CardTitle className="flex items-center text-green-800">
                   <FileText className="w-5 h-5 mr-2" />
-                  Contract Details
+                  {t('contractDetails', { en: 'Contract Details', hi: 'अनुबंध विवरण' })}
                 </CardTitle>
                 <CardDescription>
-                  Manage your ongoing and past contracts
+                  {t('manageContracts', { en: 'Manage your ongoing and past contracts', hi: 'अपने चल रहे और पिछले अनुबंधों का प्रबंधन करें' })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
@@ -1143,7 +1145,7 @@ export default function ProfilePage() {
                                   : "bg-blue-100 text-blue-800 hover:bg-blue-200"
                               }
                             >
-                              {contract.status ? "Active" : "Pending"}
+                              {contract.status ? t('active', { en: 'Active', hi: 'सक्रिय' }) : t('pending', { en: 'Pending', hi: 'लंबित' })}
                             </Badge>
                           </div>
                         </CardHeader>
@@ -1151,21 +1153,21 @@ export default function ProfilePage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <h3 className="font-medium text-gray-700">
-                                Contract Details
+                                {t('contractDetails', { en: 'Contract Details', hi: 'अनुबंध विवरण' })}
                               </h3>
                               <div className="mt-2 space-y-2">
                                 <div className="flex items-center text-gray-600">
                                   <User className="w-4 h-4 mr-2 text-gray-500" />
-                                  <span>Farmer: {contract.farmer_name}</span>
+                                  <span>{t('farmer', { en: 'Farmer', hi: 'किसान' })}: {contract.farmer_name}</span>
                                 </div>
                                 <div className="flex items-center text-gray-600">
                                   <User className="w-4 h-4 mr-2 text-gray-500" />
-                                  <span>Buyer: {contract.buyer_name}</span>
+                                  <span>{t('buyer', { en: 'Buyer', hi: 'खरीददार' })}: {contract.buyer_name}</span>
                                 </div>
                                 <div className="flex items-center text-gray-600">
                                   <Calendar className="w-4 h-4 mr-2 text-gray-500" />
                                   <span>
-                                    Delivery Date:{" "}
+                                    {t('deliveryDate', { en: 'Delivery Date', hi: 'डिलीवरी तिथि' })}:{" "}
                                     {new Date(
                                       contract.delivery_date
                                     ).toLocaleDateString()}
@@ -1174,7 +1176,7 @@ export default function ProfilePage() {
                                 <div className="flex items-center text-gray-600">
                                   <Clock className="w-4 h-4 mr-2 text-gray-500" />
                                   <span>
-                                    Created:{" "}
+                                    {t('created', { en: 'Created', hi: 'बनाया गया' })}:{" "}
                                     {new Date(
                                       contract.created_at
                                     ).toLocaleDateString()}
@@ -1184,31 +1186,31 @@ export default function ProfilePage() {
                             </div>
                             <div>
                               <h3 className="font-medium text-gray-700">
-                                Financial Details
+                                {t('financialDetails', { en: 'Financial Details', hi: 'वित्तीय विवरण' })}
                               </h3>
                               <div className="mt-2 space-y-2">
                                 <div className="flex items-center text-gray-600">
                                   <CreditCard className="w-4 h-4 mr-2 text-gray-500" />
                                   <span>
-                                    Price: ₹
+                                    {t('price', { en: 'Price', hi: 'मूल्य' })}: ₹
                                     {contract.nego_price.toLocaleString()}
                                   </span>
                                 </div>
                                 <div className="flex items-center text-gray-600">
                                   <Crop className="w-4 h-4 mr-2 text-gray-500" />
-                                  <span>Crop: {contract.crop_name}</span>
+                                  <span>{t('crop', { en: 'Crop', hi: 'फसल' })}: {contract.crop_name}</span>
                                 </div>
                                 <div className="flex items-center text-gray-600">
                                   <MapPin className="w-4 h-4 mr-2 text-gray-500" />
                                   <span>
-                                    Delivery Address:{" "}
+                                    {t('deliveryAddress', { en: 'Delivery Address', hi: 'डिलीवरी पता' })}:{" "}
                                     {contract.delivery_address}
                                   </span>
                                 </div>
                                 <div className="flex items-center text-gray-600">
                                   <FileText className="w-4 h-4 mr-2 text-gray-500" />
                                   <span>
-                                    Quantity: {contract.quantity} units
+                                    {t('quantity', { en: 'Quantity', hi: 'मात्रा' })}: {contract.quantity} {t('units', { en: 'units', hi: 'इकाइयां' })}
                                   </span>
                                 </div>
                               </div>
@@ -1219,7 +1221,7 @@ export default function ProfilePage() {
                           <Link href="/contracts">
                             <Button variant="outline" className="ml-auto">
                               <FileText className="w-4 h-4 mr-2" />
-                              View Details
+                              {t('viewDetails', { en: 'View Details', hi: 'विवरण देखें' })}
                             </Button>
                           </Link>
                         </CardFooter>
@@ -1229,10 +1231,10 @@ export default function ProfilePage() {
                     <div className="text-center py-8">
                       <FileText className="w-12 h-12 mx-auto text-gray-300 mb-4" />
                       <h3 className="text-xl font-medium text-gray-700 mb-2">
-                        No Contracts Found
+                        {t('noContractsFound', { en: 'No Contracts Found', hi: 'कोई अनुबंध नहीं मिला' })}
                       </h3>
                       <p className="text-gray-500 max-w-md mx-auto">
-                        There are no contracts associated with this account yet.
+                        {t('noContractsDesc', { en: 'There are no contracts associated with this account yet.', hi: 'इस खाते से अभी तक कोई अनुबंध नहीं जुड़ा है।' })}
                       </p>
                     </div>
                   )}
@@ -1249,10 +1251,10 @@ export default function ProfilePage() {
               <CardHeader className="bg-green-50 border-b border-green-100">
                 <CardTitle className="flex items-center text-green-800">
                   <CreditCard className="w-5 h-5 mr-2" />
-                  Payment History
+                  {t('paymentHistory', { en: 'Payment History', hi: 'भुगतान इतिहास' })}
                 </CardTitle>
                 <CardDescription>
-                  View all payment transactions made and received
+                  {t('viewAllPayments', { en: 'View all payment transactions made and received', hi: 'किए गए और प्राप्त सभी भुगतान लेन-देन देखें' })}
                 </CardDescription>
               </CardHeader>
 
@@ -1268,43 +1270,43 @@ export default function ProfilePage() {
                         <thead>
                           <tr className="bg-gray-50 border-b border-gray-200">
                             <th className="text-left p-3 text-gray-700">
-                              Payment ID
+                              {t('paymentID', { en: 'Payment ID', hi: 'भुगतान ID' })}
                             </th>
                             <th className="text-left p-3 text-gray-700">
-                              Date
+                              {t('date', { en: 'Date', hi: 'तारीख' })}
                             </th>
                             <th className="text-left p-3 text-gray-700">
-                              Description
+                              {t('description', { en: 'Description', hi: 'विवरण' })}
                             </th>
                             <th className="text-left p-3 text-gray-700">
-                              Amount
+                              {t('amount', { en: 'Amount', hi: 'राशि' })}
                             </th>
                             {userRole === "farmer" && (
                               <th className="text-left p-3 text-gray-700">
-                                Buyer
+                                {t('buyer', { en: 'Buyer', hi: 'खरीददार' })}
                               </th>
                             )}
                             {userRole === "contractor" && (
                               <th className="text-left p-3 text-gray-700">
-                                Farmer
+                                {t('farmer', { en: 'Farmer', hi: 'किसान' })}
                               </th>
                             )}
                             {userRole !== "farmer" &&
                               userRole !== "contractor" && (
                                 <>
                                   <th className="text-left p-3 text-gray-700">
-                                    From
+                                    {t('from', { en: 'From', hi: 'से' })}
                                   </th>
                                   <th className="text-left p-3 text-gray-700">
-                                    To
+                                    {t('to', { en: 'To', hi: 'तक' })}
                                   </th>
                                 </>
                               )}
                             <th className="text-left p-3 text-gray-700">
-                              Receipt
+                              {t('receipt', { en: 'Receipt', hi: 'रसीद' })}
                             </th>
                             <th className="text-left p-3 text-gray-700">
-                              Actions
+                              {t('actions', { en: 'Actions', hi: 'कार्रवाई' })}
                             </th>
                           </tr>
                         </thead>
@@ -1376,11 +1378,11 @@ export default function ProfilePage() {
                                     className="flex items-center text-sm"
                                   >
                                     <FileText className="w-4 h-4 mr-2" />
-                                    View Receipt
+                                    {t('viewReceipt', { en: 'View Receipt', hi: 'रसीद देखें' })}
                                   </a>
                                 ) : (
                                   <span className="text-gray-400">
-                                    No receipt
+                                    {t('noReceipt', { en: 'No receipt', hi: 'कोई रसीद नहीं' })}
                                   </span>
                                 )}
                               </td>
@@ -1394,7 +1396,7 @@ export default function ProfilePage() {
                                   }
                                 >
                                   <FileText className="w-4 h-4 mr-1" />
-                                  View Contract
+                                  {t('viewContract', { en: 'View Contract', hi: 'अनुबंध देखें' })}
                                 </Button>
                               </td>
                             </tr>
@@ -1410,7 +1412,7 @@ export default function ProfilePage() {
                         <Card className="border border-green-100">
                           <CardHeader className="bg-green-50 p-4">
                             <CardTitle className="text-green-800 text-lg">
-                              Total Payments Made
+                              {t('totalPaymentsMade', { en: 'Total Payments Made', hi: 'कुल भुगतान किया गया' })}
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="p-6">
@@ -1430,7 +1432,7 @@ export default function ProfilePage() {
                                   (p) => p.buyer === currentUser
                                 ).length
                               }{" "}
-                              transactions
+                              {t('transactions', { en: 'transactions', hi: 'लेन-देन' })}
                             </p>
                           </CardContent>
                         </Card>
@@ -1440,7 +1442,7 @@ export default function ProfilePage() {
                         <Card className="border border-blue-100">
                           <CardHeader className="bg-blue-50 p-4">
                             <CardTitle className="text-blue-800 text-lg">
-                              Total Payments Received
+                              {t('totalPaymentsReceived', { en: 'Total Payments Received', hi: 'कुल भुगतान प्राप्त हुआ' })}
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="p-6">
@@ -1471,10 +1473,10 @@ export default function ProfilePage() {
                   <div className="text-center py-12">
                     <CreditCard className="w-12 h-12 mx-auto text-gray-300 mb-4" />
                     <h3 className="text-xl font-medium text-gray-700 mb-2">
-                      No Payment History
+                      {t('noPaymentHistory', { en: 'No Payment History', hi: 'कोई भुगतान इतिहास नहीं' })}
                     </h3>
                     <p className="text-gray-500 max-w-md mx-auto">
-                      There are no payment transactions recorded yet.
+                      {t('noPaymentHistoryDesc', { en: 'There are no payment transactions recorded yet.', hi: 'अभी तक कोई भुगतान लेन-देन दर्ज नहीं किया गया है।' })}
                     </p>
                   </div>
                 )}
@@ -1499,20 +1501,20 @@ export default function ProfilePage() {
                       </CardHeader>
                       <CardContent>
                         <CardTitle className="text-xl">
-                          {crop.crop_name}
+                          {getTranslatedCropName(crop.crop_name, language)}
                         </CardTitle>
                         <div className="space-y-2 mt-4">
                           <p className="text-green-600 font-semibold">
-                            ₹{crop.crop_price}/kg
+                            ₹{crop.crop_price}/{t('kg', { en: 'kg', hi: 'किलो' })}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Quantity: {crop.quantity} Kg
+                            {t('quantity', { en: 'Quantity', hi: 'मात्रा' })}: {crop.quantity} {t('kg', { en: 'Kg', hi: 'किलो' })}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Location: {crop.location}
+                            {t('location', { en: 'Location', hi: 'स्थान' })}: {crop.location}
                           </p>
                           <p className="text-sm text-gray-600">
-                            Harvested: {crop.harvested_time}
+                            {t('harvested', { en: 'Harvested', hi: 'कटाई' })}: {crop.harvested_time}
                           </p>
                           <p className="text-gray-700">{crop.Description}</p>
                         </div>
@@ -1529,25 +1531,25 @@ export default function ProfilePage() {
                 <div className="flex justify-center items-center h-64">
                   <Loader2 className="w-8 h-8 animate-spin text-green-600" />
                   <span className="ml-2 text-lg text-gray-600">
-                    Loading demands...
+                    {t('loadingDemands', { en: 'Loading demands...', hi: 'मांगें लोड हो रही हैं...' })}
                   </span>
                 </div>
               ) : isError ? (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
                   <p className="text-red-600">
-                    Error fetching demands. Please try again later.
+                    {t('errorFetchingDemands', { en: 'Error fetching demands. Please try again later.', hi: 'मांगें प्राप्त करने में त्रुटि। कृपया बाद में पुनः प्रयास करें।' })}
                   </p>
                 </div>
               ) : demands.length === 0 ? (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
                   <p className="text-gray-600 mb-4">
-                    No crop demands available yet.
+                    {t('noCropDemands', { en: 'No crop demands available yet.', hi: 'अभी तक कोई फसल मांग उपलब्ध नहीं।' })}
                   </p>
                   <Button
                     onClick={() => setOpenDialog(true)}
                     className="bg-green-600 hover:bg-green-700"
                   >
-                    Create Your First Demand
+                    {t('createFirstDemand', { en: 'Create Your First Demand', hi: 'अपनी पहली मांग बनाएं' })}
                   </Button>
                 </div>
               ) : (
@@ -1566,13 +1568,13 @@ export default function ProfilePage() {
                         >
                           <div className="text-center p-6 backdrop-blur-[2px] backdrop-brightness-90 w-full h-full flex flex-col items-center justify-center">
                             <h2 className="text-4xl font-bold tracking-tight mb-1">
-                              {demand.crop_name}
+                              {getTranslatedCropName(demand.crop_name, language)}
                             </h2>
                             <p className="text-lg opacity-90 font-medium">
-                              Premium Quality
+                              {t('premiumQuality', { en: 'Premium Quality', hi: 'प्रीमियम गुणवत्ता' })}
                             </p>
                             <div className="mt-3 px-5 py-1.5 bg-white/20 rounded-full inline-block backdrop-blur-sm text-sm">
-                              Fresh Harvest
+                              {t('freshHarvest', { en: 'Fresh Harvest', hi: 'ताज़ी कटाई' })}
                             </div>
                           </div>
                         </div>
@@ -1580,7 +1582,7 @@ export default function ProfilePage() {
                       <CardContent className="pt-6 pb-4">
                         <div className="flex justify-between items-start mb-4">
                           <CardTitle className="text-2xl text-green-800">
-                            {demand.crop_name}
+                            {getTranslatedCropName(demand.crop_name, language)}
                           </CardTitle>
                           <div className="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full font-medium">
                             ₹{demand.crop_price}
@@ -1591,7 +1593,7 @@ export default function ProfilePage() {
                           <div className="flex items-start">
                             <Package className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                             <p className="text-gray-700">
-                              Quantity:{" "}
+                              {t('quantity', { en: 'Quantity', hi: 'मात्रा' })}:{" "}
                               <span className="font-medium">
                                 {demand.quantity}
                               </span>
@@ -1601,7 +1603,7 @@ export default function ProfilePage() {
                           <div className="flex items-start">
                             <Phone className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                             <p className="text-gray-700">
-                              Contact:{" "}
+                              {t('contact', { en: 'Contact', hi: 'संपर्क' })}:{" "}
                               <span className="font-medium">
                                 {demand.contact_no}
                               </span>
@@ -1611,7 +1613,7 @@ export default function ProfilePage() {
                           <div className="flex items-start">
                             <MapPin className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                             <p className="text-gray-700">
-                              Location:{" "}
+                              {t('location', { en: 'Location', hi: 'स्थान' })}:{" "}
                               <span className="font-medium">
                                 {demand.location}
                               </span>
@@ -1621,7 +1623,7 @@ export default function ProfilePage() {
                           <div className="flex items-start">
                             <Calendar className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                             <p className="text-gray-700">
-                              Harvested:{" "}
+                              {t('harvested', { en: 'Harvested', hi: 'कटाई' })}:{" "}
                               <span className="font-medium">
                                 {demand.harvested_time}
                               </span>

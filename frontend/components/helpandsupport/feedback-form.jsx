@@ -7,8 +7,10 @@ import { Button } from "../ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useTranslate } from "@/lib/LanguageContext"
 
 export function FeedbackForm({ userType }) {
+  const { t } = useTranslate();
   const [rating, setRating] = useState(null)
   const [hoveredRating, setHoveredRating] = useState(null)
   const [submitting, setSubmitting] = useState(false)
@@ -62,10 +64,10 @@ export function FeedbackForm({ userType }) {
         <div className="flex items-center justify-center w-16 h-16 mx-auto mb-2 rounded-full bg-primary/20">
           <ThumbsUp className="w-8 h-8 text-primary" />
         </div>
-        <h3 className="text-xl font-medium text-primary">Thank You for Your Feedback!</h3>
-        <p className="text-primary/80">Your feedback helps us improve our platform for everyone.</p>
+        <h3 className="text-xl font-medium text-primary">{t('thankYouFeedback', { en: 'Thank You for Your Feedback!', hi: 'आपके फीडबैक के लिए धन्यवाद!' })}</h3>
+        <p className="text-primary/80">{t('feedbackHelps', { en: 'Your feedback helps us improve our platform for everyone.', hi: 'आपका फीडबैक हमें सभी के लिए अपने प्लेटफॉर्म को बेहतर बनाने में मदद करता है।' })}</p>
         <Button onClick={handleReset} className="mt-4">
-          Submit Another Feedback
+          {t('submitAnotherFeedback', { en: 'Submit Another Feedback', hi: 'एक और फीडबैक जमा करें' })}
         </Button>
       </motion.div>
     )
@@ -80,7 +82,7 @@ export function FeedbackForm({ userType }) {
       className="space-y-6"
     >
       <motion.div variants={itemVariants} className="space-y-2">
-        <Label className="text-lg">How would you rate your experience?</Label>
+        <Label className="text-lg">{t('rateExperience', { en: 'How would you rate your experience?', hi: 'आप अपने अनुभव को कैसे रेट करेंगे?' })}</Label>
         <div className="flex justify-center space-x-2 py-4">
           {[1, 2, 3, 4, 5].map((star) => (
             <Button
@@ -104,28 +106,28 @@ export function FeedbackForm({ userType }) {
           ))}
         </div>
         <div className="text-center text-sm text-muted-foreground">
-          {rating ? `You selected ${rating} star${rating !== 1 ? "s" : ""}` : "Click to rate"}
+          {rating ? t('youSelectedStars', { en: `You selected ${rating} star${rating !== 1 ? 's' : ''}`, hi: `आपने ${rating} स्टार चुना` }) : t('clickToRate', { en: 'Click to rate', hi: 'रेट करने के लिए क्लिक करें' })}
         </div>
       </motion.div>
 
       <motion.div variants={itemVariants}>
         <Label htmlFor="satisfaction" className="text-lg">
-          What aspects are you satisfied with?
+          {t('whatSatisfied', { en: 'What aspects are you satisfied with?', hi: 'आप किन पहलुओं से संतुष्ट हैं?' })}
         </Label>
         <RadioGroup className="flex flex-col space-y-2 mt-2">
           {userType === "farmer" ? (
             <>
-              <RadioOption value="payment" label="Payment Process" />
-              <RadioOption value="support" label="Support & Guidance" />
-              <RadioOption value="contract" label="Contract Terms" />
-              <RadioOption value="website" label="Website Usability" />
+              <RadioOption value="payment" label={t('paymentProcess', { en: 'Payment Process', hi: 'भुगतान प्रक्रिया' })} />
+              <RadioOption value="support" label={t('supportGuidance', { en: 'Support & Guidance', hi: 'समर्थन और मार्गदर्शन' })} />
+              <RadioOption value="contract" label={t('contractTerms', { en: 'Contract Terms', hi: 'अनुबंध शर्तें' })} />
+              <RadioOption value="website" label={t('websiteUsability', { en: 'Website Usability', hi: 'वेबसाइट उपयोगिता' })} />
             </>
           ) : (
             <>
-              <RadioOption value="farmers" label="Farmer Relationships" />
-              <RadioOption value="quality" label="Produce Quality" />
-              <RadioOption value="process" label="Contract Process" />
-              <RadioOption value="website" label="Website Usability" />
+              <RadioOption value="farmers" label={t('farmerRelationships', { en: 'Farmer Relationships', hi: 'किसान संबंध' })} />
+              <RadioOption value="quality" label={t('produceQuality', { en: 'Produce Quality', hi: 'उपज गुणवत्ता' })} />
+              <RadioOption value="process" label={t('contractProcess', { en: 'Contract Process', hi: 'अनुबंध प्रक्रिया' })} />
+              <RadioOption value="website" label={t('websiteUsability', { en: 'Website Usability', hi: 'वेबसाइट उपयोगिता' })} />
             </>
           )}
         </RadioGroup>
@@ -133,14 +135,14 @@ export function FeedbackForm({ userType }) {
 
       <motion.div variants={itemVariants} className="space-y-2">
         <Label htmlFor="feedback-details" className="text-lg">
-          How can we improve?
+          {t('howCanWeImprove', { en: 'How can we improve?', hi: 'हम कैसे सुधार सकते हैं?' })}
         </Label>
-        <Textarea id="feedback-details" placeholder="Share your suggestions..." className="min-h-[120px]" />
+        <Textarea id="feedback-details" placeholder={t('shareSuggestions', { en: 'Share your suggestions...', hi: 'अपने सुझाव साझा करें...' })} className="min-h-[120px]" />
       </motion.div>
 
       <motion.div variants={itemVariants}>
         <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={submitting || !rating}>
-          {submitting ? "Submitting..." : "Submit Feedback"}
+          {submitting ? t('submitting', { en: 'Submitting...', hi: 'जमा हो रहा है...' }) : t('submitFeedback', { en: 'Submit Feedback', hi: 'फीडबैक जमा करें' })}
         </Button>
       </motion.div>
     </motion.form>

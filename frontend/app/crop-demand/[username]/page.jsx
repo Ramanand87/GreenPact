@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useTranslate } from "@/lib/LanguageContext";
 import {
   Dialog,
   DialogTrigger,
@@ -43,6 +44,7 @@ import { useParams, useRouter } from "next/navigation";
 export default function DemandCropsPage() {
   const { username } = useParams();
   const router = useRouter();
+  const { t } = useTranslate();
 
   const {
     data: demands = [],
@@ -127,11 +129,10 @@ export default function DemandCropsPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
         <div>
           <h1 className="text-4xl font-bold text-green-800 mb-2">
-            Demand Crops
+            {t('demandCrops', { en: 'Demand Crops', hi: 'फसल मांग' })}
           </h1>
           <p className="text-gray-600 max-w-2xl">
-            Browse available crop demands from buyers or create your own demand
-            listing.
+            {t('browseDemands', { en: 'Browse available crop demands from buyers or create your own demand listing.', hi: 'खरीददारों से उपलब्ध फसल मांगों को देखें या अपनी मांग सूची बनाएं।' })}
           </p>
         </div>
 
@@ -146,7 +147,7 @@ export default function DemandCropsPage() {
           <DialogTrigger asChild>
             <Button className="mt-4 md:mt-0 bg-green-600 hover:bg-green-700 shadow-md transition-all hover:shadow-lg hover:translate-y-[-2px]">
               <Plus className="w-4 h-4 mr-2" />
-              Create Demand
+              {t('createDemand', { en: 'Create Demand', hi: 'मांग बनाएं' })}
             </Button>
           </DialogTrigger>
 
@@ -154,22 +155,22 @@ export default function DemandCropsPage() {
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-green-800">
-                {editingDemand ? "Edit Demand" : "Create Demand"}
+                {editingDemand ? t('editDemand', { en: 'Edit Demand', hi: 'मांग संपादित करें' }) : t('createDemand', { en: 'Create Demand', hi: 'मांग बनाएं' })}
               </DialogTitle>
               <DialogDescription>
                 {editingDemand
-                  ? "Update your crop demand details below."
-                  : "Fill in the details to create a new crop demand."}
+                  ? t('updateDemandDetails', { en: 'Update your crop demand details below.', hi: 'अपनी फसल मांग विवरण नीचे अपडेट करें।' })
+                  : t('fillDemandDetails', { en: 'Fill in the details to create a new crop demand.', hi: 'नई फसल मांग बनाने के लिए विवरण भरें।' })}
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSave} className="space-y-5 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="crop_name">Crop Name</Label>
+                <Label htmlFor="crop_name">{t('cropName', { en: 'Crop Name', hi: 'फसल का नाम' })}</Label>
                 <Input
                   id="crop_name"
                   name="crop_name"
-                  placeholder="Enter crop name"
+                  placeholder={t('enterCropName', { en: 'Enter crop name', hi: 'फसल का नाम दर्ज करें' })}
                   defaultValue={editingDemand?.crop_name}
                   className="focus-visible:ring-green-500"
                   required
@@ -177,11 +178,11 @@ export default function DemandCropsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="crop_price">Price (₹)</Label>
+                <Label htmlFor="crop_price">{t('price', { en: 'Price (₹)', hi: 'मूल्य (₹)' })}</Label>
                 <Input
                   id="crop_price"
                   name="crop_price"
-                  placeholder="Enter price"
+                  placeholder={t('enterPrice', { en: 'Enter price', hi: 'मूल्य दर्ज करें' })}
                   defaultValue={editingDemand?.crop_price}
                   className="focus-visible:ring-green-500"
                   required
@@ -190,11 +191,11 @@ export default function DemandCropsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-    <Label htmlFor="contact_no">Contact Number</Label>
+    <Label htmlFor="contact_no">{t('contactNumber', { en: 'Contact Number', hi: 'संपर्क नंबर' })}</Label>
     <Input
       id="contact_no"
       name="contact_no"
-      placeholder="Enter contact number"
+      placeholder={t('enterContactNumber', { en: 'Enter contact number', hi: 'संपर्क नंबर दर्ज करें' })}
       defaultValue={editingDemand?.contact_no}
       className={`focus-visible:ring-green-500 ${contactError ? "border-red-500" : ""}`}
       required
@@ -203,7 +204,7 @@ export default function DemandCropsPage() {
       onChange={(e) => {
         // Validate on change to give immediate feedback
         if (e.target.value.length !== 10 && e.target.value.length > 0) {
-          setContactError("Contact number must be 10 digits");
+          setContactError(t('contactNumberMust10Digits', { en: 'Contact number must be 10 digits', hi: 'संपर्क नंबर 10 अंकों का होना चाहिए' }));
         } else {
           setContactError("");
         }
@@ -215,11 +216,11 @@ export default function DemandCropsPage() {
   </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
+                  <Label htmlFor="quantity">{t('quantity', { en: 'Quantity', hi: 'मात्रा' })}</Label>
                   <Input
                     id="quantity"
                     name="quantity"
-                    placeholder="Enter quantity"
+                    placeholder={t('enterQuantity', { en: 'Enter quantity', hi: 'मात्रा दर्ज करें' })}
                     defaultValue={editingDemand?.quantity}
                     className="focus-visible:ring-green-500"
                     required
@@ -228,11 +229,11 @@ export default function DemandCropsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('description', { en: 'Description', hi: 'विवरण' })}</Label>
                 <Textarea
                   id="description"
                   name="description"
-                  placeholder="Enter crop description"
+                  placeholder={t('enterCropDescription', { en: 'Enter crop description', hi: 'फसल विवरण दर्ज करें' })}
                   defaultValue={editingDemand?.description}
                   className="min-h-[100px] focus-visible:ring-green-500"
                   required
@@ -241,11 +242,11 @@ export default function DemandCropsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location">{t('location', { en: 'Location', hi: 'स्थान' })}</Label>
                   <Input
                     id="location"
                     name="location"
-                    placeholder="Enter location"
+                    placeholder={t('enterLocation', { en: 'Enter location', hi: 'स्थान दर्ज करें' })}
                     defaultValue={editingDemand?.location}
                     className="focus-visible:ring-green-500"
                     required
@@ -253,7 +254,7 @@ export default function DemandCropsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="harvested_time">Harvested Date</Label>
+                  <Label htmlFor="harvested_time">{t('harvestedDate', { en: 'Harvested Date', hi: 'कटाई की तारीख' })}</Label>
                   <Input
                     id="harvested_time"
                     name="harvested_time"
@@ -274,7 +275,7 @@ export default function DemandCropsPage() {
                   {(isAdding || isUpdating) && (
                     <Loader2 className="animate-spin w-4 h-4 mr-2" />
                   )}
-                  {editingDemand ? "Save Changes" : "Create Demand"}
+                  {editingDemand ? t('saveChanges', { en: 'Save Changes', hi: 'परिवर्तन सहेजें' }) : t('createDemand', { en: 'Create Demand', hi: 'मांग बनाएं' })}
                 </Button>
                 <Button
                   type="button"
@@ -282,7 +283,7 @@ export default function DemandCropsPage() {
                   onClick={() => setOpenDialog(false)}
                   className="border-gray-300 hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('cancel', { en: 'Cancel', hi: 'रद्द करें' })}
                 </Button>
               </div>
             </form>
@@ -294,22 +295,22 @@ export default function DemandCropsPage() {
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-          <span className="ml-2 text-lg text-gray-600">Loading demands...</span>
+          <span className="ml-2 text-lg text-gray-600">{t('loadingDemands', { en: 'Loading demands...', hi: 'मांगें लोड हो रही हैं...' })}</span>
         </div>
       ) : isError ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <p className="text-red-600">
-            Error fetching demands. Please try again later.
+            {t('errorFetchingDemands', { en: 'Error fetching demands. Please try again later.', hi: 'मांगें प्राप्त करने में त्रुटि। कृपया बाद में पुनः प्रयास करें।' })}
           </p>
         </div>
       ) : demands?.data?.length === 0 ? (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-          <p className="text-gray-600 mb-4">No crop demands available yet.</p>
+          <p className="text-gray-600 mb-4">{t('noDemands', { en: 'No crop demands available yet.', hi: 'अभी तक कोई फसल मांग उपलब्ध नहीं।' })}</p>
           <Button
             onClick={() => setOpenDialog(true)}
             className="bg-green-600 hover:bg-green-700"
           >
-            Create Your First Demand
+            {t('createFirstDemand', { en: 'Create Your First Demand', hi: 'अपनी पहली मांग बनाएं' })}
           </Button>
         </div>
       ) : (
@@ -333,10 +334,10 @@ export default function DemandCropsPage() {
                       {demand.crop_name}
                     </h2>
                     <p className="text-lg opacity-90 font-medium">
-                      Premium Quality
+                      {t('premiumQuality', { en: 'Premium Quality', hi: 'प्रीमियम गुणवत्ता' })}
                     </p>
                     <div className="mt-3 px-5 py-1.5 bg-white/20 rounded-full inline-block backdrop-blur-sm text-sm">
-                      Fresh Harvest
+                      {t('freshHarvest', { en: 'Fresh Harvest', hi: 'ताज़ा कटाई' })}
                     </div>
                   </div>
                 </div>
@@ -355,7 +356,7 @@ export default function DemandCropsPage() {
                   <div className="flex items-start">
                     <Package className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Quantity:{" "}
+                      {t('quantity', { en: 'Quantity:', hi: 'मात्रा:' })}{" "}
                       <span className="font-medium">{demand.quantity}</span>
                     </p>
                   </div>
@@ -363,7 +364,7 @@ export default function DemandCropsPage() {
                   <div className="flex items-start">
                     <Phone className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Contact:{" "}
+                      {t('contact', { en: 'Contact:', hi: 'संपर्क:' })}{" "}
                       <span className="font-medium">{demand.contact_no}</span>
                     </p>
                   </div>
@@ -371,7 +372,7 @@ export default function DemandCropsPage() {
                   <div className="flex items-start">
                     <MapPin className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Location:{" "}
+                      {t('location', { en: 'Location:', hi: 'स्थान:' })}{" "}
                       <span className="font-medium">{demand.location}</span>
                     </p>
                   </div>
@@ -379,7 +380,7 @@ export default function DemandCropsPage() {
                   <div className="flex items-start">
                     <Calendar className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
                     <p className="text-gray-700">
-                      Harvested:{" "}
+                      {t('harvested', { en: 'Harvested:', hi: 'कटाई:' })}{" "}
                       <span className="font-medium">
                         {demand.harvested_time}
                       </span>
@@ -403,7 +404,7 @@ export default function DemandCropsPage() {
                   }}
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Edit
+                  {t('edit', { en: 'Edit', hi: 'संपादित करें' })}
                 </Button>
                 <Button
                   variant="destructive"
@@ -421,7 +422,7 @@ export default function DemandCropsPage() {
                   ) : (
                     <Trash className="w-4 h-4 mr-2" />
                   )}
-                  Delete
+                  {t('delete', { en: 'Delete', hi: 'हटाएं' })}
                 </Button>
               </CardFooter>
             </Card>

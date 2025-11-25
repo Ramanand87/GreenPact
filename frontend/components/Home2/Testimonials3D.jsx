@@ -2,29 +2,37 @@
 
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Aparna Devi",
-    role: "Organic farmer, Karnataka",
-    quote:
-      "The 3D cockpit shows me contract health, logistics, and finance streams in one sweep. Our partners finally feel like co-pilots, not strangers.",
-  },
-  {
-    name: "Raghav Sharma",
-    role: "Agri contractor, Punjab",
-    quote:
-      "Negotiations are faster because the agreement literally surrounds us. We highlight clauses, simulate risks, and commit with absolute clarity.",
-  },
-  {
-    name: "GreenFuture Coop",
-    role: "Agri collective, Maharashtra",
-    quote:
-      "Real-time projections surfaced by AI agents help us optimise crop rotations and cashflow, keeping every member accountable.",
-  },
-];
+import { useTranslate } from "@/lib/LanguageContext";
 
 export default function Testimonials3D() {
+  const { t } = useTranslate();
+  
+  const testimonials = [
+    {
+      name: t('testimonial1Name', { en: 'Aparna Devi', hi: 'अपर्णा देवी' }),
+      role: t('testimonial1Role', { en: 'Organic farmer, Karnataka', hi: 'जैविक किसान, कर्नाटक' }),
+      quote: t('testimonial1Quote', { 
+        en: 'The 3D cockpit shows me contract health, logistics, and finance streams in one sweep. Our partners finally feel like co-pilots, not strangers.', 
+        hi: '3D कॉकपिट मुझे एक नज़र में अनुबंध स्वास्थ्य, रसद और वित्त धाराएं दिखाता है। हमारे साझेदार अब अजनबी नहीं बल्कि सह-पायलट की तरह महसूस करते हैं।' 
+      }),
+    },
+    {
+      name: t('testimonial2Name', { en: 'Raghav Sharma', hi: 'राघव शर्मा' }),
+      role: t('testimonial2Role', { en: 'Agri contractor, Punjab', hi: 'कृषि ठेकेदार, पंजाब' }),
+      quote: t('testimonial2Quote', { 
+        en: 'Negotiations are faster because the agreement literally surrounds us. We highlight clauses, simulate risks, and commit with absolute clarity.', 
+        hi: 'बातचीत तेज़ होती है क्योंकि समझौता सचमुच हमें घेरे रहता है। हम खंडों को हाइलाइट करते हैं, जोखिमों का अनुकरण करते हैं, और पूर्ण स्पष्टता के साथ प्रतिबद्ध होते हैं।' 
+      }),
+    },
+    {
+      name: t('testimonial3Name', { en: 'GreenFuture Coop', hi: 'ग्रीनफ्यूचर सहकारिता' }),
+      role: t('testimonial3Role', { en: 'Agri collective, Maharashtra', hi: 'कृषि सामूहिक, महाराष्ट्र' }),
+      quote: t('testimonial3Quote', { 
+        en: 'Real-time projections surfaced by AI agents help us optimise crop rotations and cashflow, keeping every member accountable.', 
+        hi: 'AI एजेंटों द्वारा सामने लाए गए वास्तविक समय के अनुमान हमें फसल चक्र और नकदी प्रवाह को अनुकूलित करने में मदद करते हैं, हर सदस्य को जवाबदेह रखते हैं।' 
+      }),
+    },
+  ];
   return (
     <section className="relative overflow-hidden bg-slate-50 py-20 text-slate-900 sm:py-24">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(16,185,129,0.12),_transparent_70%)]" />
@@ -39,9 +47,9 @@ export default function Testimonials3D() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <Quote className="mx-auto h-12 w-12 text-emerald-500" />
-          <h2 className="mt-6 text-3xl font-semibold text-slate-900 sm:text-4xl">Voices inside the immersive hub</h2>
+          <h2 className="mt-6 text-3xl font-semibold text-slate-900 sm:text-4xl">{t('testimonialHeading', { en: 'Voices inside the immersive hub', hi: 'इमर्सिव हब के अंदर की आवाज़ें' })}</h2>
           <p className="mt-3 text-base text-slate-600">
-            Stories from teams who now operate inside the layered GreenPact environment.
+            {t('testimonialSubheading', { en: 'Stories from teams who now operate inside the layered GreenPact environment.', hi: 'उन टीमों की कहानियां जो अब स्तरित GreenPact वातावरण के अंदर काम करती हैं।' })}
           </p>
         </motion.div>
 

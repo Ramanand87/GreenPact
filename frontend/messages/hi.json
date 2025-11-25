@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "home": "होम",
+    "market": "बाज़ार",
+    "demands": "मांग",
+    "contracts": "अनुबंध",
+    "discover": "खोजें",
+    "helpSupport": "सहायता और समर्थन",
+    "login": "लॉगिन",
+    "logout": "लॉगआउट",
+    "profile": "प्रोफ़ाइल"
+  },
+  "common": {
+    "welcome": "स्वागत है",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "sort": "क्रमबद्ध करें",
+    "submit": "सबमिट करें",
+    "close": "बंद करें",
+    "yes": "हां",
+    "no": "नहीं",
+    "language": "भाषा"
+  },
+  "footer": {
+    "copyright": "© 2024 GreenPact। सर्वाधिकार सुरक्षित।",
+    "aboutUs": "हमारे बारे में",
+    "contactUs": "संपर्क करें",
+    "privacyPolicy": "गोपनीयता नीति",
+    "termsConditions": "नियम और शर्तें"
+  }
+}

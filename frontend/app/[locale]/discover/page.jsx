@@ -10,10 +10,8 @@ import { User, MapPin, Search } from "lucide-react"
 import { useGetAllUsersQuery } from "@/redux/Service/auth"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { useTranslate } from "@/lib/LanguageContext"
 
 export default function UsersPage() {
-  const { t } = useTranslate();
   const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
 
@@ -97,7 +95,7 @@ export default function UsersPage() {
             </div>
             <div className="absolute top-4 right-4">
               <Badge variant="outline" className="bg-white/80 backdrop-blur-sm">
-                {type === "farmer" ? t('farmer', { en: 'Farmer', hi: 'किसान' }) : t('contractor', { en: 'Contractor', hi: 'ठेकेदार' })}
+                {type === "farmer" ? "Farmer" : "Contractor"}
               </Badge>
             </div>
           </div>
@@ -130,7 +128,7 @@ export default function UsersPage() {
   if (error) {
     return (
       <div className="text-center text-red-500 mt-12">
-        {t('failedToLoadUsers', { en: 'Failed to load users. Please try again later.', hi: 'उपयोगकर्ता लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।' })}
+        Failed to load users. Please try again later.
       </div>
     )
   }
@@ -148,10 +146,10 @@ export default function UsersPage() {
         className="text-center mb-12"
       >
         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
-          {t('userDirectory', { en: 'User Directory', hi: 'उपयोगकर्ता निर्देशिका' })}
+          User Directory
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          {t('browseOurCommunity', { en: 'Browse through our community of farmers and contractors', hi: 'किसानों और ठेकेदारों के हमारे समुदाय को ब्राउज़ करें' })}
+          Browse through our community of farmers and contractors
         </p>
       </motion.div>
 
@@ -160,7 +158,7 @@ export default function UsersPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder={t('searchUsersPlaceholder', { en: 'Search by name, username or address...', hi: 'नाम, उपयोगकर्ता नाम या पते से खोजें...' })}
+            placeholder="Search by name, username or address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 rounded-full border border-input bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
@@ -170,7 +168,7 @@ export default function UsersPage() {
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
             >
-              {t('clear', { en: 'Clear', hi: 'साफ़ करें' })}
+              Clear
             </button>
           )}
         </div>
@@ -179,13 +177,13 @@ export default function UsersPage() {
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="w-full max-w-md mx-auto mb-8">
           <TabsTrigger value="all" className="flex-1">
-            {t('allUsers', { en: 'All Users', hi: 'सभी उपयोगकर्ता' })}
+            All Users
           </TabsTrigger>
           <TabsTrigger value="farmers" className="flex-1">
-            {t('farmers', { en: 'Farmers', hi: 'किसान' })}
+            Farmers
           </TabsTrigger>
           <TabsTrigger value="contractors" className="flex-1">
-            {t('contractors', { en: 'Contractors', hi: 'ठेकेदार' })}
+            Contractors
           </TabsTrigger>
         </TabsList>
 
@@ -202,7 +200,7 @@ export default function UsersPage() {
           </motion.div>
           {allUsers.length === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <p className="text-muted-foreground">{t('noUsersFound', { en: 'No users found matching', hi: 'मेल खाने वाले कोई उपयोगकर्ता नहीं मिले' })} "{searchQuery}"</p>
+              <p className="text-muted-foreground">No users found matching "{searchQuery}"</p>
             </motion.div>
           )}
         </TabsContent>
@@ -220,7 +218,7 @@ export default function UsersPage() {
           </motion.div>
           {farmers.length === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <p className="text-muted-foreground">{t('noFarmersFound', { en: 'No farmers found matching', hi: 'मेल खाने वाले कोई किसान नहीं मिले' })} "{searchQuery}"</p>
+              <p className="text-muted-foreground">No farmers found matching "{searchQuery}"</p>
             </motion.div>
           )}
         </TabsContent>
@@ -238,7 +236,7 @@ export default function UsersPage() {
           </motion.div>
           {contractors.length === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
-              <p className="text-muted-foreground">{t('noContractorsFound', { en: 'No contractors found matching', hi: 'मेल खाने वाले कोई ठेकेदार नहीं मिले' })} "{searchQuery}"</p>
+              <p className="text-muted-foreground">No contractors found matching "{searchQuery}"</p>
             </motion.div>
           )}
         </TabsContent>

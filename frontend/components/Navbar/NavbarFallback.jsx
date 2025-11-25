@@ -13,10 +13,9 @@ import FarmerLogo from "@/components/assets/FramerLogo"
 import { cn } from "@/lib/utils"
 import { useGetProfileQuery } from "@/redux/Service/profileApi"
 import { LanguageSwitcher } from "./LanguageSwitcher"
-import { useTranslate } from "@/lib/LanguageContext"
 
-export function Navbar() {
-  const { t } = useTranslate()
+// Fallback navbar without translations for non-localized routes
+export function NavbarFallback() {
   const [isOpen, setIsOpen] = useState(false)
   const [totalUnread, setTotalUnread] = useState(0)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -80,12 +79,12 @@ export function Navbar() {
   }, [token])
 
   const navItems = [
-    { name: t('home', { en: 'Home', hi: 'होम' }), href: `/` },
-    { name: t('market', { en: 'Market', hi: 'बाज़ार' }), href: `/market` },
-    { name: t('demands', { en: 'Demands', hi: 'मांग' }), href: `/demands` },
-    { name: t('contracts', { en: 'Contracts', hi: 'अनुबंध' }), href: `/contracts` },
-    { name: t('discover', { en: 'Discover', hi: 'खोजें' }), href: `/discover` },
-    { name: t('help', { en: 'Help & Support', hi: 'सहायता और समर्थन' }), href: `/help&support` },
+    { name: "Home", href: "/" },
+    { name: "Market", href: "/market" },
+    { name: "Demands", href: "/demands" },
+    { name: "Contracts", href: "/contracts" },
+    { name: "Discover", href: "/discover" },
+    { name: "Help & Support", href: "/help&support" },
   ]
 
   const handleLogout = () => {
@@ -175,11 +174,6 @@ export function Navbar() {
         <div className="flex items-center gap-1 sm:gap-2">
           {userInfo ? (
             <div className="flex items-center gap-1 sm:gap-2">
-              {/* Language Switcher */}
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <LanguageSwitcher />
-              </motion.div>
-
               {/* Chat Icon */}
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Button
@@ -299,14 +293,14 @@ export function Navbar() {
                           className="w-full flex items-center gap-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
                         >
                           <LogOut className="h-4 w-4" />
-                          {t('logout', { en: 'Logout', hi: 'लॉगआउट' })}
+                          Logout
                         </Button>
                       </div>
                     ) : (
                       <div className="border-t border-emerald-100 p-4 space-y-2">
                         <Button variant="outline" className="w-full border-emerald-200 text-emerald-600 hover:bg-emerald-50">
                           <Link href="/login" className="w-full">
-                            {t('login', { en: 'Login', hi: 'लॉगिन' })}
+                            Login
                           </Link>
                         </Button>
                         <Button className="w-full bg-gradient-to-r from-emerald-600 to-lime-500 hover:shadow-lg hover:shadow-emerald-300/50 text-white">Shop Now</Button>
@@ -345,21 +339,15 @@ export function Navbar() {
                     size="sm"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span className="hidden lg:inline">{t('logout', { en: 'Logout', hi: 'लॉगआउट' })}</span>
+                    <span className="hidden lg:inline">Logout</span>
                   </Button>
                 </motion.div>
               </div>
             </div>
           ) : (
-            <>
-              {/* Language Switcher for non-logged in users */}
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                <LanguageSwitcher />
-              </motion.div>
-              <Button variant="outline" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs sm:text-sm px-2 sm:px-4">
-                <Link href="/login">{t('login', { en: 'Login', hi: 'लॉगिन' })}</Link>
-              </Button>
-            </>
+            <Button variant="outline" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs sm:text-sm px-2 sm:px-4">
+              <Link href="/login">Login</Link>
+            </Button>
           )}
         </div>
       </div>

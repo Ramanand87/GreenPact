@@ -9,6 +9,7 @@ import {
   useGetFramerProgressQuery,
   useCreateFarmerProgressMutation,
 } from "@/redux/Service/contract"
+import { useTranslate } from "@/lib/LanguageContext"
 
 // Add this import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -47,31 +48,31 @@ import { toast } from "sonner"
 import { useSelector } from "react-redux"
 import Image from "next/image"
 
-// Harvest status options
-const harvestStatusOptions = [
+// Harvest status options - wrapped in function to access t
+const getHarvestStatusOptions = (t) => [
   {
     value: "planted",
-    label: "Planted",
+    label: t('planted', { en: 'Planted', hi: 'बोया गया' }),
     icon: <Sprout className="h-4 w-4 mr-2" />,
   },
   {
     value: "growing",
-    label: "Growing",
+    label: t('growing', { en: 'Growing', hi: 'बढ़ रहा है' }),
     icon: <Plant className="h-4 w-4 mr-2" />,
   },
   {
     value: "harvested",
-    label: "Harvested",
+    label: t('harvested', { en: 'Harvested', hi: 'कटाई हो गई' }),
     icon: <Leaf className="h-4 w-4 mr-2" />,
   },
   {
     value: "ready_for_delivery",
-    label: "Ready for Delivery",
+    label: t('readyForDelivery', { en: 'Ready for Delivery', hi: 'डिलीवरी के लिए तैयार' }),
     icon: <PackageCheck className="h-4 w-4 mr-2" />,
   },
   {
     value: "delivered",
-    label: "Delivered",
+    label: t('delivered', { en: 'Delivered', hi: 'डिलीवर हो गया' }),
     icon: <Truck className="h-4 w-4 mr-2" />,
   },
 ]
@@ -117,6 +118,7 @@ export default function ContractPage() {
   const [showQrPopup, setShowQrPopup] = useState(false)
   const [showReceiptPopup, setShowReceiptPopup] = useState(false);
 const [currentReceipt, setCurrentReceipt] = useState(null);
+  const { t } = useTranslate()
   // Fetch contract details
   const { data: contractData, isLoading: isLoadingContract, error: contractError } = useGetContractQuery(contract_id)
 
@@ -237,12 +239,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
 
     // Validate payment amount
     if (Number(paymentForm.amount) <= 0) {
-      setPaymentError("Payment amount must be greater than zero")
+      setPaymentError(t('paymentAmountGreaterThanZero', { en: 'Payment amount must be greater than zero', hi: 'भुगतान राशि शून्य से अधिक होनी चाहिए' }))
       return
     }
 
     if (Number(paymentForm.amount) > remainingAmount) {
-      setPaymentError(`Payment amount cannot exceed the remaining amount (₹${remainingAmount.toLocaleString()})`)
+      setPaymentError(`${t('paymentCannotExceedRemaining', { en: 'Payment amount cannot exceed the remaining amount', hi: 'भुगतान राशि शेष राशि से अधिक नहीं हो सकती' })} (₹${remainingAmount.toLocaleString()})`)
       return
     }
 
@@ -275,10 +277,10 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
         fileInputRef.current.value = ""
       }
 
-      toast.success("Payment added successfully")
+      toast.success(t('paymentAddedSuccess', { en: 'Payment added successfully', hi: 'भुगतान सफलतापूर्वक जोड़ा गया' }))
     } catch (error) {
       console.log(error)
-      toast.error("Failed to add payment. Please try again.")
+      toast.error(t('failedToAddPayment', { en: 'Failed to add payment. Please try again.', hi: 'भुगतान जोड़ने में विफल। कृपया पुनः प्रयास करें।' }))
     }
   }
 
@@ -312,10 +314,10 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
         cropImageRef.current.value = ""
       }
 
-      toast.success("Crop progress updated successfully")
+      toast.success(t('cropProgressUpdatedSuccess', { en: 'Crop progress updated successfully', hi: 'फसल प्रगति सफलतापूर्वक अपडेट की गई' }))
     } catch (error) {
       console.log(error)
-      toast.error("Failed to update progress. Please try again.")
+      toast.error(t('failedToUpdateProgress', { en: 'Failed to update progress. Please try again.', hi: 'प्रगति अपडेट करने में विफल। कृपया पुनः प्रयास करें।' }))
     }
   }
 
@@ -323,7 +325,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Loading contract details...</span>
+        <span className="ml-2">{t('loadingContractDetails', { en: 'Loading contract details...', hi: 'अनुबंध विवरण लोड हो रहे हैं...' })}</span>
       </div>
     )
   }
@@ -332,10 +334,10 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600">Error Loading Contract</h2>
-          <p className="mt-2">Failed to load contract details. Please try again later.</p>
+          <h2 className="text-2xl font-bold text-red-600">{t('errorLoadingContract', { en: 'Error Loading Contract', hi: 'अनुबंध लोड करने में त्रुटि' })}</h2>
+          <p className="mt-2">{t('failedToLoadContract', { en: 'Failed to load contract details. Please try again later.', hi: 'अनुबंध विवरण लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।' })}</p>
           <Button className="mt-4" onClick={() => window.location.reload()}>
-            Retry
+            {t('retry', { en: 'Retry', hi: 'पुनः प्रयास करें' })}
           </Button>
         </div>
       </div>
@@ -423,49 +425,49 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div>
-                <CardTitle className="text-2xl font-bold">Contract Details</CardTitle>
-                <CardDescription>Contract ID: {contract.contract_id}</CardDescription>
+                <CardTitle className="text-2xl font-bold">{t('contractDetails', { en: 'Contract Details', hi: 'अनुबंध विवरण' })}</CardTitle>
+                <CardDescription>{t('contractId', { en: 'Contract ID:', hi: 'अनुबंध ID:' })} {contract.contract_id}</CardDescription>
               </div>
-              <Badge variant={hasPayments ? "secondary" : "outline"}>{hasPayments ? "In Progress" : "Active"}</Badge>
+              <Badge variant={hasPayments ? "secondary" : "outline"}>{hasPayments ? t('inProgress', { en: 'In Progress', hi: 'प्रगति में' }) : t('active', { en: 'Active', hi: 'सक्रिय' })}</Badge>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Farmer</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('farmer', { en: 'Farmer', hi: 'किसान' })}</h3>
                   <p className="text-lg font-semibold">{contract.farmer_name}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Buyer</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('buyer', { en: 'Buyer', hi: 'खरीददार' })}</h3>
                   <p className="text-lg font-semibold">{contract.buyer_name}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Crop</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('crop', { en: 'Crop', hi: 'फसल' })}</h3>
                   <p className="text-lg font-semibold">{contract.crop_name}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Quantity</h3>
-                  <p className="text-lg font-semibold">{contract.quantity} kg</p>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('quantity', { en: 'Quantity', hi: 'मात्रा' })}</h3>
+                  <p className="text-lg font-semibold">{contract.quantity} {t('kg', { en: 'kg', hi: 'किलो' })}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Price per kg</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('pricePerKg', { en: 'Price per kg', hi: 'प्रति किलो मूल्य' })}</h3>
                   <p className="text-lg font-semibold">₹{contract.nego_price}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Total Value</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('totalValue', { en: 'Total Value', hi: 'कुल मूल्य' })}</h3>
                   <p className="text-lg font-semibold">₹{totalContractValue.toLocaleString()}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Delivery Address</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('deliveryAddress', { en: 'Delivery Address', hi: 'डिलीवरी पता' })}</h3>
                   <p className="text-lg font-semibold">{contract.delivery_address}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Delivery Date</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t('deliveryDate', { en: 'Delivery Date', hi: 'डिलीवरी तिथि' })}</h3>
                   <p className="text-lg font-semibold">{new Date(contract.delivery_date).toLocaleDateString()}</p>
                 </div>
               </div>
               {contract.qr_code && (
                 <div className="mt-4">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">QR Code</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">{t('qrCode', { en: 'QR Code', hi: 'QR कोड' })}</h3>
                   <div
                     className="w-32 h-32 relative cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={() => setShowQrPopup(true)}
@@ -485,7 +487,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-auto">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Payment Receipt</h3>
+        <h3 className="text-lg font-semibold">{t('paymentReceipt', { en: 'Payment Receipt', hi: 'भुगतान रसीद' })}</h3>
         <Button 
           variant="ghost" 
           size="icon"
@@ -506,13 +508,13 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
               <FileText className="h-16 w-16 text-gray-400 mb-4" />
-              <p className="text-gray-500">Receipt document</p>
+              <p className="text-gray-500">{t('receiptDocument', { en: 'Receipt document', hi: 'रसीद दस्तावेज़' })}</p>
               <Button 
                 variant="outline" 
                 className="mt-4"
                 onClick={() => window.open(currentReceipt, '_blank')}
               >
-                Open in new tab
+                {t('openInNewTab', { en: 'Open in new tab', hi: 'नए टैब में खोलें' })}
               </Button>
             </div>
           )
@@ -531,10 +533,10 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
           }}
         >
           <Download className="h-4 w-4 mr-2" />
-          Download
+          {t('download', { en: 'Download', hi: 'डाउनलोड' })}
         </Button>
         <Button onClick={() => setShowReceiptPopup(false)}>
-          Close
+          {t('close', { en: 'Close', hi: 'बंद करें' })}
         </Button>
       </div>
     </div>
@@ -545,7 +547,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                   <div className="bg-white rounded-lg p-6 max-w-md w-full">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold">Field QR Code</h3>
+                      <h3 className="text-lg font-semibold">{t('fieldQrCode', { en: 'Field QR Code', hi: 'फील्ड QR कोड' })}</h3>
                       {/* <Button 
           variant="ghost" 
           size="icon"
@@ -563,7 +565,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                       />
                     </div>
                     <div className="mt-4 flex justify-end">
-                      <Button onClick={() => setShowQrPopup(false)}>Close</Button>
+                      <Button onClick={() => setShowQrPopup(false)}>{t('close', { en: 'Close', hi: 'बंद करें' })}</Button>
                     </div>
                   </div>
                 </div>
@@ -598,32 +600,32 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                   </div>
                   <Progress value={paymentProgressPercentage} className="h-2" />
                   <p className="text-sm text-muted-foreground">
-                    {paymentProgressPercentage.toFixed(0)}% of contract value paid
+                    {paymentProgressPercentage.toFixed(0)}% {t('ofContractValuePaid', { en: 'of contract value paid', hi: 'अनुबंध मूल्य का भुगतान हो गया' })}
                   </p>
                 </div>
               </div>
 
               {progressEntries.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Crop Progress</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">{t('cropProgress', { en: 'Crop Progress', hi: 'फसल प्रगति' })}</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span>Planted</span>
-                      <span>Delivered</span>
+                      <span>{t('planted', { en: 'Planted', hi: 'बोया गया' })}</span>
+                      <span>{t('delivered', { en: 'Delivered', hi: 'डिलीवर हो गया' })}</span>
                     </div>
                     <Progress value={cropProgressPercentage} className="h-2" />
                     <div className="flex justify-between text-sm">
                       <span>
-                        Current:{" "}
-                        {harvestStatusOptions.find((option) => option.value === highestProgress.status)?.label ||
-                          "Not started"}
+                        {t('current', { en: 'Current:', hi: 'वर्तमान:' })}{" "}
+                        {getHarvestStatusOptions(t).find((option) => option.value === highestProgress.status)?.label ||
+                          t('notStarted', { en: 'Not started', hi: 'शुरू नहीं हुआ' })}
                       </span>
-                      <span className="text-muted-foreground">{cropProgressPercentage}% complete</span>
+                      <span className="text-muted-foreground">{cropProgressPercentage}% {t('complete', { en: 'complete', hi: 'पूर्ण' })}</span>
                     </div>
                     {highestProgress && highestProgress.status !== progress.status && (
                       <p className="text-xs text-muted-foreground">
-                        Highest status achieved:{" "}
-                        {harvestStatusOptions.find((option) => option.value === highestProgress.status)?.label}
+                        {t('highestStatusAchieved', { en: 'Highest status achieved:', hi: 'सर्वोच्च स्थिति प्राप्त:' })}{" "}
+                        {getHarvestStatusOptions(t).find((option) => option.value === highestProgress.status)?.label}
                       </p>
                     )}
                   </div>
@@ -637,8 +639,8 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
         <div className="lg:col-span-1">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="payment">{userRole === "farmer" ? "Payment History" : "Payments"}</TabsTrigger>
-              <TabsTrigger value="farmer">Crop Progress</TabsTrigger>
+              <TabsTrigger value="payment">{userRole === "farmer" ? t('paymentHistory', { en: 'Payment History', hi: 'भुगतान इतिहास' }) : t('payments', { en: 'Payments', hi: 'भुगतान' })}</TabsTrigger>
+              <TabsTrigger value="farmer">{t('cropProgress', { en: 'Crop Progress', hi: 'फसल प्रगति' })}</TabsTrigger>
             </TabsList>
 
             {/* Payment Tab Content */}
@@ -647,8 +649,8 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
               {userRole === "farmer" ? (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Payment History</CardTitle>
-                    <CardDescription>View all payments made for this contract</CardDescription>
+                    <CardTitle>{t('paymentHistory', { en: 'Payment History', hi: 'भुगतान इतिहास' })}</CardTitle>
+                    <CardDescription>{t('viewAllPaymentsMade', { en: 'View all payments made for this contract', hi: 'इस अनुबंध के लिए किए गए सभी भुगतान देखें' })}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {payments.length > 0 ? (
@@ -664,7 +666,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                               </div>
                               <Badge variant="outline" className="flex items-center gap-1">
                                 <CheckCircle className="h-3 w-3" />
-                                Confirmed
+                                {t('confirmed', { en: 'Confirmed', hi: 'पुष्टि की गई' })}
                               </Badge>
                             </div>
                             <div className="mt-2 text-sm">
@@ -674,7 +676,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                                   <FileText className="h-3 w-3" />
                                   {typeof payment.receipt === "string"
                                     ? payment.receipt.split("/").pop()
-                                    : "Receipt attached"}
+                                    : t('receiptAttached', { en: 'Receipt attached', hi: 'रसीद संलग्न' })}
                                 </p>
                                 
                               )}
@@ -683,12 +685,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-6 text-muted-foreground">No payments have been made yet.</div>
+                      <div className="text-center py-6 text-muted-foreground">{t('noPaymentsYet', { en: 'No payments have been made yet.', hi: 'अभी तक कोई भुगतान नहीं हुआ है।' })}</div>
                     )}
                   </CardContent>
                   <CardFooter>
                     <div className="w-full flex justify-between text-sm">
-                      <span className="text-muted-foreground">Total Paid:</span>
+                      <span className="text-muted-foreground">{t('totalPaid', { en: 'Total Paid:', hi: 'कुल भुगतान:' })}</span>
                       <span className="font-medium">₹{totalPaid.toLocaleString()}</span>
                     </div>
                   </CardFooter>
@@ -699,40 +701,40 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                   {!hasPayments ? (
                     <Card>
                       <CardHeader>
-                        <CardTitle>Advance Payment Required</CardTitle>
-                        <CardDescription>An advance payment is required to start this contract</CardDescription>
+                        <CardTitle>{t('advancePaymentRequired', { en: 'Advance Payment Required', hi: 'अग्रिम भुगतान आवश्यक' })}</CardTitle>
+                        <CardDescription>{t('advancePaymentRequiredDesc', { en: 'An advance payment is required to start this contract', hi: 'इस अनुबंध को शुरू करने के लिए अग्रिम भुगतान आवश्यक है' })}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <Alert className="mb-6">
                           <AlertCircle className="h-4 w-4" />
-                          <AlertTitle>Attention</AlertTitle>
-                          <AlertDescription>Please make an advance payment to activate this contract.</AlertDescription>
+                          <AlertTitle>{t('attention', { en: 'Attention', hi: 'ध्यान दें' })}</AlertTitle>
+                          <AlertDescription>{t('pleaseAdvancePayment', { en: 'Please make an advance payment to activate this contract.', hi: 'कृपया इस अनुबंध को सक्रिय करने के लिए अग्रिम भुगतान करें।' })}</AlertDescription>
                         </Alert>
 
                         <form onSubmit={handlePaymentSubmit} className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="amount">Advance Payment Amount (₹)</Label>
+                            <Label htmlFor="amount">{t('advancePaymentAmount', { en: 'Advance Payment Amount (₹)', hi: 'अग्रिम भुगतान राशि (₹)' })}</Label>
                             <Input
                               id="amount"
                               name="amount"
                               type="number"
-                              placeholder="Enter amount"
+                              placeholder={t('enterAmount', { en: 'Enter amount', hi: 'राशि दर्ज करें' })}
                               value={paymentForm.amount}
                               onChange={handlePaymentChange}
                               required
                             />
                             {paymentError && <p className="text-sm text-red-500 mt-1">{paymentError}</p>}
                             <p className="text-xs text-muted-foreground">
-                              Recommended: ₹{Math.round(totalContractValue * 0.25).toLocaleString()} (25% of total)
+                              {t('recommended', { en: 'Recommended:', hi: 'सुझाव:' })} ₹{Math.round(totalContractValue * 0.25).toLocaleString()} ({t('25PercentOfTotal', { en: '25% of total', hi: 'कुल का 25%' })})
                             </p>
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor="description">Payment Description</Label>
+                            <Label htmlFor="description">{t('paymentDescription', { en: 'Payment Description', hi: 'भुगतान विवरण' })}</Label>
                             <Textarea
                               id="description"
                               name="description"
-                              placeholder="Advance payment details"
+                              placeholder={t('advancePaymentDetails', { en: 'Advance payment details', hi: 'अग्रिम भुगतान विवरण' })}
                               value={paymentForm.description}
                               onChange={handlePaymentChange}
                               required
@@ -740,12 +742,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                           </div>
 
                           <div className="space-y-2">
-                            <Label>Payment Date</Label>
+                            <Label>{t('paymentDate', { en: 'Payment Date', hi: 'भुगतान तिथि' })}</Label>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                                   <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {paymentDate ? format(paymentDate, "PPP") : "Select date"}
+                                  {paymentDate ? format(paymentDate, "PPP") : t('selectDate', { en: 'Select date', hi: 'तिथि चुनें' })}
                                 </Button>
                               </PopoverTrigger>
                               <PopoverContent className="w-auto p-0">
@@ -760,7 +762,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor="receipt">Payment Receipt</Label>
+                            <Label htmlFor="receipt">{t('paymentReceipt', { en: 'Payment Receipt', hi: 'भुगतान रसीद' })}</Label>
                             <div className="flex items-center gap-2">
                               <Input
                                 ref={fileInputRef}
@@ -777,17 +779,17 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                                 className="w-full justify-start"
                               >
                                 <Upload className="mr-2 h-4 w-4" />
-                                {paymentForm.receiptName || "Upload receipt"}
+                                {paymentForm.receiptName || t('uploadReceipt', { en: 'Upload receipt', hi: 'रसीद अपलोड करें' })}
                               </Button>
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="reference_number">Reference Number</Label>
+                            <Label htmlFor="reference_number">{t('referenceNumber', { en: 'Reference Number', hi: 'संदर्भ संख्या' })}</Label>
                             <Input
                               id="reference_number"
                               name="reference_number"
                               type="text"
-                              placeholder="Enter payment reference number"
+                              placeholder={t('enterReferenceNumber', { en: 'Enter payment reference number', hi: 'भुगतान संदर्भ संख्या दर्ज करें' })}
                               value={paymentForm.reference_number}
                               onChange={handlePaymentChange}
                             />
@@ -795,7 +797,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
 
                           <Button type="submit" className="w-full" disabled={isCreatingPayment}>
                             {isCreatingPayment && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Submit Advance Payment
+                            {t('submitAdvancePayment', { en: 'Submit Advance Payment', hi: 'अग्रिम भुगतान जमा करें' })}
                           </Button>
                         </form>
                       </CardContent>
@@ -803,19 +805,19 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                   ) : (
                     <Tabs defaultValue="history" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="history">Payment History</TabsTrigger>
-                        <TabsTrigger value="add">Add Payment</TabsTrigger>
+                        <TabsTrigger value="history">{t('paymentHistory', { en: 'Payment History', hi: 'भुगतान इतिहास' })}</TabsTrigger>
+                        <TabsTrigger value="add">{t('addPayment', { en: 'Add Payment', hi: 'भुगतान जोड़ें' })}</TabsTrigger>
                       </TabsList>
 
                       <TabsContent value="history" className="mt-4">
                         <Card>
                           <CardHeader className="flex flex-row items-center justify-between">
                             <div>
-                              <CardTitle>Payment History</CardTitle>
+                              <CardTitle>{t('paymentHistory', { en: 'Payment History', hi: 'भुगतान इतिहास' })}</CardTitle>
                               <CardDescription>
                                 {payments.length > 0
-                                  ? `${currentPaymentIndex + 1} of ${payments.length}`
-                                  : "No payments yet"}
+                                  ? `${currentPaymentIndex + 1} ${t('of', { en: 'of', hi: 'में से' })} ${payments.length}`
+                                  : t('noPaymentsYet', { en: 'No payments yet', hi: 'अभी कोई भुगतान नहीं' })}
                               </CardDescription>
                             </div>
                             {payments.length > 1 && (
@@ -855,13 +857,13 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                                   </div>
                                   <Badge variant="outline" className="flex items-center gap-1">
                                     <CheckCircle className="h-3 w-3" />
-                                    Confirmed
+                                    {t('confirmed', { en: 'Confirmed', hi: 'पुष्टि की गई' })}
                                   </Badge>
                                 </div>
                                 <div className="mt-2 text-sm">
                                   <p>{payments[currentPaymentIndex].description}</p>
                                   <p className="text-sm text-muted-foreground mt-1">
-                                    Reference: {payments[currentPaymentIndex].reference_number}
+                                    {t('reference', { en: 'Reference:', hi: 'संदर्भ:' })} {payments[currentPaymentIndex].reference_number}
                                   </p>
                                   {payments[currentPaymentIndex].receipt && (
   <div className="mt-3">
@@ -869,7 +871,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
       <FileText className="h-3 w-3" />
       {typeof payments[currentPaymentIndex].receipt === "string"
         ? payments[currentPaymentIndex].receipt.split("/").pop()
-        : "Receipt attached"}
+        : t('receiptAttached', { en: 'Receipt attached', hi: 'रसीद संलग्न' })}
     </p>
     <div className="flex gap-2">
       <Button 
@@ -882,7 +884,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
         }}
       >
         <FileText className="h-4 w-4 mr-2" />
-        View Receipt
+        {t('viewReceipt', { en: 'View Receipt', hi: 'रसीद देखें' })}
       </Button>
       <Button
         variant="outline"
@@ -895,7 +897,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
         }
       >
         <Download className="h-4 w-4 mr-2" />
-        Download
+        {t('download', { en: 'Download', hi: 'डाउनलोड' })}
       </Button>
     </div>
   </div>
@@ -920,34 +922,34 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                       <TabsContent value="add" className="mt-4">
                         <Card>
                           <CardHeader>
-                            <CardTitle>Add New Payment</CardTitle>
-                            <CardDescription>Record a new payment for this contract</CardDescription>
+                            <CardTitle>{t('addNewPayment', { en: 'Add New Payment', hi: 'नया भुगतान जोड़ें' })}</CardTitle>
+                            <CardDescription>{t('recordNewPayment', { en: 'Record a new payment for this contract', hi: 'इस अनुबंध के लिए एक नया भुगतान दर्ज करें' })}</CardDescription>
                           </CardHeader>
                           <CardContent>
                             <form onSubmit={handlePaymentSubmit} className="space-y-4">
                               <div className="space-y-2">
-                                <Label htmlFor="amount">Payment Amount (₹)</Label>
+                                <Label htmlFor="amount">{t('paymentAmount', { en: 'Payment Amount (₹)', hi: 'भुगतान राशि (₹)' })}</Label>
                                 <Input
                                   id="amount"
                                   name="amount"
                                   type="number"
-                                  placeholder="Enter amount"
+                                  placeholder={t('enterAmount', { en: 'Enter amount', hi: 'राशि दर्ज करें' })}
                                   value={paymentForm.amount}
                                   onChange={handlePaymentChange}
                                   required
                                 />
                                 {paymentError && <p className="text-sm text-red-500 mt-1">{paymentError}</p>}
                                 <p className="text-xs text-muted-foreground">
-                                  Remaining: ₹{(totalContractValue - totalPaid).toLocaleString()}
+                                  {t('remaining', { en: 'Remaining:', hi: 'शेष:' })} ₹{(totalContractValue - totalPaid).toLocaleString()}
                                 </p>
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor="description">Payment Description</Label>
+                                <Label htmlFor="description">{t('paymentDescription', { en: 'Payment Description', hi: 'भुगतान विवरण' })}</Label>
                                 <Textarea
                                   id="description"
                                   name="description"
-                                  placeholder="Payment details"
+                                  placeholder={t('paymentDetails', { en: 'Payment details', hi: 'भुगतान विवरण' })}
                                   value={paymentForm.description}
                                   onChange={handlePaymentChange}
                                   required
@@ -955,12 +957,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                               </div>
 
                               <div className="space-y-2">
-                                <Label>Payment Date</Label>
+                                <Label>{t('paymentDate', { en: 'Payment Date', hi: 'भुगतान तिथि' })}</Label>
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button variant="outline" className="w-full justify-start text-left font-normal">
                                       <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {paymentDate ? format(paymentDate, "PPP") : "Select date"}
+                                      {paymentDate ? format(paymentDate, "PPP") : t('selectDate', { en: 'Select date', hi: 'तिथि चुनें' })}
                                     </Button>
                                   </PopoverTrigger>
                                   <PopoverContent className="w-auto p-0">
@@ -975,7 +977,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor="receipt">Payment Receipt</Label>
+                                <Label htmlFor="receipt">{t('paymentReceipt', { en: 'Payment Receipt', hi: 'भुगतान रसीद' })}</Label>
                                 <div className="flex items-center gap-2">
                                   <Input
                                     ref={fileInputRef}
@@ -992,18 +994,18 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                                     className="w-full justify-start"
                                   >
                                     <Upload className="mr-2 h-4 w-4" />
-                                    {paymentForm.receiptName || "Upload receipt"}
+                                    {paymentForm.receiptName || t('uploadReceipt', { en: 'Upload receipt', hi: 'रसीद अपलोड करें' })}
                                   </Button>
                                 </div>
                               </div>
 
                               <div className="space-y-2">
-                                <Label htmlFor="reference_number">Reference Number</Label>
+                                <Label htmlFor="reference_number">{t('referenceNumber', { en: 'Reference Number', hi: 'संदर्भ संख्या' })}</Label>
                                 <Input
                                   id="reference_number"
                                   name="reference_number"
                                   type="text"
-                                  placeholder="Enter payment reference number"
+                                  placeholder={t('enterReferenceNumber', { en: 'Enter payment reference number', hi: 'भुगतान संदर्भ संख्या दर्ज करें' })}
                                   value={paymentForm.reference_number}
                                   onChange={handlePaymentChange}
                                 />
@@ -1011,7 +1013,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
 
                               <Button type="submit" className="w-full" disabled={isCreatingPayment}>
                                 {isCreatingPayment && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Record Payment
+                                {t('recordPayment', { en: 'Record Payment', hi: 'भुगतान दर्ज करें' })}
                               </Button>
                             </form>
                           </CardContent>
@@ -1062,8 +1064,8 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                     <div className="space-y-6">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Planted</span>
-                          <span>Delivered</span>
+                          <span>{t('planted', { en: 'Planted', hi: 'बोया गया' })}</span>
+                          <span>{t('delivered', { en: 'Delivered', hi: 'डिलीवर हो गया' })}</span>
                         </div>
                         <Progress
                           value={getProgressPercentage(
@@ -1075,31 +1077,31 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                         <div className="flex justify-between items-center mt-4">
                           <div className="flex items-center">
                             {
-                              harvestStatusOptions.find(
+                              getHarvestStatusOptions(t).find(
                                 (option) =>
                                   option.value ===
                                   farmerProgressData.data[currentProgressIndex].current_status.toLowerCase(),
                               )?.icon
                             }
                             <span className="font-medium">
-                              {harvestStatusOptions.find(
+                              {getHarvestStatusOptions(t).find(
                                 (option) =>
                                   option.value ===
                                   farmerProgressData.data[currentProgressIndex].current_status.toLowerCase(),
-                              )?.label || "Not started"}
+                              )?.label || t('notStarted', { en: 'Not started', hi: 'शुरू नहीं हुआ' })}
                             </span>
                           </div>
                           <Badge variant="outline">
                             {farmerProgressData.data[currentProgressIndex].date
                               ? format(new Date(farmerProgressData.data[currentProgressIndex].date), "PPP")
-                              : "No date set"}
+                              : t('noDateSet', { en: 'No date set', hi: 'कोई तिथि नहीं' })}
                           </Badge>
                         </div>
                       </div>
 
                       {farmerProgressData.data[currentProgressIndex].notes && (
                         <div>
-                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Farmer Notes:</h4>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('farmerNotes', { en: 'Farmer Notes:', hi: 'किसान नोट्स:' })}</h4>
                           <p className="text-sm bg-muted p-3 rounded-md">
                             {farmerProgressData.data[currentProgressIndex].notes}
                           </p>
@@ -1108,7 +1110,7 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
 
                       {farmerProgressData.data[currentProgressIndex].image && (
                         <div>
-                          <h4 className="text-sm font-medium text-muted-foreground mb-2">Crop Image:</h4>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-2">{t('cropImage', { en: 'Crop Image:', hi: 'फसल छवि:' })}</h4>
                           <div className="relative h-48 w-full rounded-md overflow-hidden">
                             <Image
                               src={farmerProgressData.data[currentProgressIndex].image || "/placeholder.svg"}
@@ -1125,12 +1127,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
               ) : (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Crop Progress</CardTitle>
-                    <CardDescription>Current status of crop cultivation</CardDescription>
+                    <CardTitle>{t('cropProgress', { en: 'Crop Progress', hi: 'फसल प्रगति' })}</CardTitle>
+                    <CardDescription>{t('currentStatusOfCrop', { en: 'Current status of crop cultivation', hi: 'फसल खेती की वर्तमान स्थिति' })}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-center py-6 text-muted-foreground">
-                      No progress information has been added yet.
+                      {t('noProgressInfoAdded', { en: 'No progress information has been added yet.', hi: 'अभी तक कोई प्रगति जानकारी नहीं जोड़ी गई है।' })}
                     </div>
                   </CardContent>
                 </Card>
@@ -1140,22 +1142,22 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
               {userRole === "farmer" && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Update Crop Progress</CardTitle>
-                    <CardDescription>Keep the buyer updated on your crop status</CardDescription>
+                    <CardTitle>{t('updateCropProgress', { en: 'Update Crop Progress', hi: 'फसल प्रगति अपडेट करें' })}</CardTitle>
+                    <CardDescription>{t('keepBuyerUpdated', { en: 'Keep the buyer updated on your crop status', hi: 'खरीददार को अपनी फसल की स्थिति से अवगत रखें' })}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleProgressSubmit} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="status">Current Status</Label>
+                        <Label htmlFor="status">{t('currentStatus', { en: 'Current Status', hi: 'वर्तमान स्थिति' })}</Label>
                         <Select
                           value={progressForm.status}
                           onValueChange={(value) => setProgressForm({ ...progressForm, status: value })}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
+                            <SelectValue placeholder={t('selectStatus', { en: 'Select status', hi: 'स्थिति चुनें' })} />
                           </SelectTrigger>
                           <SelectContent>
-                            {harvestStatusOptions.map((option) => (
+                            {getHarvestStatusOptions(t).map((option) => (
                               <SelectItem key={option.value} value={option.value}>
                                 <div className="flex items-center">
                                   {option.icon}
@@ -1168,12 +1170,12 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Harvest/Update Date</Label>
+                        <Label>{t('harvestUpdateDate', { en: 'Harvest/Update Date', hi: 'कटाई/अपडेट तिथि' })}</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="outline" className="w-full justify-start text-left font-normal">
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {harvestDate ? format(harvestDate, "PPP") : "Select date"}
+                              {harvestDate ? format(harvestDate, "PPP") : t('selectDate', { en: 'Select date', hi: 'तिथि चुनें' })}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
@@ -1188,18 +1190,18 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="notes">Notes</Label>
+                        <Label htmlFor="notes">{t('notes', { en: 'Notes', hi: 'नोट्स' })}</Label>
                         <Textarea
                           id="notes"
                           name="notes"
-                          placeholder="Add details about current crop condition"
+                          placeholder={t('addCropConditionDetails', { en: 'Add details about current crop condition', hi: 'वर्तमान फसल की स्थिति के बारे में विवरण जोड़ें' })}
                           value={progressForm.notes}
                           onChange={handleProgressChange}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="cropImage">Crop Image</Label>
+                        <Label htmlFor="cropImage">{t('cropImage', { en: 'Crop Image', hi: 'फसल छवि' })}</Label>
                         <div className="flex items-center gap-2">
                           <Input
                             ref={cropImageRef}
@@ -1217,14 +1219,14 @@ const [currentReceipt, setCurrentReceipt] = useState(null);
                             className="w-full justify-start"
                           >
                             <Upload className="mr-2 h-4 w-4" />
-                            {progressForm.cropImageName || "Upload crop image"}
+                            {progressForm.cropImageName || t('uploadCropImage', { en: 'Upload crop image', hi: 'फसल छवि अपलोड करें' })}
                           </Button>
                         </div>
                       </div>
 
                       <Button type="submit" className="w-full" disabled={isCreatingProgress}>
                         {isCreatingProgress && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Update Progress
+                        {t('updateProgress', { en: 'Update Progress', hi: 'प्रगति अपडेट करें' })}
                       </Button>
                     </form>
                   </CardContent>
