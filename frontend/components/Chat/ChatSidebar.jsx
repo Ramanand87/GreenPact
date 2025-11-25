@@ -20,7 +20,7 @@ const ChatSidebar = ({ rooms, currentChat, setCurrentChat }) => {
   useEffect(() => {
     if (!token) return
 
-    const websocket = new WebSocket( `ws://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
+    const websocket = new WebSocket( `wss://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
     setWs(websocket)
 
     websocket.onopen = () => {

@@ -9,8 +9,7 @@ const ConditionalNavbar = () => {
     const userInfo = useSelector((state) => state.auth.userInfo);
 
     if (userInfo?.role === 'admin') return <AdminNavbar />;
-    else if (userInfo?.role === 'farmer' || userInfo?.role === 'contractor') return <Navbar />;
-    else return null; // or return a guest navbar if needed
+    else return <Navbar />; 
 };
 
 export default ConditionalNavbar;

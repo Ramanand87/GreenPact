@@ -35,7 +35,7 @@ const ChatInput = ({ onSend, currentChat }) => {
   useEffect(() => {
     if (roomId) {
       console.log("Establishing WebSocket for room:", roomId);
-      const ws = new WebSocket(` ws://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/chat/${roomId}/`);
+      const ws = new WebSocket(` wss://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/chat/${roomId}/`);
 
       ws.onopen = () => console.log("WebSocket Connected!");
 
