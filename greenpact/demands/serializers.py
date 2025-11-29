@@ -13,7 +13,7 @@ class DemandSerializer(ModelSerializer):
     def get_contractor_profile(self,obj):
         cont_prof=ContractorProfile.objects.filter(user=obj.demand_user).first()
         if cont_prof:
-            return ContractorProfileSerializer(cont_prof).data
+            return ContractorProfileSerializer(cont_prof, context=self.context).data
         return None
     def create(self, validated_data):
         request = self.context.get('request')

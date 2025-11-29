@@ -57,10 +57,37 @@ class FarmerProfileSerializer(ModelSerializer):
     class Meta:
         model = models.FarmerProfile 
         fields = '__all__'
-        
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if request:
+            for field in ['image', 'screenshot', 'aadhar_image', 'signature', 'qr_code_image']:
+                file_field = getattr(instance, field, None)
+                if file_field and hasattr(file_field, 'url'):
+                    representation[field] = request.build_absolute_uri(file_field.url)
+        return representation
+
 class ContractorProfileSerializer(ModelSerializer):
     user = userSerializers()
 
     class Meta: 
         model = models.ContractorProfile
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        print(f"DEBUG: ContractorProfileSerializer to_representation called for {instance}")
+        print(f"DEBUG: request is {request}")
+        if request:
+            for field in ['image', 'aadhar_image', 'signature']:
+                file_field = getattr(instance, field, None)
+                if file_field and hasattr(file_field, 'url'):
+                    try:
+                        abs_url = request.build_absolute_uri(file_field.url)
+                        print(f"DEBUG: Converting {field} url {file_field.url} to {abs_url}")
+                        representation[field] = abs_url
+                    except Exception as e:
+                        print(f"DEBUG: Error converting {field}: {e}")
+        return representation
