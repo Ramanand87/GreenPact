@@ -150,8 +150,11 @@ ASGI_APPLICATION = 'greenpact.asgi.application'
 # }
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("REDIS_URL", "redis://localhost:6379")],
+        },
+    },
 }
 
 GREENBOT_API_KEY = os.getenv("GREENBOT_API_KEY")

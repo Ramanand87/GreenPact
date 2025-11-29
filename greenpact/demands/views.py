@@ -16,14 +16,14 @@ class DemandView(APIView):
         if pk is None:
             try:
                 demands=models.Demand.objects.all()
-                serial=serializers.DemandSerializer(demands,many=True)
+                serial=serializers.DemandSerializer(demands,many=True,context={'request': request})
                 return Response({'data':serial.data},status=status.HTTP_200_OK)
             except Exception as e:
                 return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             try:
                 demand=get_object_or_404(models.Demand,demand_id=pk)
-                serial=serializers.DemandSerializer(demand)
+                serial=serializers.DemandSerializer(demand, context={'request': request})
                 return Response({'data':serial.data},status=status.HTTP_200_OK)
             except Http404:
                 return Response({'Error': 'No Demand found'}, status=status.HTTP_404_NOT_FOUND)
@@ -43,7 +43,7 @@ class DemandView(APIView):
     def put(self,request,pk):
         try:
             demand=get_object_or_404(models.Demand,demand_id=pk)
-            serial=serializers.DemandSerializer(demand,data=request.data,partial=True)
+            serial=serializers.DemandSerializer(demand,data=request.data,partial=True, context={'request': request})
             if serial.is_valid():
                 serial.save()
                 return Response({"Success":"Demand Successfully Created"},status=status.HTTP_200_OK)
@@ -71,7 +71,7 @@ class DemandCurrUser(APIView):
     def get(self,request,pk):
         try:
             demands=get_list_or_404(models.Demand,demand_user__username=pk)
-            serial=serializers.DemandSerializer(demands,many=True)
+            serial=serializers.DemandSerializer(demands,many=True, context={'request': request})
             return Response({'data':serial.data},status=status.HTTP_200_OK)
         except Http404:
             return Response({'data':[]}, status=status.HTTP_200_OK)

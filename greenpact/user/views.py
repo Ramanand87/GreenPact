@@ -87,7 +87,7 @@ class ProfileView(APIView):
                 serializer = serializers.FarmerProfileSerializer(farmer_profile, data=request.data, partial=True,context={'request': request})
             elif role == "contractor":
                 contractor_profile = get_object_or_404(models.ContractorProfile, user=user)
-                serializer = serializers.ContractorProfileSerializer(contractor_profile, data=request.data, partial=True)
+                serializer = serializers.ContractorProfileSerializer(contractor_profile, data=request.data, partial=True, context={'request': request})
             else:
                 return Response({"error": "Invalid role"}, status=status.HTTP_400_BAD_REQUEST)
             if serializer.is_valid():
