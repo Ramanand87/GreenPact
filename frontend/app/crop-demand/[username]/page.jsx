@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTranslate } from "@/lib/LanguageContext";
+import { getTranslatedCropName } from "@/lib/cropTranslations";
 import {
   Dialog,
   DialogTrigger,
@@ -14,6 +15,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Card,
   CardHeader,
@@ -30,7 +41,8 @@ import {
   MapPin,
   Phone,
   Package,
-  DollarSign,
+  User,
+  Star,
 } from "lucide-react";
 import {
   useGetAllDemandsQuery,
@@ -44,7 +56,7 @@ import { useParams, useRouter } from "next/navigation";
 export default function DemandCropsPage() {
   const { username } = useParams();
   const router = useRouter();
-  const { t } = useTranslate();
+  const { t, language } = useTranslate();
 
   const {
     data: demands = [],
@@ -55,10 +67,12 @@ export default function DemandCropsPage() {
   const [addDemand, { isLoading: isAdding }] = useAddDemandMutation();
   const [updateDemand, { isLoading: isUpdating }] = useUpdateDemandMutation();
   const [deleteDemand] = useDeleteDemandMutation();
-  const [deletingId, setDeletingId] = useState(null);
 
   const [editingDemand, setEditingDemand] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [demandToDelete, setDemandToDelete] = useState(null);
+  const [isDeletingInDialog, setIsDeletingInDialog] = useState(false);
 
   const [contactError, setContactError] = useState("");
 
@@ -103,12 +117,45 @@ export default function DemandCropsPage() {
     refetch();
   };
 
-  const handleDelete = async (id) => {
-    setDeletingId(id);
-    await deleteDemand(id).unwrap();
-    setDeletingId(null);
-    refetch();
+  const handleDeleteClick = (demand) => {
+    setDemandToDelete(demand);
+    setDeleteDialogOpen(true);
   };
+
+  const handleDeleteConfirm = async () => {
+    if (!demandToDelete) return;
+    
+    setIsDeletingInDialog(true);
+    try {
+      await deleteDemand(demandToDelete.demand_id).unwrap();
+      setDeleteDialogOpen(false);
+      setDemandToDelete(null);
+      refetch();
+    } catch (error) {
+      console.error("Error deleting demand:", error);
+    } finally {
+      setIsDeletingInDialog(false);
+    }
+  };
+
+  // Generate professional gradient colors based on crop name
+  const getGradientForCrop = (cropName) => {
+    const gradients = [
+      'from-emerald-500 via-teal-500 to-cyan-600',
+      'from-blue-500 via-indigo-500 to-purple-600',
+      'from-pink-500 via-rose-500 to-red-600',
+      'from-orange-500 via-amber-500 to-yellow-600',
+      'from-green-500 via-lime-500 to-emerald-600',
+      'from-violet-500 via-purple-500 to-fuchsia-600',
+      'from-cyan-500 via-sky-500 to-blue-600',
+      'from-rose-500 via-pink-500 to-purple-600',
+      'from-amber-500 via-orange-500 to-red-600',
+      'from-teal-500 via-emerald-500 to-green-600',
+    ]
+    
+    const index = cropName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % gradients.length
+    return gradients[index]
+  }
 
   const generateColor = (name) => {
     const colors = [
@@ -314,83 +361,90 @@ export default function DemandCropsPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {demands?.data.map((demand) => (
             <Card
               key={demand.id}
-              className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 group"
+              className="group hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden border-0 shadow-md flex flex-col h-full bg-white"
             >
-              <CardHeader
-                onClick={() => router.push(`/demand/${demand.demand_id}`)}
-                className="p-0"
-              >
-                <div
-                  className={`w-full h-52 cursor-pointer  flex items-center justify-center bg-gradient-to-br ${generateColor(
-                    demand.crop_name
-                  )} text-white group-hover:scale-[1.02] transition-transform duration-300 ease-out`}
+              {/* Gradient Header with Crop Name */}
+              <CardHeader className="p-0 relative overflow-hidden">
+                <div 
+                  className="relative w-full h-48 bg-gradient-to-br from-green-400 via-green-500 to-green-700 group-hover:scale-105 transition-transform duration-500"
+                  onClick={() => router.push(`/demand/${demand.demand_id}`)}
                 >
-                  <div className="text-center p-6 backdrop-blur-[2px] backdrop-brightness-90 w-full h-full flex flex-col items-center justify-center">
-                    <h2 className="text-4xl font-bold tracking-tight mb-1">
-                      {demand.crop_name}
-                    </h2>
-                    <p className="text-lg opacity-90 font-medium">
-                      {t('premiumQuality', { en: 'Premium Quality', hi: 'प्रीमियम गुणवत्ता' })}
-                    </p>
-                    <div className="mt-3 px-5 py-1.5 bg-white/20 rounded-full inline-block backdrop-blur-sm text-sm">
-                      {t('freshHarvest', { en: 'Fresh Harvest', hi: 'ताज़ा कटाई' })}
+                  {/* Decorative Pattern Overlay */}
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-white rounded-full -ml-20 -mb-20" />
+                  </div>
+                  
+                  {/* Crop Name Display */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center px-6">
+                      <div className="bg-white/10 backdrop-blur-md rounded-2xl px-8 py-6 border border-white/20 shadow-2xl">
+                        <h2 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+                          {getTranslatedCropName(demand.crop_name, language)}
+                        </h2>
+                        <div className="h-1 w-16 bg-white/60 rounded-full mx-auto" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Price Tag */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="flex items-end justify-between">
+                      <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
+                        <p className="text-gray-600 text-xs font-medium mb-0.5">Price per kg</p>
+                        <p className="text-gray-900 text-2xl font-bold">₹{demand.crop_price}</p>
+                      </div>
+                      <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg text-right">
+                        <p className="text-gray-600 text-xs font-medium mb-0.5">Required</p>
+                        <p className="text-gray-900 text-lg font-semibold">{demand.quantity} kg</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 pb-4">
-                <div className="flex justify-between items-start mb-4">
-                  <CardTitle className="text-2xl text-green-800">
-                    {demand.crop_name}
-                  </CardTitle>
-                  <div className="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full font-medium">
-                    ₹{demand.crop_price}
+
+              <CardContent className="p-5 flex-grow flex flex-col">
+                {/* Title */}
+                <h3 className="text-xl font-bold text-gray-900 mb-4 line-clamp-1">
+                  {getTranslatedCropName(demand.crop_name, language)}
+                </h3>
+
+                {/* Compact Info Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">{demand.location}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0">
+                      <Package className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-xs text-gray-500">Quantity</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">{demand.quantity} kg</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-3 mt-4">
-                  <div className="flex items-start">
-                    <Package className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
-                    <p className="text-gray-700">
-                      {t('quantity', { en: 'Quantity:', hi: 'मात्रा:' })}{" "}
-                      <span className="font-medium">{demand.quantity}</span>
-                    </p>
+                {/* Secondary Info */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-sm">{new Date(demand.harvested_time).toLocaleDateString('en-GB')}</span>
                   </div>
-
-                  <div className="flex items-start">
-                    <Phone className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
-                    <p className="text-gray-700">
-                      {t('contact', { en: 'Contact:', hi: 'संपर्क:' })}{" "}
-                      <span className="font-medium">{demand.contact_no}</span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-start">
-                    <MapPin className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
-                    <p className="text-gray-700">
-                      {t('location', { en: 'Location:', hi: 'स्थान:' })}{" "}
-                      <span className="font-medium">{demand.location}</span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-start">
-                    <Calendar className="w-4 h-4 text-gray-500 mt-0.5 mr-2" />
-                    <p className="text-gray-700">
-                      {t('harvested', { en: 'Harvested:', hi: 'कटाई:' })}{" "}
-                      <span className="font-medium">
-                        {demand.harvested_time}
-                      </span>
-                    </p>
-                  </div>
-
-                  <div className="pt-2">
-                    <p className="text-gray-700 line-clamp-2">
-                      {demand.description}
-                    </p>
+                  <div className="flex items-center gap-2 text-green-600 font-medium">
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm">Contact</span>
                   </div>
                 </div>
               </CardContent>
@@ -408,20 +462,10 @@ export default function DemandCropsPage() {
                 </Button>
                 <Button
                   variant="destructive"
-                  className={cn(
-                    "flex-1 transition-colors",
-                    deletingId === demand.demand_id
-                      ? "bg-red-400"
-                      : "bg-red-500 hover:bg-red-600"
-                  )}
-                  onClick={() => handleDelete(demand.demand_id)}
-                  disabled={deletingId === demand.demand_id}
+                  className="flex-1"
+                  onClick={() => handleDeleteClick(demand)}
                 >
-                  {deletingId === demand.demand_id ? (
-                    <Loader2 className="animate-spin w-4 h-4 mr-2" />
-                  ) : (
-                    <Trash className="w-4 h-4 mr-2" />
-                  )}
+                  <Trash className="w-4 h-4 mr-2" />
                   {t('delete', { en: 'Delete', hi: 'हटाएं' })}
                 </Button>
               </CardFooter>
@@ -429,6 +473,43 @@ export default function DemandCropsPage() {
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={(open) => {
+        if (!isDeletingInDialog) {
+          setDeleteDialogOpen(open);
+          if (!open) setDemandToDelete(null);
+        }
+      }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete <span className="font-semibold text-gray-900">{demandToDelete?.crop_name}</span> from your demands.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingInDialog}>
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              onClick={handleDeleteConfirm}
+              disabled={isDeletingInDialog}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isDeletingInDialog ? (
+                <>
+                  <Loader2 className="animate-spin w-4 h-4 mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

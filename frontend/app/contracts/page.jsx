@@ -88,6 +88,9 @@ export default function ContractsListPage() {
   const token = userInfo?.access
   const userRole = userInfo?.role
 
+  console.log("Current User Info:", userInfo)
+  console.log("User Role:", userRole)
+
   const captureImage = () => {
     const imageSrc = webcamRef.current.getScreenshot()
     setVerificationImage(imageSrc)
@@ -174,13 +177,17 @@ export default function ContractsListPage() {
       const data = JSON.parse(event.data)
       console.log("WebSocket data received:", data)
       if (data.data) {
+        console.log("Raw contracts data from backend:", data.data)
         const transformedContracts = transformContracts(data.data)
+        console.log("Transformed contracts:", transformedContracts)
         setContracts(transformedContracts)
 
         // Count pending contracts
         const pendingContracts = transformedContracts.filter((c) => c.status === "pending")
         setPendingCount(pendingContracts.length)
         setIsLoading(false) // Set loading to false after data is received
+      } else {
+        console.log("No 'data' field in WebSocket message or data is empty")
       }
     }
 
@@ -201,22 +208,32 @@ export default function ContractsListPage() {
 
   // Transform the API data to match our UI needs
   const transformContracts = (data) => {
+    console.log("transformContracts called with:", data)
     if (!data) return []
+    if (!Array.isArray(data)) {
+      console.error("Data is not an array:", data)
+      return []
+    }
 
-    return data.map((contract) => ({
-      id: contract.contract_id,
-      crop: contract.crop_name,
-      farmer: contract.farmer_name,
-      buyer: contract.buyer_name,
-      quantity: contract.quantity,
-      price: contract.nego_price,
-      deliveryDate: contract.delivery_date,
-      status: contract.status ? "active" : "pending", // Convert boolean to status string
-      createdAt: contract.created_at,
-      terms: contract.terms || [],
-      delivery_address: contract.delivery_address,
-      rawData: contract, // Keep original data for editing
-    }))
+    try {
+      return data.map((contract) => ({
+        id: contract.contract_id,
+        crop: contract.crop_name,
+        farmer: contract.farmer_name,
+        buyer: contract.buyer_name,
+        quantity: contract.quantity,
+        price: contract.nego_price,
+        deliveryDate: contract.delivery_date,
+        status: contract.status ? "active" : "pending", // Convert boolean to status string
+        createdAt: contract.created_at,
+        terms: contract.terms || [],
+        delivery_address: contract.delivery_address,
+        rawData: contract, // Keep original data for editing
+      }))
+    } catch (error) {
+      console.error("Error transforming contracts:", error)
+      return []
+    }
   }
 
   // Open view dialog
