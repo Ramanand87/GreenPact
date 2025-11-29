@@ -36,11 +36,14 @@ class ContractSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         try:
             prof = FarmerProfile.objects.get(user=obj.farmer)
-            if request is not None:
-                return request.build_absolute_uri(prof.qr_code_image.url)
-            return prof.qr_code_image.url
+            # Check if qr_code_image field has a file associated with it
+            if prof.qr_code_image and hasattr(prof.qr_code_image, 'url'):
+                if request is not None:
+                    return request.build_absolute_uri(prof.qr_code_image.url)
+                return prof.qr_code_image.url
+            return None
         except (FarmerProfile.DoesNotExist, AttributeError):
-            return obj.farmer.username
+            return None
 
     def get_pdf_url(self, obj):
         """
