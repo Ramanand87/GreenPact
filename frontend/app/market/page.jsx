@@ -29,7 +29,7 @@ export default function MarketPage() {
 
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 10000])
+  const [maxPriceFilter, setMaxPriceFilter] = useState(1000)
   const [selectedLocation, setSelectedLocation] = useState("")
   const [filteredCrops, setFilteredCrops] = useState([])
   const [filteredUserCrops, setFilteredUserCrops] = useState([])
@@ -166,19 +166,7 @@ export default function MarketPage() {
     }
   }, [userCoords])
 
-  useEffect(() => {
-    if (!detectedLocation || !locations.length || hasManualLocationSelection) return
-
-    const normalizedDetected = detectedLocation.toLowerCase()
-    const match =
-      locations.find((loc) => loc.toLowerCase() === normalizedDetected) ||
-      locations.find((loc) => normalizedDetected.includes(loc.toLowerCase())) ||
-      locations.find((loc) => loc.toLowerCase().includes(normalizedDetected))
-
-    if (match && match !== selectedLocation) {
-      setSelectedLocation(match)
-    }
-  }, [detectedLocation, locations, hasManualLocationSelection, selectedLocation])
+  // Removed automatic location selection - user must manually select location filter
 
   const fullAddress = detectedLocationDetails.full
 
@@ -266,12 +254,12 @@ export default function MarketPage() {
 
     filtered = filtered.filter((crop) => {
       const price = Number.parseFloat(crop.crop_price)
-      return price >= priceRange[0] && price <= priceRange[1]
+      return price >= 0 && price <= maxPriceFilter
     })
 
     userFiltered = userFiltered.filter((crop) => {
       const price = Number.parseFloat(crop.crop_price)
-      return price >= priceRange[0] && price <= priceRange[1]
+      return price >= 0 && price <= maxPriceFilter
     })
 
     if (selectedLocation) {
@@ -281,12 +269,12 @@ export default function MarketPage() {
 
     setFilteredCrops(filtered)
     setFilteredUserCrops(userFiltered)
-  }, [cropsData, searchQuery, priceRange, selectedLocation, currentUser, aiFilteredCrops])
+  }, [cropsData, searchQuery, maxPriceFilter, selectedLocation, currentUser, aiFilteredCrops])
 
   // Reset all filters
   const resetFilters = () => {
     setSearchQuery("")
-    setPriceRange([0, 10000])
+    setMaxPriceFilter(1000)
     setSelectedLocation("")
     setIsFilterOpen(false)
     setHasManualLocationSelection(false)
@@ -296,8 +284,8 @@ export default function MarketPage() {
 
   // Get max price for slider
   const maxPrice = cropsData.length
-    ? Math.max(...cropsData.map((crop) => Number.parseFloat(crop.crop_price || 0)), 10000)
-    : 10000
+    ? Math.max(...cropsData.map((crop) => Number.parseFloat(crop.crop_price || 0)), 1000)
+    : 1000
 
   const CropCard = ({ crop }) => (
     <Card
@@ -538,9 +526,9 @@ export default function MarketPage() {
                 >
                   <Filter className="h-4 w-4 text-green-600" />
                   <span className="font-semibold">Filters</span>
-                  {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+                  {(selectedLocation || maxPriceFilter < maxPrice) && (
                     <Badge className="ml-2 bg-green-600 text-white rounded-full px-2">
-                      {(selectedLocation ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)}
+                      {(selectedLocation ? 1 : 0) + (maxPriceFilter < maxPrice ? 1 : 0)}
                     </Badge>
                   )}
                 </Button>
@@ -549,7 +537,7 @@ export default function MarketPage() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 text-lg">Filters</h3>
-                    {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+                    {(selectedLocation || maxPriceFilter < maxPrice) && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -563,26 +551,24 @@ export default function MarketPage() {
 
                   <Separator />
 
-                  {/* Price Range */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold text-gray-900">Price Range (₹ per kg)</Label>
-                    <div className="pt-4">
-                      <Slider
-                        defaultValue={[0, maxPrice]}
-                        value={priceRange}
-                        max={maxPrice}
-                        step={100}
-                        onValueChange={setPriceRange}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">₹{priceRange[0]}</span>
-                      <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">₹{priceRange[1]}</span>
-                    </div>
+                {/* Price Range */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold text-gray-900">Max Price: ₹{maxPriceFilter} per kg</Label>
+                  <div className="pt-4">
+                    <Slider
+                      value={[maxPriceFilter]}
+                      max={maxPrice}
+                      min={0}
+                      step={10}
+                      onValueChange={(value) => setMaxPriceFilter(value[0])}
+                      className="cursor-pointer [&_.bg-primary\/20]:bg-gray-200 [&_.bg-primary]:bg-green-600 [&_[role=slider]]:bg-white [&_[role=slider]]:border-green-600"
+                    />
                   </div>
-
-                  {/* Location Filter */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">₹0</span>
+                    <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-lg">₹{maxPriceFilter}</span>
+                  </div>
+                </div>                  {/* Location Filter */}
                   <div className="space-y-3">
                     <Label className="text-base font-semibold text-gray-900">Location</Label>
                     <Select
@@ -723,8 +709,8 @@ export default function MarketPage() {
             </Popover>
           </div>
 
-          {/* Active Filters Display */}
-          {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice || aiFilteredCrops !== null) && (
+        {/* Active Filters Display */}
+        {(selectedLocation || maxPriceFilter < maxPrice || aiFilteredCrops !== null) && (
             <div className="flex flex-wrap gap-2 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
               <span className="text-sm font-semibold text-gray-700 mr-2">Active Filters:</span>
               
@@ -751,19 +737,17 @@ export default function MarketPage() {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                </Badge>
-              )}
+              </Badge>
+            )}
 
-              {(priceRange[0] > 0 || priceRange[1] < maxPrice) && (
-                <Badge variant="secondary" className="flex items-center gap-1.5 bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-300">
-                  ₹{priceRange[0]} - ₹{priceRange[1]}
-                  <button onClick={() => setPriceRange([0, maxPrice])} className="ml-1 hover:opacity-70">
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              )}
-
-              <Button
+            {maxPriceFilter < maxPrice && (
+              <Badge variant="secondary" className="flex items-center gap-1.5 bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-300">
+                ₹0 - ₹{maxPriceFilter}
+                <button onClick={() => setMaxPriceFilter(maxPrice)} className="ml-1 hover:opacity-70">
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            )}              <Button
                 variant="ghost"
                 size="sm"
                 onClick={resetFilters}

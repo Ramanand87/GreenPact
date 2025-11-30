@@ -31,12 +31,13 @@ export default function DemandCropsPage() {
 
   // Search and filter states
   const [searchQuery, setSearchQuery] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 10000])
+  const [maxPriceFilter, setMaxPriceFilter] = useState(1000)
   const [selectedLocation, setSelectedLocation] = useState("")
   const [filteredDemands, setFilteredDemands] = useState([])
   const [filteredUserDemands, setFilteredUserDemands] = useState([])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("all")
+  const ALL_LOCATIONS_OPTION = "__all__"
 
   // AI Filter states
   const [maxDistance, setMaxDistance] = useState(100)
@@ -280,11 +281,11 @@ export default function DemandCropsPage() {
     // Apply price filter
     filtered = filtered.filter((demand) => {
       const price = Number.parseFloat(demand.crop_price)
-      return price >= priceRange[0] && price <= priceRange[1]
+      return price >= 0 && price <= maxPriceFilter
     })
     userFiltered = userFiltered.filter((demand) => {
       const price = Number.parseFloat(demand.crop_price)
-      return price >= priceRange[0] && price <= priceRange[1]
+      return price >= 0 && price <= maxPriceFilter
     })
 
     // Apply location filter
@@ -295,12 +296,12 @@ export default function DemandCropsPage() {
 
     setFilteredDemands(filtered)
     setFilteredUserDemands(userFiltered)
-  }, [demandsData, searchQuery, priceRange, selectedLocation, currentUser, userRole, aiFilteredDemands])
+  }, [demandsData, searchQuery, maxPriceFilter, selectedLocation, currentUser, userRole, aiFilteredDemands])
 
   // Reset all filters
   const resetFilters = () => {
     setSearchQuery("")
-    setPriceRange([0, 10000])
+    setMaxPriceFilter(1000)
     setSelectedLocation("")
     setIsFilterOpen(false)
     setAiFilteredDemands(null)
@@ -310,8 +311,8 @@ export default function DemandCropsPage() {
 
   // Get max price for slider
   const maxPrice = demandsData.length
-    ? Math.max(...demandsData.map((demand) => Number.parseFloat(demand.crop_price || 0)), 10000)
-    : 10000
+    ? Math.max(...demandsData.map((demand) => Number.parseFloat(demand.crop_price || 0)), 1000)
+    : 1000
 
   // Generate professional gradient colors based on crop name
   const getGradientForCrop = (cropName) => {
@@ -579,9 +580,9 @@ export default function DemandCropsPage() {
                 >
                   <Filter className="h-4 w-4 text-blue-600" />
                   <span className="font-semibold">Filters</span>
-                  {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+                  {(selectedLocation || maxPriceFilter < maxPrice) && (
                     <Badge className="ml-2 bg-blue-600 text-white rounded-full px-2">
-                      {(selectedLocation ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0)}
+                      {(selectedLocation ? 1 : 0) + (maxPriceFilter < maxPrice ? 1 : 0)}
                     </Badge>
                   )}
                 </Button>
@@ -590,7 +591,7 @@ export default function DemandCropsPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-gray-900 text-lg">Filters</h3>
-                  {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+                  {(selectedLocation || maxPriceFilter < maxPrice) && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -606,32 +607,41 @@ export default function DemandCropsPage() {
 
                 {/* Price Range */}
                 <div className="space-y-3">
-                  <Label className="text-base font-semibold text-gray-900">Price Range (₹ per kg)</Label>
+                  <Label className="text-base font-semibold text-gray-900">Max Price: ₹{maxPriceFilter} per kg</Label>
                   <div className="pt-4">
                     <Slider
-                      defaultValue={[0, maxPrice]}
-                      value={priceRange}
+                      value={[maxPriceFilter]}
                       max={maxPrice}
-                      step={100}
-                      onValueChange={setPriceRange}
-                      className="cursor-pointer"
+                      min={0}
+                      step={10}
+                      onValueChange={(value) => setMaxPriceFilter(value[0])}
+                      className="cursor-pointer [&_.bg-primary\/20]:bg-gray-200 [&_.bg-primary]:bg-blue-600 [&_[role=slider]]:bg-white [&_[role=slider]]:border-blue-600"
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">₹{priceRange[0]}</span>
-                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">₹{priceRange[1]}</span>
+                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">₹0</span>
+                    <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">₹{maxPriceFilter}</span>
                   </div>
                 </div>
 
                 {/* Location Filter */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold text-gray-900">Location</Label>
-                  <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <Select
+                    value={selectedLocation || ALL_LOCATIONS_OPTION}
+                    onValueChange={(value) => {
+                      if (value === ALL_LOCATIONS_OPTION) {
+                        setSelectedLocation("")
+                      } else {
+                        setSelectedLocation(value)
+                      }
+                    }}
+                  >
                     <SelectTrigger className="border-2 border-gray-200 focus:border-blue-500 rounded-lg">
                       <SelectValue placeholder={t('selectLocation', { en: 'Select location', hi: 'स्थान चुनें' })} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allLocations', { en: 'All Locations', hi: 'सभी स्थान' })}</SelectItem>
+                      <SelectItem value={ALL_LOCATIONS_OPTION}>{t('allLocations', { en: 'All Locations', hi: 'सभी स्थान' })}</SelectItem>
                       {locations.map((location) => (
                         <SelectItem key={location} value={location}>
                           {location}
@@ -744,7 +754,7 @@ export default function DemandCropsPage() {
         </div>
 
         {/* Active filters */}
-        {(selectedLocation || priceRange[0] > 0 || priceRange[1] < maxPrice || aiFilteredDemands !== null) && (
+        {(selectedLocation || maxPriceFilter < maxPrice || aiFilteredDemands !== null) && (
           <div className="flex flex-wrap gap-2 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
             <span className="text-sm font-semibold text-gray-700 mr-2">Active Filters:</span>
             
@@ -766,10 +776,10 @@ export default function DemandCropsPage() {
                 </button>
               </Badge>
             )}
-            {(priceRange[0] > 0 || priceRange[1] < maxPrice) && (
+            {maxPriceFilter < maxPrice && (
               <Badge variant="secondary" className="flex items-center gap-1.5 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-lg border border-orange-300">
-                ₹{priceRange[0]} - ₹{priceRange[1]}
-                <button onClick={() => setPriceRange([0, maxPrice])} className="ml-1 hover:opacity-70">
+                ₹0 - ₹{maxPriceFilter}
+                <button onClick={() => setMaxPriceFilter(maxPrice)} className="ml-1 hover:opacity-70">
                   <X className="h-3 w-3" />
                 </button>
               </Badge>
