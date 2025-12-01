@@ -25,29 +25,25 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         user = self.request.user
         qs = Complaint.objects.select_related("complainant", "accused")
 
-        # Admins see everything
         if user.is_staff:
             return qs.order_by("-created_at")
 
-        # Normal users see complaints they filed or where they’re accused
         return qs.filter(
             Q(complainant=user) | Q(accused=user)
         ).order_by("-created_at")
 
     def perform_create(self, serializer):
-        # Force complainant to be the logged-in user
         serializer.save(complainant=self.request.user)
 
     def perform_update(self, serializer):
         """
-        - Admins can update everything (status, admin_notes, etc.)
+        - Admins can update everything (status, etc.)
         - Normal users can only edit their own description, proof, etc.
         """
         user = self.request.user
 
         if not user.is_staff:
-            # Remove protected fields for non-admins
-            protected_fields = ["status", "admin_notes", "complainant", "accused"]
+            protected_fields = ["status", "complainant", "accused"]
             for field in protected_fields:
                 serializer.validated_data.pop(field, None)
 
