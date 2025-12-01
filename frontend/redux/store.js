@@ -12,6 +12,7 @@ import { demandApi } from './Service/demandApi';
 import { ratingApi } from './Service/ratingApi';
 import { chatApi } from './Service/chatApi';
 import { contractApi } from './Service/contract';
+import { complaintApi } from './Service/complaintApi';
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     [ratingApi.reducerPath]:ratingApi.reducer,
     [chatApi.reducerPath]:chatApi.reducer,
     [contractApi.reducerPath]:contractApi.reducer,
+    [complaintApi.reducerPath]:complaintApi.reducer,
     
   },
   middleware: (getDefaultMiddleware) =>
@@ -36,7 +38,8 @@ export const store = configureStore({
       demandApi.middleware,
       ratingApi.middleware,
       chatApi.middleware,
-      contractApi.middleware
+      contractApi.middleware,
+      complaintApi.middleware
       
     ),
 });

@@ -6,11 +6,20 @@ import { Send, Mic, ChevronDown, MessageSquare } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useSelector } from "react-redux"
 import { useGetRoomsQuery } from "@/redux/Service/chatApi"
+import { useGetProfileQuery } from "@/redux/Service/profileApi"
 import ChatSidebar from "@/components/Chat/ChatSidebar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { MapPin, Phone, User } from "lucide-react"
 
 const ChatPage = () => {
   const [message, setMessage] = useState("")
@@ -18,6 +27,13 @@ const ChatPage = () => {
   const { data: rooms, isLoading, isError } = useGetRoomsQuery()
   const userInfo = useSelector((state) => state.auth.userInfo)
   const currentUser = userInfo?.data.username
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false)
+  const [selectedUsername, setSelectedUsername] = useState(null)
+  
+  // Fetch profile data when dialog is opened
+  const { data: profileData, isLoading: profileLoading } = useGetProfileQuery(selectedUsername, {
+    skip: !selectedUsername
+  })
   const [socket, setSocket] = useState(null)
   const [currentChat, setCurrentChat] = useState(null)
   const messagesEndRef = useRef(null)
@@ -186,12 +202,21 @@ const ChatPage = () => {
               {/* Chat Header */}
               <div className="px-4 md:px-6 py-4 bg-gradient-to-r from-green-50/80 via-white to-green-50/40 border-b border-green-100/30 flex items-center justify-between backdrop-blur-sm transition-all duration-300">
                 {currentChat ? (
-                  <div className="flex items-center space-x-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div 
+                    className="flex items-center space-x-3 animate-in fade-in slide-in-from-top-4 duration-300 cursor-pointer hover:bg-green-50/50 rounded-lg p-2 -m-2 transition-colors"
+                    onClick={() => {
+                      setSelectedUsername(currentChat.chat_user)
+                      setProfileDialogOpen(true)
+                    }}
+                  >
                     {isMobile && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setShowSidebar(true)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setShowSidebar(true)
+                        }}
                         className="mr-2 p-1 hover:bg-green-100 transition-colors duration-200"
                       >
                         <ChevronDown className="rotate-90 w-4 h-4" />
@@ -363,6 +388,82 @@ const ChatPage = () => {
           </div>
         )}
       </div>
+
+      {/* User Profile Dialog */}
+      <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-green-800">User Profile</DialogTitle>
+          </DialogHeader>
+          {profileLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            </div>
+          ) : profileData?.data ? (
+            <div className="space-y-6 py-4">
+              {/* Profile Image and Name */}
+              <div className="flex flex-col items-center space-y-3">
+                <div className="relative">
+                  <Avatar className="w-24 h-24 border-4 border-green-200 shadow-lg">
+                    <AvatarImage
+                      src={profileData.data.image || "/profile.jpg"}
+                      alt={profileData.data.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="bg-green-100 text-green-800 text-2xl">
+                      {profileData.data.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <Badge className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-green-600 hover:bg-green-700">
+                    {profileData.role === "farmer" ? "Farmer" : "Contractor"}
+                  </Badge>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-gray-900">{profileData.data.name}</h3>
+                  <p className="text-sm text-gray-600">@{profileData.data.user.username}</p>
+                </div>
+              </div>
+
+              {/* User Details */}
+              <div className="space-y-4 border-t pt-4">
+                <div className="flex items-start space-x-3">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <Phone className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 font-medium">Phone Number</p>
+                    <p className="text-sm text-gray-900">+91 {profileData.data.phoneno || "N/A"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <MapPin className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 font-medium">Address</p>
+                    <p className="text-sm text-gray-900">{profileData.data.address || "N/A"}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="bg-green-100 p-2 rounded-full">
+                    <User className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 font-medium">User Type</p>
+                    <p className="text-sm text-gray-900 capitalize">{profileData.role || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <p>Unable to load profile information</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -94,37 +94,36 @@ export function ProgressTable({ userType }) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          {userType === "farmer" ? (
-            <TableRow>
-              <TableHead>Contract ID</TableHead>
-              <TableHead>Farmer Name</TableHead>
-              <TableHead>Crop</TableHead>
-              {/* Area field removed as it's not in the API data */}
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          ) : (
-            <TableRow>
-              <TableHead>Contract ID</TableHead>
-              <TableHead>Buyer Name</TableHead>
-              {/* Farmers field removed as it's not in the API data */}
-              {/* Total Area field removed as it's not in the API data */}
-              <TableHead>Total Payment</TableHead>
-              <TableHead>Last Transaction</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          )}
-        </TableHeader>
+      <div className="rounded-lg border border-gray-200 shadow-sm overflow-hidden bg-white">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+              {userType === "farmer" ? (
+                <TableRow className="border-b border-gray-200">
+                  <TableHead className="font-semibold text-gray-700">Contract ID</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Farmer Name</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Crop</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Date</TableHead>
+                  <TableHead className="text-right font-semibold text-gray-700">Actions</TableHead>
+                </TableRow>
+              ) : (
+                <TableRow className="border-b border-gray-200">
+                  <TableHead className="font-semibold text-gray-700">Contract ID</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Buyer Name</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Total Payment</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Last Transaction</TableHead>
+                  <TableHead className="text-right font-semibold text-gray-700">Actions</TableHead>
+                </TableRow>
+              )}
+            </TableHeader>
         <TableBody>
           {userType === "farmer"
             ? processedFarmerData.map((item) => (
-                <TableRow key={item.contract_id}>
-                  <TableCell className="font-medium">{item.contract_id.substring(0, 8)}...</TableCell>
-                  <TableCell>{item.farmer_name}</TableCell>
-                  <TableCell>{item.crop_name}</TableCell>
+                <TableRow key={item.contract_id} className="hover:bg-gray-50 transition-colors">
+                  <TableCell className="font-medium text-gray-900">{item.contract_id.substring(0, 8)}...</TableCell>
+                  <TableCell className="text-gray-700">{item.farmer_name}</TableCell>
+                  <TableCell className="text-gray-700">{item.crop_name}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -134,13 +133,14 @@ export function ProgressTable({ userType }) {
                             ? "outline"
                             : "secondary"
                       }
+                      className="font-medium"
                     >
                       {formatStatus(item.current_status)}
                     </Badge>
                   </TableCell>
-                  <TableCell>{item.date}</TableCell>
+                  <TableCell className="text-gray-700">{item.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleView(item)}>
+                    <Button variant="ghost" size="sm" onClick={() => handleView(item)} className="hover:bg-green-50 hover:text-green-700">
                       <Eye className="mr-2 h-4 w-4" />
                       View
                     </Button>
@@ -148,13 +148,13 @@ export function ProgressTable({ userType }) {
                 </TableRow>
               ))
             : processedContractorData.map((item) => (
-                <TableRow key={item.contract_id}>
-                  <TableCell className="font-medium">{item.contract_id.substring(0, 8)}...</TableCell>
-                  <TableCell>{item.buyer_name}</TableCell>
-                  <TableCell>₹{item.totalAmount.toLocaleString()}</TableCell>
-                  <TableCell>{item.date}</TableCell>
+                <TableRow key={item.contract_id} className="hover:bg-gray-50 transition-colors">
+                  <TableCell className="font-medium text-gray-900">{item.contract_id.substring(0, 8)}...</TableCell>
+                  <TableCell className="text-gray-700">{item.buyer_name}</TableCell>
+                  <TableCell className="text-gray-700">₹{item.totalAmount.toLocaleString()}</TableCell>
+                  <TableCell className="text-gray-700">{item.date}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleView(item)}>
+                    <Button variant="ghost" size="sm" onClick={() => handleView(item)} className="hover:bg-green-50 hover:text-green-700">
                       <Eye className="mr-2 h-4 w-4" />
                       View
                     </Button>
@@ -163,6 +163,8 @@ export function ProgressTable({ userType }) {
               ))}
         </TableBody>
       </Table>
+        </div>
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">

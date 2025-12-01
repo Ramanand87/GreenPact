@@ -69,22 +69,24 @@ export function AllUsers({ status = "pending" }) {
     }
 
     return (
-      <Table className="min-w-full">
-        <TableHeader className="bg-gray-50">
-          <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Username</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead>Documents</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="rounded-lg border border-gray-200 shadow-sm overflow-hidden bg-white">
+        <div className="overflow-x-auto">
+          <Table className="min-w-full">
+            <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <TableRow className="border-b border-gray-200">
+                <TableHead className="font-semibold text-gray-700">User</TableHead>
+                <TableHead className="font-semibold text-gray-700">Username</TableHead>
+                <TableHead className="font-semibold text-gray-700">Phone</TableHead>
+                <TableHead className="font-semibold text-gray-700">Address</TableHead>
+                <TableHead className="font-semibold text-gray-700">Documents</TableHead>
+                <TableHead className="font-semibold text-gray-700">Status</TableHead>
+              </TableRow>
+            </TableHeader>
         <TableBody>
           {filteredUsers.map((user) => (
             <TableRow
               key={user.id}
-              className="hover:bg-gray-50"
+              className="hover:bg-gray-50 transition-colors cursor-pointer"
               onClick={() => {
                 setSelectedUser(user)
                 setOpen(true)
@@ -157,6 +159,8 @@ export function AllUsers({ status = "pending" }) {
           ))}
         </TableBody>
       </Table>
+        </div>
+      </div>
     )
   }
 

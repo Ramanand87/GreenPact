@@ -91,25 +91,25 @@ export function RecentRegistrations() {
   }
 
   const renderUserTable = (users) => (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="rounded-lg border border-gray-200 shadow-sm overflow-hidden bg-white">
       <div className="overflow-x-auto">
         <Table className="min-w-full">
-          <TableHeader className="bg-gray-50">
-            <TableRow>
-              <TableHead className="min-w-[150px]">User</TableHead>
-              <TableHead className="min-w-[120px]">Username</TableHead>
-              <TableHead className="min-w-[120px]">Phone</TableHead>
-              <TableHead className="min-w-[150px]">Address</TableHead>
-              <TableHead className="min-w-[150px]">Documents</TableHead>
-              <TableHead className="min-w-[100px]">Status</TableHead>
-              <TableHead className="min-w-[80px] text-right">Actions</TableHead>
+          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <TableRow className="border-b border-gray-200">
+              <TableHead className="min-w-[150px] font-semibold text-gray-700">User</TableHead>
+              <TableHead className="min-w-[120px] font-semibold text-gray-700">Username</TableHead>
+              <TableHead className="min-w-[120px] font-semibold text-gray-700">Phone</TableHead>
+              <TableHead className="min-w-[150px] font-semibold text-gray-700">Address</TableHead>
+              <TableHead className="min-w-[150px] font-semibold text-gray-700">Documents</TableHead>
+              <TableHead className="min-w-[100px] font-semibold text-gray-700">Status</TableHead>
+              <TableHead className="min-w-[80px] text-right font-semibold text-gray-700">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {!isLoading && users
               ?.filter((user) => !user.is_verfied)
               .map((user) => (
-                <TableRow key={user.id} className="hover:bg-gray-50">
+                <TableRow key={user.id} className="hover:bg-gray-50 transition-colors">
                   <TableCell>
                     <div 
                       className="flex items-center gap-3 cursor-pointer"

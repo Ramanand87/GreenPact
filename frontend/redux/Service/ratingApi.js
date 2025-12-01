@@ -28,20 +28,11 @@ export const ratingApi = createApi({
       invalidatesTags: ['Rating'], // Invalidate rating cache
     }),
     updateRating: builder.mutation({
-      query: ({ ratingId, updatedRatingData }) => {
-        const formData = new FormData();
-        formData.append('description', updatedRatingData.description);
-        formData.append('rate', updatedRatingData.rate);
-        if (updatedRatingData.image) {
-          formData.append('image', updatedRatingData.image);
-        }
-
-        return {
-          url: `/update/${ratingId}`, // Ensure the URL matches the backend
-          method: 'PUT',
-          body: formData,
-        };
-      },
+      query: ({ ratingId, updatedRatingData }) => ({
+        url: `/update/${ratingId}/`,
+        method: 'PUT',
+        body: updatedRatingData, // updatedRatingData is already FormData
+      }),
       invalidatesTags: (result, error, { ratingId }) => [{ type: 'Rating', id: ratingId }],
     }),
     deleteRating: builder.mutation({
@@ -51,6 +42,13 @@ export const ratingApi = createApi({
         }),
         invalidatesTags: (result, error, ratingId) => [{ type: 'Rating', id: ratingId }],  // ✅ Invalidate specific rating
       }),
+    deleteRatingImage: builder.mutation({
+      query: (imageId) => ({
+        url: `/update/image/${imageId}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Rating'],
+    }),
   }),
 });
 
@@ -59,4 +57,5 @@ export const {
   useCreateRatingMutation,
   useUpdateRatingMutation,
   useDeleteRatingMutation,
+  useDeleteRatingImageMutation,
 } = ratingApi;
