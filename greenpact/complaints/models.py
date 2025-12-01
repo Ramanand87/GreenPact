@@ -1,9 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from user.models import CustomUser
 
 class Complaint(models.Model):
-    complainant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="complaints_filed")
-    accused = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="complaints_against")
+    complainant = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="complaints_filed")
+    accused = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="complaints_against")
     category = models.CharField(max_length=30,default="fraud")
     description = models.TextField()
     proof = models.FileField(upload_to="complaint_proofs/", blank=True, null=True)

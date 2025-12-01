@@ -27,7 +27,6 @@ const ChatPage = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true)
 
-  // Check for mobile view
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -37,13 +36,11 @@ const ChatPage = () => {
         setShowSidebar(true)
       }
     }
-
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
   }, [currentChat])
 
-  // Bargaining suggestions for farmers
   const suggestions = [
     "Can we negotiate the price?",
     "I can offer ₹__ per kg",
@@ -52,7 +49,6 @@ const ChatPage = () => {
     "Is there any discount for regular orders?",
   ]
 
-  // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -61,23 +57,19 @@ const ChatPage = () => {
         recognitionRef.current.continuous = false
         recognitionRef.current.interimResults = false
         recognitionRef.current.lang = "en-US"
-
         recognitionRef.current.onresult = (event) => {
           const transcript = event.results[0][0].transcript
           setMessage((prev) => (prev ? `${prev} ${transcript}` : transcript))
         }
-
         recognitionRef.current.onerror = (event) => {
           console.error("Speech recognition error", event.error)
           setIsListening(false)
         }
-
         recognitionRef.current.onend = () => {
           setIsListening(false)
         }
       }
     }
-
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop()
@@ -85,37 +77,29 @@ const ChatPage = () => {
     }
   }, [])
 
-  // WebSocket connection
-  // WebSocket connection
-useEffect(() => {
-  let ws;
-
-  if (currentChat?.name) {
-    console.log("Connecting to WebSocket for room:", currentChat.name);
-    ws = new WebSocket(`wss://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/chat/${currentChat.name}/`);
-
-    ws.onopen = () => console.log("WebSocket Connected!");
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      console.log("Message received:", msg);
-      setReceiveMessages((prev) => (Array.isArray(msg.messages) ? msg.messages : [...prev, msg]));
-    };
-    ws.onerror = (error) => console.error("WebSocket Error:", error);
-    ws.onclose = () => console.log("WebSocket Closed!");
-
-    setSocket(ws);
-  }
-
-  return () => {
-    if (ws) {
-      console.log("Cleaning up WebSocket connection...");
-      ws.close();
+  useEffect(() => {
+    let ws
+    if (currentChat?.name) {
+      console.log("Connecting to WebSocket for room:", currentChat.name)
+      ws = new WebSocket(`wss://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/chat/${currentChat.name}/`)
+      ws.onopen = () => console.log("WebSocket Connected!")
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data)
+        console.log("Message received:", msg)
+        setReceiveMessages((prev) => (Array.isArray(msg.messages) ? msg.messages : [...prev, msg]))
+      }
+      ws.onerror = (error) => console.error("WebSocket Error:", error)
+      ws.onclose = () => console.log("WebSocket Closed!")
+      setSocket(ws)
     }
-  };
-}, [currentChat]);
+    return () => {
+      if (ws) {
+        console.log("Cleaning up WebSocket connection...")
+        ws.close()
+      }
+    }
+  }, [currentChat])
 
-
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [receiveMessages])
@@ -140,7 +124,6 @@ useEffect(() => {
         username: currentUser,
         timestamp: new Date().toISOString(),
       }
-
       socket.send(JSON.stringify(messageData))
       setMessage("")
     }
@@ -167,7 +150,6 @@ useEffect(() => {
     const today = new Date().toDateString()
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-
     if (messageDate === today) return "Today"
     if (messageDate === yesterday.toDateString()) return "Yesterday"
     return messageDate
@@ -185,88 +167,96 @@ useEffect(() => {
     }
   }
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar)
-  }
-
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] bg-gray-50 rounded-lg">
-    {/* Responsive Layout */}
-    <div className="flex w-full h-full">
-      {/* Sidebar - Hidden on mobile when chat is active */}
-      {(showSidebar || !isMobile) && (
-        <div className={`${isMobile ? "w-full" : "w-[320px]"} h-full border-r`}>
-          <ChatSidebar rooms={rooms} currentChat={currentChat} setCurrentChat={handleChatSelect} />
-        </div>
-      )}
+    <div className="flex flex-col md:flex-row h-[calc(100vh-5rem)] bg-gradient-to-br from-gray-50 via-white to-green-50/30 rounded-lg overflow-hidden">
+      <div className="flex w-full h-full">
+        {/* Sidebar */}
+        {(showSidebar || !isMobile) && (
+          <div
+            className={`${isMobile ? "w-full" : "w-[320px]"} h-full border-r border-green-100/50 transition-all duration-300 ease-out animate-in fade-in slide-in-from-left-4`}
+          >
+            <ChatSidebar rooms={rooms} currentChat={currentChat} setCurrentChat={handleChatSelect} />
+          </div>
+        )}
 
-        {/* Chat Section - Full width on mobile */}
+        {/* Chat Section */}
         {(!showSidebar || !isMobile) && (
-        <div className={`${isMobile ? "w-full" : "flex-1"} flex flex-col h-full`}>
-          <Card className="flex flex-col flex-1 h-full bg-white rounded-none shadow-none md:rounded-lg md:shadow-md overflow-hidden">
+          <div className={`${isMobile ? "w-full" : "flex-1"} flex flex-col h-full transition-all duration-300`}>
+            <Card className="flex flex-col flex-1 h-full bg-white rounded-none md:rounded-xl shadow-none md:shadow-lg md:m-0 overflow-hidden border-0 md:border md:border-green-100/50">
               {/* Chat Header */}
-              <div className="p-4 bg-gradient-to-r from-green-50 to-white border-b flex items-center justify-between">
+              <div className="px-4 md:px-6 py-4 bg-gradient-to-r from-green-50/80 via-white to-green-50/40 border-b border-green-100/30 flex items-center justify-between backdrop-blur-sm transition-all duration-300">
                 {currentChat ? (
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3 animate-in fade-in slide-in-from-top-4 duration-300">
                     {isMobile && (
-                      <Button variant="ghost" size="sm" onClick={() => setShowSidebar(true)} className="mr-2 p-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowSidebar(true)}
+                        className="mr-2 p-1 hover:bg-green-100 transition-colors duration-200"
+                      >
                         <ChevronDown className="rotate-90 w-4 h-4" />
                       </Button>
                     )}
-                    <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-green-200">
+                    <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-green-200 ring-2 ring-green-100 shadow-md transition-transform duration-300 hover:scale-105">
                       <img
                         src={currentChat.profile.image || "/placeholder.svg"}
                         alt="Avatar"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div>
-                      <span className="font-semibold text-green-800">{currentChat.profile.name}</span>
-                      <p className="text-xs text-gray-500">@{currentChat.chat_user}</p>
+                    <div className="flex-1">
+                      <p className="font-semibold text-green-900">{currentChat.profile.name}</p>
+                      <p className="text-xs text-green-600/70">@{currentChat.chat_user}</p>
                     </div>
                   </div>
                 ) : (
-                  <span className="text-gray-500">Select a conversation</span>
+                  <span className="text-gray-400">Select a conversation</span>
                 )}
               </div>
 
               {/* Messages Section */}
               {currentChat ? (
-                <ScrollArea className="flex-1 p-4">
+                <ScrollArea className="flex-1 p-4 md:p-6">
                   {receiveMessages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 p-4">
-                      <MessageSquare className="w-16 h-16 text-green-200 mb-4" />
-                      <h3 className="text-lg font-medium text-gray-700">No messages yet</h3>
-                      <p className="text-sm max-w-xs">Start the conversation by sending a message below.</p>
+                    <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 p-4 animate-in fade-in duration-500">
+                      <div className="p-4 bg-green-50 rounded-full mb-4 ring-2 ring-green-100">
+                        <MessageSquare className="w-8 h-8 text-green-300" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-600">No messages yet</h3>
+                      <p className="text-sm max-w-xs text-gray-500">
+                        Start the conversation by sending a message below.
+                      </p>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {receiveMessages.map((msg, index) => {
                         const messageDate = formatDate(msg.timestamp)
                         const showDate = index === 0 || formatDate(receiveMessages[index - 1].timestamp) !== messageDate
-
                         return (
-                          <div key={index}>
+                          <div key={index} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                             {showDate && (
-                              <div className="flex justify-center my-4">
-                                <Badge variant="outline" className="bg-gray-100 text-gray-600 font-medium px-3 py-1">
+                              <div className="flex justify-center my-6 animate-in fade-in duration-400">
+                                <Badge
+                                  variant="outline"
+                                  className="bg-green-50 text-green-700 border-green-200 font-medium px-4 py-1.5 shadow-sm"
+                                >
                                   {messageDate}
                                 </Badge>
                               </div>
                             )}
                             <div
-                              className={`flex ${msg.username === currentUser ? "justify-end" : "justify-start"} mb-3`}
+                              className={`flex ${msg.username === currentUser ? "justify-end" : "justify-start"} mb-2`}
                             >
                               <div
-                                className={`px-4 py-2 rounded-lg shadow-sm max-w-xs md:max-w-md ${
+                                className={`px-4 py-2.5 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md max-w-xs md:max-w-md ${
                                   msg.username === currentUser
-                                    ? "bg-green-500 text-white rounded-tr-none"
-                                    : "bg-gray-100 text-gray-800 rounded-tl-none"
+                                    ? "bg-green-600 text-white rounded-br-none hover:bg-green-700"
+                                    : "bg-gray-100 text-gray-900 rounded-bl-none hover:bg-gray-150"
                                 }`}
                               >
-                                <p className="break-words whitespace-pre-wrap overflow-hidden">{msg.message}</p>
+                                <p className="break-words whitespace-pre-wrap text-sm leading-relaxed">{msg.message}</p>
                                 <p
-                                  className={`text-xs mt-1 ${
+                                  className={`text-xs mt-2 ${
                                     msg.username === currentUser ? "text-green-100" : "text-gray-500"
                                   }`}
                                 >
@@ -282,14 +272,14 @@ useEffect(() => {
                   )}
                 </ScrollArea>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center text-gray-500 p-4">
+                <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 p-4 animate-in fade-in duration-500">
                   <img
                     src="/chatIcon.png"
                     alt="Chat Illustration"
-                    className="w-32 h-32 md:w-48 md:h-48 mb-4 opacity-80"
+                    className="w-32 h-32 md:w-48 md:h-48 mb-4 opacity-50 transition-transform duration-500 hover:scale-105"
                   />
                   <h2 className="text-xl font-semibold text-gray-700">Welcome to your inbox!</h2>
-                  <p className="text-md text-gray-500 max-w-sm">
+                  <p className="text-sm text-gray-500 max-w-sm">
                     Select a chat from the list to start messaging. Stay connected and enjoy seamless conversations. 🚀
                   </p>
                 </div>
@@ -297,34 +287,32 @@ useEffect(() => {
 
               {/* Input Section */}
               {currentChat && (
-                <div className="p-3 md:p-4 border-t bg-white">
-                  {/* Bargaining Suggestions */}
-                  <div className="relative mb-2">
+                <div className="p-3 md:p-4 border-t border-green-100/30 bg-gradient-to-r from-white via-green-50/20 to-white animate-in fade-in slide-in-from-bottom-4 duration-400">
+                  <div className="relative mb-3">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex items-center gap-1 text-green-700 border-green-200 hover:bg-green-50"
+                            className="flex items-center gap-1 text-green-700 border-green-300 hover:bg-green-50 hover:border-green-400 transition-all duration-200 bg-transparent"
                             onClick={() => setShowSuggestions(!showSuggestions)}
                           >
                             Bargaining Tips{" "}
                             <ChevronDown
-                              className={`w-4 h-4 transition-transform ${showSuggestions ? "rotate-180" : ""}`}
+                              className={`w-4 h-4 transition-transform duration-300 ${showSuggestions ? "rotate-180" : ""}`}
                             />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>Quick phrases to help with price negotiation</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-
                     {showSuggestions && (
-                      <div className="absolute bottom-full left-0 mb-2 w-full md:w-72 bg-white border rounded-lg shadow-lg z-10">
+                      <div className="absolute bottom-full left-0 mb-2 w-full md:w-72 bg-white border border-green-200 rounded-xl shadow-lg z-10 overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                         {suggestions.map((suggestion, i) => (
                           <div
                             key={i}
-                            className="p-2 hover:bg-green-50 cursor-pointer border-b text-sm"
+                            className="p-3 hover:bg-green-50 cursor-pointer transition-colors duration-150 text-sm border-b border-green-100 last:border-b-0"
                             onClick={() => insertSuggestion(suggestion)}
                           >
                             {suggestion}
@@ -340,7 +328,7 @@ useEffect(() => {
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={handleKeyPress}
                       placeholder="Type a message..."
-                      className="flex-1 border-2 focus:border-green-500 focus:ring-green-200"
+                      className="flex-1 border-green-300 focus:border-green-500 focus:ring-green-200 rounded-full transition-all duration-200 bg-green-50/50"
                     />
                     <TooltipProvider>
                       <Tooltip>
@@ -348,7 +336,11 @@ useEffect(() => {
                           <Button
                             variant={isListening ? "destructive" : "outline"}
                             onClick={toggleVoiceInput}
-                            className={isListening ? "bg-red-500" : "border-green-200 hover:bg-green-50"}
+                            className={`rounded-full transition-all duration-200 ${
+                              isListening
+                                ? "bg-red-500 hover:bg-red-600 shadow-lg"
+                                : "border-green-300 hover:bg-green-50 hover:border-green-400"
+                            }`}
                           >
                             <Mic className="w-4 h-4" />
                           </Button>
@@ -356,11 +348,10 @@ useEffect(() => {
                         <TooltipContent>{isListening ? "Stop recording" : "Voice input"}</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-
                     <Button
                       onClick={handleSend}
                       disabled={!socket || !message.trim()}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 rounded-full transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send className="w-4 h-4 mr-1" />
                       <span className="hidden sm:inline">Send</span>
