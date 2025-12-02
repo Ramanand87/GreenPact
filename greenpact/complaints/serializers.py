@@ -8,8 +8,6 @@ class ComplaintSerializer(serializers.ModelSerializer):
     accused = serializers.SlugRelatedField(
         slug_field='username',
         queryset=CustomUser.objects.all(),
-        required=False,
-        allow_null=True
     )
 
     class Meta:
