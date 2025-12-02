@@ -34,7 +34,7 @@ export const complaintApi = createApi({
     updateComplaintStatus: builder.mutation({
       query: ({ id, status, priority }) => ({
         url: `/${id}/`,
-        method: 'PUT',
+        method: 'PATCH',
         body: { status, priority },
       }),
       invalidatesTags: ['Complaint'],

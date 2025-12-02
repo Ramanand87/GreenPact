@@ -13,6 +13,7 @@ import {
   useDeleteRatingMutation,
   useUpdateRatingMutation,
   useDeleteRatingImageMutation,
+  useAddRatingImageMutation,
 } from "@/redux/Service/ratingApi";
 import {
   useGetAllContractsQuery,
@@ -60,6 +61,7 @@ export default function ProfilePage() {
   const [deleteRating] = useDeleteRatingMutation();
   const [updateRating] = useUpdateRatingMutation();
   const [deleteRatingImage] = useDeleteRatingImageMutation();
+  const [addRatingImage] = useAddRatingImageMutation();
   const [createRoom] = useCreateRoomMutation();
 
   const crops = Array.isArray(cropsData) ? cropsData : [];
@@ -204,6 +206,13 @@ export default function ProfilePage() {
   const handleDeleteRatingImage = async (imageId) => {
     try {
       await deleteRatingImage(imageId).unwrap();
+      
+      // Update the currentEditingRating state to remove the deleted image immediately
+      setCurrentEditingRating(prev => ({
+        ...prev,
+        rating_images: prev.rating_images.filter(img => img.id !== imageId)
+      }));
+      
       refetchRatings();
     } catch (error) {
       console.error("Failed to delete rating image:", error);
@@ -241,15 +250,24 @@ export default function ProfilePage() {
     formData.append("description", description);
     formData.append("rate", parseInt(rating)); // Ensure rate is an integer
     
-    // Only append new File objects (newly uploaded images), not existing URLs
-    images.forEach((image) => {
-      if (image instanceof File) {
-        formData.append("images", image);
-      }
-    });
-
     try {
+      // 1. Update text fields (description, rate)
       await updateRating({ ratingId, updatedRatingData: formData }).unwrap();
+
+      // 2. Upload new images one by one using the addRatingImage API
+      const imageUploadPromises = images
+        .filter(image => image instanceof File)
+        .map(image => {
+          const imageFormData = new FormData();
+          imageFormData.append("rating", ratingId);
+          imageFormData.append("image", image);
+          return addRatingImage(imageFormData).unwrap();
+        });
+
+      if (imageUploadPromises.length > 0) {
+        await Promise.all(imageUploadPromises);
+      }
+
       refetchRatings();
       handleCloseEditDialog();
     } catch (error) {

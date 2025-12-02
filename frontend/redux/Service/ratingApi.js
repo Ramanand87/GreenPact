@@ -49,6 +49,14 @@ export const ratingApi = createApi({
       }),
       invalidatesTags: ['Rating'],
     }),
+    addRatingImage: builder.mutation({
+      query: (imageData) => ({
+        url: `/update/image/`,
+        method: 'POST',
+        body: imageData,
+      }),
+      invalidatesTags: ['Rating'],
+    }),
   }),
 });
 
@@ -58,4 +66,5 @@ export const {
   useUpdateRatingMutation,
   useDeleteRatingMutation,
   useDeleteRatingImageMutation,
+  useAddRatingImageMutation,
 } = ratingApi;

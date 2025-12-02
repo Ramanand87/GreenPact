@@ -20,6 +20,7 @@ import { format } from "date-fns"
 
 export function ConcernsTable({ status }) {
   const { data: complaintsData = [], isLoading } = useGetComplaintsQuery()
+  console.log("Complaints Data:", complaintsData)
   const [updateComplaintStatus, { isLoading: isUpdating }] = useUpdateComplaintStatusMutation()
   const [selectedComplaint, setSelectedComplaint] = useState(null)
   const [open, setOpen] = useState(false)
@@ -27,7 +28,7 @@ export function ConcernsTable({ status }) {
   const [selectedPriority, setSelectedPriority] = useState("")
 
   const complaints = complaintsData || []
-  const filteredComplaints = complaints.filter((c) => c.status?.toLowerCase() === status?.toLowerCase())
+  const filteredComplaints = complaints.filter((c) => c.status.toLowerCase() === status.toLowerCase())
 
   const handleView = (complaint) => {
     setSelectedComplaint(complaint)
@@ -76,6 +77,8 @@ export function ConcernsTable({ status }) {
       </div>
     )
   }
+
+  console.log("Filtered Complaints:", filteredComplaints)
 
   return (
     <>
