@@ -5,14 +5,11 @@ from user.models import CustomUser
 class ComplaintSerializer(serializers.ModelSerializer):
     # Read-only fields
     complainant = serializers.ReadOnlyField(source="complainant.username")
-    accused = serializers.ReadOnlyField(source="accused.username")
-
-    # Write-only helper to set accused by username (optional)
-    accused_username = serializers.CharField(
-        write_only=True,
+    accused = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=CustomUser.objects.all(),
         required=False,
-        allow_blank=True,
-        help_text="Username of the user you are complaining against"
+        allow_null=True
     )
 
     class Meta:

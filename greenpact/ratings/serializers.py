@@ -8,6 +8,9 @@ class RatingImageSerializer(ModelSerializer):
         model=models.RatingImage
         fields='__all__'
 
+    def create(self, validated_data):
+        return super().create(validated_data)
+        
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         request = self.context.get('request')

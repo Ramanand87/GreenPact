@@ -52,6 +52,16 @@ class RatingImageView(APIView):
     authentication_classes=[JWTAuthentication]
     permission_classes=[IsAuthenticated]
 
+    def post(self,request):
+        try:
+            serializer=serializers.RatingImageSerializer(data=request.data,context={'request': request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'Success':'Rating Image Added'},status=status.HTTP_201_CREATED)
+            else:
+                return Response({'Error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     def delete(self,request,id):
         try:
             rating_image = models.RatingImage.objects.get(id=id)
