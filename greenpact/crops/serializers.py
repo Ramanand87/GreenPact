@@ -26,7 +26,28 @@ class CropsSerializer(ModelSerializer):
         representation = super().to_representation(instance)
         request = self.context.get('request')
         if request:
-            image_url = representation['publisher_profile']['image']
-            if image_url and not image_url.startswith('http'):
-                representation['publisher_profile']['image'] = request.build_absolute_uri(image_url)
+            if representation.get('publisher_profile'):
+                # Fix for publisher profile image (Cloudinary)
+                contractor_profile = FarmerProfile.objects.filter(user=instance.publisher).first()
+                if contractor_profile and contractor_profile.image:
+                    try:
+                        representation['publisher_profile']['image'] = contractor_profile.image.url
+                    except Exception:
+                        pass
+                
+                # Fallback for local development if not Cloudinary
+                image_url = representation['publisher_profile'].get('image')
+                if image_url and not image_url.startswith('http'):
+                    representation['publisher_profile']['image'] = request.build_absolute_uri(image_url)
+            
+            # Fix for Cloudinary image URL
+            if instance.crop_image:
+                try:
+                    representation['crop_image'] = instance.crop_image.url
+                except Exception:
+                    pass
+
+            crop_image_url = representation.get('crop_image')
+            if crop_image_url and not crop_image_url.startswith('http'):
+                representation['crop_image'] = request.build_absolute_uri(crop_image_url)
         return representation

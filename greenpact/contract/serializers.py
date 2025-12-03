@@ -11,7 +11,6 @@ class ContractSerializer(serializers.ModelSerializer):
     buyer_name = serializers.SerializerMethodField()
     crop_name = serializers.SerializerMethodField()
     qr_code = serializers.SerializerMethodField()
-    pdf_url = serializers.SerializerMethodField()   # ✅ NEW
     terms = serializers.ListField(child=serializers.CharField(), required=False)
 
     class Meta:
@@ -29,7 +28,6 @@ class ContractSerializer(serializers.ModelSerializer):
             "terms",
             "status",
             "qr_code",
-            "pdf_url",
         ]
 
     def get_qr_code(self, obj):
@@ -44,18 +42,6 @@ class ContractSerializer(serializers.ModelSerializer):
             return None
         except (FarmerProfile.DoesNotExist, AttributeError):
             return None
-
-    def get_pdf_url(self, obj):
-        """
-        Return absolute URL for the contract PDF if it exists.
-        """
-        if not obj.pdf_document:
-            return None
-
-        request = self.context.get("request")
-        if request is not None:
-            return request.build_absolute_uri(obj.pdf_document.url)
-        return obj.pdf_document.url
 
     def get_farmer_name(self, obj):
         try:

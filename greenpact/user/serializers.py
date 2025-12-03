@@ -3,6 +3,9 @@ from rest_framework.serializers import ModelSerializer, ValidationError
 from . import models
 from rest_framework import serializers
 from django.conf import settings
+from django.db import transaction
+
+
 class userSerializers(ModelSerializer):
     class Meta:
         model = models.CustomUser
@@ -25,32 +28,33 @@ class userSerializers(ModelSerializer):
         return data
 
     def create(self, validated_data):
-        print(self.initial_data.get("role"))
-        user = models.CustomUser(username=validated_data["username"], type=self.initial_data.get("role"))
-        user.set_password(validated_data["password"])
-        user.save()
+        with transaction.atomic():
+            user = models.CustomUser(username=validated_data["username"], type=self.initial_data.get("role"))
+            user.set_password(validated_data["password"])
+            user.save()
 
-        profile_data = {
-            "name": self.initial_data.get("name"),
-            "phoneno": self.initial_data.get("phoneno"),
-            "address": self.initial_data.get("address"),
-            "image": self.initial_data.get("image"),
-            "aadhar_image":self.initial_data.get("aadhar_image"),
-            "user": user
-        }
-        if user.type == "farmer":
-            profile_data["screenshot"] = self.initial_data.get("screenshot")
-            profile_data["signature"] = self.initial_data.get("signature")
-            if not self.initial_data.get("qr_code_image"):
-                raise ValidationError({'error': 'Farmer QR code image is required'})
-            else :
-                profile_data["qr_code_image"] = self.initial_data.get("qr_code_image")
-            models.FarmerProfile.objects.create(**profile_data)
-        elif user.type == "contractor":
-            profile_data["gstin"] = self.initial_data.get("gstin")
-            profile_data["signature"] = self.initial_data.get("signature")
-            models.ContractorProfile.objects.create(**profile_data)
-        return user
+            profile_data = {
+                "name": self.initial_data.get("name"),
+                "phoneno": self.initial_data.get("phoneno"),
+                "address": self.initial_data.get("address"),
+                "image": self.initial_data.get("image"),
+                "aadhar_image":self.initial_data.get("aadhar_image"),
+                "user": user
+            }
+            if user.type == "farmer":
+                profile_data["screenshot"] = self.initial_data.get("screenshot")
+                profile_data["signature"] = self.initial_data.get("signature")
+                if not self.initial_data.get("qr_code_image"):
+                    raise ValidationError({'error': 'Farmer QR code image is required'})
+                else :
+                    profile_data["qr_code_image"] = self.initial_data.get("qr_code_image")
+                models.FarmerProfile.objects.create(**profile_data)
+            elif user.type == "contractor":
+                profile_data["gstin"] = self.initial_data.get("gstin")
+                profile_data["signature"] = self.initial_data.get("signature")
+                models.ContractorProfile.objects.create(**profile_data)
+            return user
+        return None
 
 class FarmerProfileSerializer(ModelSerializer):
     user = userSerializers()

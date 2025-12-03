@@ -9,7 +9,7 @@ export function useWebSocketContracts(token) {
   useEffect(() => {
     if (!token) return
 
-    ws.current = new WebSocket(`wss://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/contract/`)
+    ws.current = new WebSocket(`ws://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/contract/`)
 
     ws.current.onopen = () => {
       console.log("WebSocket connected")

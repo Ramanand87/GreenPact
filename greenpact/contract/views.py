@@ -10,7 +10,10 @@ from . import serializers
 from django.http import Http404
 from user.models import FarmerProfile
 import tempfile
-from utils.contract_pdf import attach_contract_pdf
+from utils.contract_pdf import generate_contract_pdf_bytes
+from django.http import HttpResponse, FileResponse
+import io
+
 class ContractView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -93,6 +96,17 @@ class ContractView(APIView):
             return Response({"Error": serial.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def delete(self,request,pk):
+        try:
+            contract=get_object_or_404(models.Contract,contract_id=pk)
+            contract.delete()
+            return Response({"Success":"Contract Deleted"},status=status.HTTP_200_OK)
+        except Http404:
+            return Response({"Error":"No Contract found"},status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"Error":str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         
 class TransactionView(APIView):
     authentication_classes=[JWTAuthentication]
@@ -304,5 +318,20 @@ class AllContracts(APIView):
                 contracts, many=True, context={"request": request}
             )
             return Response({"data": serial.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ContractDocView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self,request,pk):
+        try:
+            contract=get_object_or_404(models.Contract,contract_id=pk)
+            pdf_bytes = generate_contract_pdf_bytes(contract)
+            return FileResponse(
+                io.BytesIO(pdf_bytes),
+                as_attachment=True,
+                filename=f"contract_{contract.contract_id}.pdf"
+            )
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

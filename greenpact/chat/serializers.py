@@ -45,13 +45,22 @@ class ChatRoomSerializer(ModelSerializer):
                 serial=ContractorProfileSerializer(prof).data
                 return {"name":serial["name"],"image":serial["image"]}
         return None
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         request = self.context.get("request")
+
         if request:
-            profile_data = representation.get('profile')
+            profile_data = representation.get("profile")
+
             if profile_data:
-                image_url = profile_data.get('image')
-                if image_url and not image_url.startswith('http'):
-                    profile_data['image'] = request.build_absolute_uri(image_url)
+                image_url = profile_data.get("image")
+
+                # If Cloudinary URL → keep as is
+                # If local file URL → convert to absolute URL
+                if image_url and not (
+                    image_url.startswith("http://") or image_url.startswith("https://")
+                ):
+                    profile_data["image"] = request.build_absolute_uri(image_url)
+
         return representation

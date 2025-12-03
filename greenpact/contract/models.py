@@ -19,8 +19,7 @@ class Contract(models.Model):
     delivery_date = models.DateField()
     terms = ArrayField(models.TextField(), blank=True, default=list)
     status = models.BooleanField(default=False)
-    pdf_document = models.FileField(upload_to="contracts_pdfs/", null=True, blank=True)
-
+    # pdf_document = models.FileField(upload_to="contracts_pdfs/", null=True, blank=True)
     def __str__(self):
         return f"Contract {self.farmer} & {self.buyer}"
 

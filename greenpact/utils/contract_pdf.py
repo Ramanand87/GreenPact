@@ -138,10 +138,10 @@ def generate_contract_pdf_bytes(contract: Contract) -> bytes:
     return buffer.getvalue()
 
 
-def attach_contract_pdf(contract: Contract) -> None:
-    """
-    Generate the PDF and save it into contract.pdf_document.
-    """
-    pdf_bytes = generate_contract_pdf_bytes(contract)
-    filename = f"contract_{contract.contract_id}.pdf"
-    contract.pdf_document.save(filename, ContentFile(pdf_bytes), save=True)
+# def attach_contract_pdf(contract: Contract) -> None:
+#     """
+#     Generate the PDF and save it into contract.pdf_document.
+#     """
+#     pdf_bytes = generate_contract_pdf_bytes(contract)
+#     filename = f"contract_{contract.contract_id}.pdf"
+#     contract.pdf_document.save(filename, ContentFile(pdf_bytes), save=True)

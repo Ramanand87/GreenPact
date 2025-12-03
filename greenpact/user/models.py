@@ -23,8 +23,8 @@ class FarmerProfile(models.Model):
     phoneno = models.CharField(max_length=15, unique=True)
     image = CloudinaryField('image', folder='farmer/image/', null=True, blank=True)
     screenshot = CloudinaryField('screenshot', folder='screenshots/', null=True, blank=True)
-    aadhar_image = models.FileField(upload_to='aadhar/', null=True, blank=True)
-    signature = models.FileField(upload_to='signature/', null=True, blank=True)
+    aadhar_image = CloudinaryField('aadhar_image', folder='aadhar/', null=True, blank=True)
+    signature = CloudinaryField('signature', folder='signature/', null=True, blank=True)
     is_verfied=models.BooleanField(default=False)
     qr_code_image = CloudinaryField('qr_code_image', folder='qr_codes/', null=True, blank=True)
     

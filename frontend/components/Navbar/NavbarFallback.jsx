@@ -45,7 +45,7 @@ export function NavbarFallback() {
     let ws = null
 
     try {
-      ws = new WebSocket(`wss:${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
+      ws = new WebSocket(`ws:${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
 
       ws.onopen = () => {
         console.log("WebSocket connected")

@@ -3,7 +3,6 @@ from . import views
 urlpatterns = [
     path('',views.ContractView.as_view()),
     path('<uuid:pk>/',views.ContractView.as_view()),
-    # path('pdf/<uuid:pk>/',views.ContractDocView.as_view()),
     path('transaction/<uuid:pk>/',views.TransactionView.as_view()),
     path('transaction/',views.TransactionView.as_view()),
     path('progress/detail/<uuid:pk>/',views.GetProgressView.as_view()),
@@ -14,4 +13,5 @@ urlpatterns = [
     path('facematch/',views.FaceMatchView.as_view()),
     path('transaction/user/',views.TransactionUser.as_view()),
     path('allcontracts/',views.AllContracts.as_view()),
+    path('contract_pdf/<uuid:pk>/',views.ContractDocView.as_view()),
 ]
