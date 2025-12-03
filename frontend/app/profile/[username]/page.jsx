@@ -121,8 +121,10 @@ export default function ProfilePage() {
         data.append("image", file);
       }
 
-      if (qrCodeImage) {
-        data.append("qr_code_image", qrCodeImage);
+      if (qrCodeImage && qrCodeImage.startsWith("data:image")) {
+        const blob = dataURItoBlob(qrCodeImage);
+        const file = new File([blob], "qr_code.jpg", { type: "image/jpeg" });
+        data.append("qr_code_image", file);
       }
 
       await updateProfile(data).unwrap();
