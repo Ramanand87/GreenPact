@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { FileText, Video, Download, ExternalLink, BookOpen, Calendar, HelpCircle } from "lucide-react"
+import { FileText, Video, Download, ExternalLink, BookOpen, Calendar, HelpCircle, Smartphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,12 +17,12 @@ export function ResourcesSection({ userType }) {
       {
         id: "guides",
         title: t('guidesTutorials', { en: 'Guides & Tutorials', hi: 'गाइड और ट्यूटोरियल' }),
-        icon: <BookOpen className="w-5 h-5" />, 
+        icon: <BookOpen className="w-5 h-5" />,
         items: [
-          { title: t('understandingContractFarming', { en: 'Understanding Contract Farming', hi: 'कॉन्ट्रैक्ट फार्मिंग को समझना' }), type: "PDF", new: true },
-          { title: t('negotiateBetterTerms', { en: 'How to Negotiate Better Terms', hi: 'बेहतर शर्तें कैसे तय करें' }), type: "Video" },
-          { title: t('managingFarmRecords', { en: 'Managing Your Farm Records', hi: 'अपने फार्म रिकॉर्ड प्रबंधित करना' }), type: "PDF" },
-          { title: t('usingMobileApp', { en: 'Using the Mobile App', hi: 'मोबाइल ऐप का उपयोग' }), type: "Tutorial" },
+          { title: t('understandingContractFarming', { en: 'Understanding Contract Farming', hi: 'कॉन्ट्रैक्ट फार्मिंग को समझना' }), type: "PDF", new: true, link: "https://drive.google.com/file/d/16e6a-AIee5mlru9LWi6qgIAh0q_7xz-c/view?usp=sharing", actionIcon: "external" },
+          { title: t('negotiateBetterTerms', { en: 'How to Negotiate Better Terms', hi: 'बेहतर शर्तें कैसे तय करें' }), type: "Video", link: "" , actionIcon: "external"},
+          { title: t('managingFarmRecords', { en: 'Managing Your Farm Records', hi: 'अपने फार्म रिकॉर्ड प्रबंधित करना' }), type: "PDF", link: "https://drive.google.com/file/d/1gimZlUWq4vQE6nJv1KhC-Yw8hl1isrY6/view?usp=sharing", actionIcon: "external" },
+          { title: t('usingMobileApp', { en: 'Using the Mobile App', hi: 'मोबाइल ऐप का उपयोग' }), type: "Tutorial", icon: <Smartphone className="w-4 h-4" />, link: "https://drive.google.com/file/d/1JO2knWi8qjEd-taI7XH7nC8yC65qhxsh/view?usp=sharing", actionIcon: "external" },
         ],
       },
       {
@@ -30,10 +30,10 @@ export function ResourcesSection({ userType }) {
         title: t('importantDocuments', { en: 'Important Documents', hi: 'महत्वपूर्ण दस्तावेज़' }),
         icon: <FileText className="w-5 h-5" />,
         items: [
-          { title: t('sampleContractTemplate', { en: 'Sample Contract Template', hi: 'नमूना अनुबंध टेम्प्लेट' }), type: "PDF" },
-          { title: t('farmerRightsDocument', { en: 'Farmer Rights Document', hi: 'किसान अधिकार दस्तावेज़' }), type: "PDF", new: true },
-          { title: t('paymentSchedule', { en: 'Payment Schedule', hi: 'भुगतान अनुसूची' }), type: "PDF" },
-          { title: t('qualityStandardsGuide', { en: 'Quality Standards Guide', hi: 'गुणवत्ता मानक गाइड' }), type: "PDF" },
+          { title: t('sampleContractTemplate', { en: 'Sample Contract Template', hi: 'नमूना अनुबंध टेम्प्लेट' }), type: "PDF", link: "https://drive.google.com/file/d/1dhAVlWuKlS6M2_tI3Tnc5SOU2ztq1CJE/view?usp=sharing", actionIcon: "external" },
+          { title: t('farmerRightsDocument', { en: 'Farmer Rights Document', hi: 'किसान अधिकार दस्तावेज़' }), type: "PDF", new: true, link: "https://drive.google.com/file/d/1pdfxSXPgBYO2vo42Q5GW2BXXxihnAmwg/view?usp=sharing", actionIcon: "external" },
+          { title: t('paymentSchedule', { en: 'Payment Schedule', hi: 'भुगतान अनुसूची' }), type: "PDF", link: "https://drive.google.com/file/d/1_0wESNT5rafhfCLcGlTae8KxYDQTvAUC/view?usp=sharing", actionIcon: "external" },
+          { title: t('qualityStandardsGuide', { en: 'Quality Standards Guide', hi: 'गुणवत्ता मानक गाइड' }), type: "PDF", link: "https://drive.google.com/file/d/1zUsLZUUhUgi9QMEYyz0ba0u39cAV7MI4/view?usp=sharing", actionIcon: "external" },
         ],
       },
     ],
@@ -65,7 +65,7 @@ export function ResourcesSection({ userType }) {
 
   const getIconForType = (type) => {
     const icons = {
-      PDF: <FileText className="w-4 h-4" />, 
+      PDF: <FileText className="w-4 h-4" />,
       Video: <Video className="w-4 h-4" />,
       Tutorial: <BookOpen className="w-4 h-4" />,
       Calendar: <Calendar className="w-4 h-4" />,
@@ -103,15 +103,17 @@ export function ResourcesSection({ userType }) {
                 <Card key={index} className="border-2 border-primary/20 transition-all hover:shadow-md">
                   <CardContent className="p-4 flex items-center">
                     <div className="flex items-center justify-center w-10 h-10 mr-4 bg-primary/20 rounded-full">
-                      {getIconForType(item.type)}
+                      {item.icon || getIconForType(item.type)}
                     </div>
                     <div className="flex-1">
                       <h3 className="font-medium">{item.title}</h3>
                       {item.new && <Badge variant="outline" className="ml-2 bg-secondary/20">{t('new', { en: 'New', hi: 'नया' })}</Badge>}
                       <p className="text-sm text-muted-foreground">{item.type}</p>
                     </div>
-                    <Button variant="ghost" size="icon">
-                      {item.type === "PDF" || item.type === "Video" ? <Download className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
+                    <Button variant="ghost" size="icon" asChild>
+                      <a href={item.link || "#"} target="_blank" rel="noopener noreferrer">
+                        {item.actionIcon === "external" ? <ExternalLink className="w-4 h-4" /> : (item.type === "PDF" || item.type === "Video" ? <Download className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />)}
+                      </a>
                     </Button>
                   </CardContent>
                 </Card>
