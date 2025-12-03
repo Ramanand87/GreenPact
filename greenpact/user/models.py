@@ -38,8 +38,8 @@ class ContractorProfile(models.Model):
     phoneno = models.CharField(max_length=15, unique=True)
     image = CloudinaryField('image', folder='contractor/image/', null=True, blank=True)
     gstin = models.CharField(max_length=15, unique=True)
-    aadhar_image = models.FileField(upload_to='aadhar/', null=True, blank=True)
-    signature = models.FileField(upload_to='signature/', null=True, blank=True)
+    aadhar_image = CloudinaryField('aadhar_image', folder='contractor/aadhar/', null=True, blank=True)
+    signature = CloudinaryField('signature', folder='contractor/signature/', null=True, blank=True)
     is_verfied=models.BooleanField(default=False)
     
     def __str__(self):
