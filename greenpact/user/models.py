@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from cloudinary.models import CloudinaryField
 
 class CustomUser(AbstractUser):
     class Types(models.TextChoices):
@@ -20,12 +21,12 @@ class FarmerProfile(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField()
     phoneno = models.CharField(max_length=15, unique=True)
-    image = models.ImageField(upload_to='farmer/image/', null=True, blank=True)
-    screenshot = models.ImageField(upload_to='screenshots/', null=True, blank=True)
+    image = CloudinaryField('image', folder='farmer/image/', null=True, blank=True)
+    screenshot = CloudinaryField('screenshot', folder='screenshots/', null=True, blank=True)
     aadhar_image = models.FileField(upload_to='aadhar/', null=True, blank=True)
     signature = models.FileField(upload_to='signature/', null=True, blank=True)
     is_verfied=models.BooleanField(default=False)
-    qr_code_image = models.ImageField(upload_to='qr_codes/', null=True, blank=True)
+    qr_code_image = CloudinaryField('qr_code_image', folder='qr_codes/', null=True, blank=True)
     
     def __str__(self):
         return self.user.username
@@ -35,7 +36,7 @@ class ContractorProfile(models.Model):
     name = models.CharField(max_length=100)
     address = models.TextField()
     phoneno = models.CharField(max_length=15, unique=True)
-    image = models.ImageField(upload_to='contractor/image/', null=True, blank=True)
+    image = CloudinaryField('image', folder='contractor/image/', null=True, blank=True)
     gstin = models.CharField(max_length=15, unique=True)
     aadhar_image = models.FileField(upload_to='aadhar/', null=True, blank=True)
     signature = models.FileField(upload_to='signature/', null=True, blank=True)

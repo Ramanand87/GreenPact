@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'channels',
     'greenbot',
     'complaints',
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +163,12 @@ CHANNEL_LAYERS = {
 GREENBOT_API_KEY = os.getenv("GREENBOT_API_KEY")
 GREENBOT_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 GREENBOT_MODEL = "meta-llama/llama-3.3-8b-instruct" 
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

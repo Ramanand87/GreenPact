@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import CustomUser
 from uuid import uuid4
+from cloudinary.models import CloudinaryField
 
 class Rating(models.Model):
     RATING_CHOICES = [
@@ -22,7 +23,7 @@ class Rating(models.Model):
 class RatingImage(models.Model):
     id=models.UUIDField(default=uuid4,primary_key=True,editable=False)
     rating=models.ForeignKey(Rating,on_delete=models.CASCADE,related_name="rating_images")
-    image=models.ImageField(upload_to='rating/image/')
+    image=CloudinaryField('image', folder='rating/image/')
 
     def __str__(self):
         return f'Image for rating {self.rating.id}'
