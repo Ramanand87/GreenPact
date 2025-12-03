@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from . import models
 from user.models import FarmerProfile, CustomUser
 from crops.models import Crops
-
+from cloudinary.utils import cloudinary_url
 
 class ContractSerializer(serializers.ModelSerializer):
     farmer_name = serializers.SerializerMethodField()
@@ -117,6 +117,8 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 
 class FarmerProgressSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = models.FarmerProgress
         fields = "__all__"
@@ -124,6 +126,12 @@ class FarmerProgressSerializer(serializers.ModelSerializer):
             "farmer": {"required": False},
             "contract": {"required": False},
         }
+
+    def get_image(self, obj):
+        if obj.image:
+            url, _ = cloudinary_url(obj.image.public_id)
+            return url
+        return None
 
     def create(self, validated_data):
         request = self.context.get("request")

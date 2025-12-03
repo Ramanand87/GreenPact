@@ -38,11 +38,11 @@ class ChatRoomSerializer(ModelSerializer):
             role=other_users.first().type
             if role=="farmer":
                 prof=FarmerProfile.objects.get(user=other_users.first())
-                serial=FarmerProfileSerializer(prof).data
+                serial=FarmerProfileSerializer(prof, context=self.context).data
                 return {"name":serial["name"],"image":serial["image"]}
             else:
                 prof=ContractorProfile.objects.get(user=other_users.first())
-                serial=ContractorProfileSerializer(prof).data
+                serial=ContractorProfileSerializer(prof, context=self.context).data
                 return {"name":serial["name"],"image":serial["image"]}
         return None
 

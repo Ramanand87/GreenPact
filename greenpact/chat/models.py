@@ -24,7 +24,8 @@ class Notification(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         channel_layer = get_channel_layer()
+        # Use username-based group name to match NotificationConsumer group_add
         async_to_sync(channel_layer.group_send)(
-            f"notifications_{self.user.id}",
+            f"notifications_{self.user.username}",
             {"type": "send_notification", "message": {"message": self.message, "timestamp": str(self.timestamp)}},
         )

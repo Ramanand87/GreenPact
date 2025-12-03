@@ -41,7 +41,7 @@ class CropView(APIView):
         except Exception as e:
             return Response({'Error':str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    def put(self, request, pk):
+    def patch(self, request, pk):
         try:
             # Print incoming request data for debugging
             print("Incoming request data:", request.data)
