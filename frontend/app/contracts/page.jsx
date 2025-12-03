@@ -233,7 +233,7 @@ export default function ContractsListPage() {
       />
 
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 gap-4">
+      <div className="flex flex-row justify-between items-start md:items-center mb-2 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-green-800">{t('contracts', { en: 'Contracts', hi: 'अनुबंध' })}</h1>
           <p className="text-gray-600 mt-1">{t('manageContracts', { en: 'Manage your farming contracts', hi: 'अपने कृषि अनुबंधों का प्रबंधन करें' })}</p>

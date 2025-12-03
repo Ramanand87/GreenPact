@@ -1,10 +1,11 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" // Added AvatarImage
 import { Button } from "@/components/ui/button"
 import { Star, Edit, Trash2 } from "lucide-react"
 import { useTranslate } from "@/lib/LanguageContext"
+import Link from "next/link" // Added Link for navigation
 
 export function ReviewsList({ 
   ratings, 
@@ -39,18 +40,32 @@ export function ReviewsList({
         >
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
-              <Avatar className="w-10 h-10">
-                <AvatarFallback className="bg-green-100 text-green-800">
-                  {ratingItem.rating_user?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
+              
+              {/* Clickable Avatar */}
+              <Link href={`/profile/${ratingItem.rating_user}`}>
+                <Avatar className="w-10 h-10 border border-gray-100 cursor-pointer hover:opacity-80 transition-opacity">
+                  {/* Bind the image from API */}
+                  <AvatarImage 
+                    src={ratingItem.rating_user_image} 
+                    alt={ratingItem.rating_user} 
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="bg-green-100 text-green-800">
+                    {ratingItem.rating_user?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
 
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold text-gray-800">
-                      {ratingItem.rating_user}
-                    </h3>
+                    {/* Clickable Username */}
+                    <Link href={`/profile/${ratingItem.rating_user}`} className="hover:underline">
+                        <h3 className="font-semibold text-gray-800 cursor-pointer">
+                        {ratingItem.rating_user}
+                        </h3>
+                    </Link>
+                    
                     <div className="flex items-center mt-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star

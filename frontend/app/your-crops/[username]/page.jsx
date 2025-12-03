@@ -78,20 +78,35 @@ export default function YourCropsPage() {
     }
   };
 
-  const handleSave = async (event) => {
+ const handleSave = async (event) => {
     event.preventDefault();
     setLoading(true);
 
     const formData = new FormData(event.target);
-
-    // Append file properly
     const fileInput = event.target.crop_image;
+
+    // CHECK: Is there a new file selected?
     if (fileInput?.files.length > 0) {
-      formData.append("crop_image", fileInput.files[0]);
+      // If yes, ensure it is set correctly
+      formData.set("crop_image", fileInput.files[0]);
+    } else {
+      // CRITICAL FIX: If no new file is selected, delete the key.
+      // This prevents sending an empty file object to the backend.
+      // Most backends will ignore the field if it's missing, preserving the old image.
+      formData.delete("crop_image");
+      
+      // OPTIONAL: Only use the line below if your backend SPECIFICALLY expects 
+      // the old image URL string when not updating the file. 
+      // If your backend handles "missing file field = keep old image", do not use this.
+      // if (editingCrop?.crop_image) {
+      //   formData.append("crop_image", editingCrop.crop_image); 
+      // }
     }
 
     try {
       if (editingCrop) {
+        // Now we send the formData. If we deleted 'crop_image', 
+        // the backend should receive only the text fields.
         await updateCrop({ id: editingCrop.crop_id, body: formData }).unwrap();
       } else {
         await addCrop(formData).unwrap();
@@ -103,7 +118,7 @@ export default function YourCropsPage() {
       console.error("Error saving crop:", error);
     } finally {
       setLoading(false);
-      setSelectedImage(null); // Reset image preview
+      setSelectedImage(null); 
     }
   };
 

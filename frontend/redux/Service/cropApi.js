@@ -37,7 +37,7 @@ export const cropApi = createApi({
     updateCrop: builder.mutation({
       query: ({ id, body }) => ({
         url: `detail/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: body,
         // Do not set Content-Type header manually
       }),

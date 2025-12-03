@@ -19,7 +19,7 @@ const ChatSidebar = ({ rooms, currentChat, setCurrentChat }) => {
 
   useEffect(() => {
     if (!token) return
-    const websocket = new WebSocket(`ws://${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
+    const websocket = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_URL}/ws/notifications/`)
     setWs(websocket)
     websocket.onopen = () => {
       console.log("WebSocket connected")
@@ -30,20 +30,21 @@ const ChatSidebar = ({ rooms, currentChat, setCurrentChat }) => {
       console.log("Notification received:", data)
       setNotifications(data)
       if (data?.lastmessages) {
-        const updatedMessages = data.lastmessages.map((msg) => {
-          const [roomId, roomData] = Object.entries(msg)[0]
-          if (currentChat?.name === roomId) {
-            websocket.send(
-              JSON.stringify({
-                token: token,
-                room_name: roomId,
-                type: "mark_as_read",
-              }),
-            )
-            return { [roomId]: { ...roomData, unread: 0 } }
-          }
-          return msg
-        })
+          const updatedMessages = data.lastmessages.map((msg) => {
+            const [roomId, roomData] = Object.entries(msg)[0]
+            // Only send mark_as_read if this room is the current chat AND there are unread messages
+            if (currentChat?.name === roomId ) {
+              websocket.send(
+                JSON.stringify({
+                  token: token,
+                  room_name: roomId,
+                  type: "mark_as_read",
+                }),
+              )
+              return { [roomId]: { ...roomData, unread: 0 } }
+            }
+            return msg
+          })
         setNotifications((prev) => ({ ...prev, lastmessages: updatedMessages }))
       }
     }
