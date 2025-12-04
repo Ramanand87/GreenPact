@@ -322,8 +322,7 @@ class AllContracts(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ContractDocView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+
     def get(self,request,pk):
         try:
             contract=get_object_or_404(models.Contract,contract_id=pk)

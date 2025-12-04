@@ -1,147 +1,224 @@
 from io import BytesIO
-from django.core.files.base import ContentFile
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch, cm
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from django.core.files.base import ContentFile
+
+# Import your models (keeping your existing imports)
 from user.models import FarmerProfile, ContractorProfile
 from contract.models import Contract
 
 def generate_contract_pdf_bytes(contract: Contract) -> bytes:
     """
-    Generate a PDF agreement for the given contract and
-    return the PDF as raw bytes.
+    Generate a professional PDF agreement for the given contract using 
+    ReportLab Platypus for advanced formatting.
     """
-
     buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
-    y = height - 50 
+    
+    # Setup the document with margins
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40,
+        title=f"Contract_{contract.contract_id}"
+    )
 
-    def write_line(text: str, font_size=11, gap=14, bold=False):
-        nonlocal y
-        if y < 60: 
-            p.showPage()
-            y = height - 50
-        font_name = "Helvetica-Bold" if bold else "Helvetica"
-        p.setFont(font_name, font_size)
-        p.drawString(50, y, text)
-        y -= gap
+    # --- Styles ---
+    styles = getSampleStyleSheet()
+    
+    # Custom Brand Color (Greenpact Green)
+    brand_color = colors.HexColor("#2E7D32") 
+    
+    # Title Style
+    style_title = ParagraphStyle(
+        'GreenpactTitle',
+        parent=styles['Heading1'],
+        fontSize=20,
+        textColor=brand_color,
+        alignment=TA_CENTER,
+        spaceAfter=10,
+        fontName='Helvetica-Bold'
+    )
+    
+    # Section Header Style
+    style_section_head = ParagraphStyle(
+        'SectionHead',
+        parent=styles['Heading2'],
+        fontSize=12,
+        textColor=colors.white,
+        backColor=brand_color,
+        borderPadding=(5, 2, 5, 2), # top, right, bottom, left
+        spaceAfter=10,
+        spaceBefore=15,
+        fontName='Helvetica-Bold'
+    )
+    
+    # Normal Text Style
+    style_normal = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=10,
+        leading=14, # Line spacing
+        spaceAfter=6
+    )
 
-    # ---------- 1. Header ----------
-    write_line("Greenpact Crop Supply Agreement", font_size=16, gap=20, bold=True)
-    write_line(f"Contract ID: {contract.contract_id}", font_size=11)
-    write_line(f"Date of Agreement: {contract.created_at.date()}", font_size=11)
-    y -= 10
+    # Label-Value Style (for specific data points)
+    style_label = ParagraphStyle(
+        'Label',
+        parent=styles['Normal'],
+        fontSize=10,
+        fontName='Helvetica-Bold',
+        textColor=colors.darkgrey
+    )
 
+    # --- Data Fetching Logic (Preserved from your code) ---
     farmer_profile = FarmerProfile.objects.filter(user=contract.farmer).first()
     contractor_profile = ContractorProfile.objects.filter(user=contract.buyer).first()
 
     farmer_name = farmer_profile.name if farmer_profile else contract.farmer.username
-    farmer_address = getattr(farmer_profile, "address", "") if farmer_profile else ""
-    farmer_phone = getattr(farmer_profile, "phoneno", "") if farmer_profile else ""
+    farmer_address = getattr(farmer_profile, "address", "N/A") if farmer_profile else "N/A"
+    farmer_phone = getattr(farmer_profile, "phoneno", "N/A") if farmer_profile else "N/A"
 
     buyer_name = contractor_profile.name if contractor_profile else contract.buyer.username
-    buyer_address = getattr(contractor_profile, "address", "") if contractor_profile else ""
-    buyer_phone = getattr(contractor_profile, "phoneno", "") if contractor_profile else ""
+    buyer_address = getattr(contractor_profile, "address", "N/A") if contractor_profile else "N/A"
+    buyer_phone = getattr(contractor_profile, "phoneno", "N/A") if contractor_profile else "N/A"
 
-    # ---------- 2. Parties ----------
-    write_line("1. Parties Involved", bold=True, gap=18)
+    # --- Building the Story (Content) ---
+    story = []
 
-    write_line("Farmer Details:", bold=True)
-    write_line(f"  Name   : {farmer_name}")
-    write_line(f"  Address: {farmer_address}")
-    write_line(f"  Phone  : {farmer_phone}")
-    y -= 6
+    # 1. Header
+    story.append(Paragraph("GREENPACT CROP SUPPLY AGREEMENT", style_title))
+    
+    # Contract Meta Info (Right aligned table)
+    meta_data = [
+        [Paragraph(f"<b>Contract ID:</b> {contract.contract_id}", style_normal)],
+        [Paragraph(f"<b>Date:</b> {contract.created_at.date()}", style_normal)]
+    ]
+    meta_table = Table(meta_data, colWidths=[doc.width], hAlign='RIGHT')
+    story.append(meta_table)
+    story.append(Spacer(1, 10))
+    story.append(HRFlowable(width="100%", thickness=1, color=colors.lightgrey))
+    story.append(Spacer(1, 15))
 
-    write_line("Buyer / Contractor Details:", bold=True)
-    write_line(f"  Name   : {buyer_name}")
-    write_line(f"  Address: {buyer_address}")
-    write_line(f"  Phone  : {buyer_phone}")
-    y -= 10
+    # 2. Parties Involved (Side-by-Side Table)
+    story.append(Paragraph("1. PARTIES INVOLVED", style_section_head))
+    
+    # Create content for Farmer and Buyer cells
+    farmer_info = [
+        [Paragraph("FARMER / SELLER", style_label)],
+        [Paragraph(f"<b>{farmer_name}</b>", style_normal)],
+        [Paragraph(f"{farmer_address}", style_normal)],
+        [Paragraph(f"Tel: {farmer_phone}", style_normal)],
+    ]
+    
+    buyer_info = [
+        [Paragraph("BUYER / CONTRACTOR", style_label)],
+        [Paragraph(f"<b>{buyer_name}</b>", style_normal)],
+        [Paragraph(f"{buyer_address}", style_normal)],
+        [Paragraph(f"Tel: {buyer_phone}", style_normal)],
+    ]
 
-    # ---------- 3. Crop & Order Details ----------
-    write_line("2. Crop & Order Details", bold=True, gap=18)
-    write_line(f"Crop Name      : {contract.crop.crop_name}")
-    write_line(f"Quantity       : {contract.quantity}")
-    write_line(f"Price per Unit : {contract.nego_price}")
+    # Nested tables for clean layout inside the main row
+    t_farmer = Table(farmer_info, colWidths=[3.2*inch])
+    t_buyer = Table(buyer_info, colWidths=[3.2*inch])
+
+    parties_data = [[t_farmer, t_buyer]]
+    parties_table = Table(parties_data, colWidths=[3.5*inch, 3.5*inch])
+    parties_table.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LINEAFTER', (0,0), (0,0), 1, colors.lightgrey), # Vertical separator
+    ]))
+    story.append(parties_table)
+
+    # 3. Crop & Order Details (Grid Table)
+    story.append(Paragraph("2. CROP & ORDER DETAILS", style_section_head))
+    
     total_amount = contract.quantity * contract.nego_price
-    write_line(f"Total Amount   : {total_amount}")
-    write_line(f"Delivery Date  : {contract.delivery_date}")
-    write_line(f"Delivery Address: {contract.delivery_address}")
-    y -= 10
+    
+    order_data = [
+        ["Crop Name", contract.crop.crop_name, "Delivery Date", str(contract.delivery_date)],
+        ["Quantity", f"{contract.quantity}", "Price per Unit", f"{contract.nego_price}"],
+        ["Total Amount", f"{total_amount}", "Delivery Address", Paragraph(str(contract.delivery_address), style_normal)]
+    ]
 
-    # ---------- 4. Agreement Terms ----------
-    write_line("3. Agreement Terms", bold=True, gap=18)
+    order_table = Table(order_data, colWidths=[1.5*inch, 2*inch, 1.5*inch, 2*inch])
+    order_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.whitesmoke), # Header-like row
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+        ('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'), # First col bold
+        ('FONTNAME', (2,0), (2,-1), 'Helvetica-Bold'), # Third col bold
+        ('PADDING', (0,0), (-1,-1), 6),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+    ]))
+    story.append(order_table)
+
+    # 4. Agreement Terms
+    story.append(Paragraph("3. AGREEMENT TERMS", style_section_head))
+    
     if contract.terms:
         for i, term in enumerate(contract.terms, start=1):
-            write_line(f"{i}. {term}")
+            story.append(Paragraph(f"{i}. {term}", style_normal))
     else:
-        write_line("No additional terms specified.")
-    y -= 10
+        story.append(Paragraph("No specific additional terms were recorded for this contract.", style_normal))
 
-    # ---------- 5. Payment Terms ----------
-    write_line("4. Payment Terms", bold=True, gap=18)
-    write_line(f"Total payable amount is {total_amount}.")
-    write_line("Payment shall be completed as per the mutually agreed schedule.")
-    write_line("Any delay in payment may attract penalties as per mutual agreement.")
-    y -= 10
+    # 5. Payment & Responsibilities (Compact Section)
+    story.append(Paragraph("4. PAYMENT & RESPONSIBILITIES", style_section_head))
+    
+    p_text = f"""
+    <b>Payment Terms:</b> The total payable amount is <b>{total_amount}</b>. 
+    Payment shall be completed as per the mutually agreed schedule. Any delay may attract penalties.
+    <br/><br/>
+    <b>Farmer Responsibilities:</b> Deliver the agreed crop in specified quantity and quality; inform buyer of any delays.
+    <br/><br/>
+    <b>Buyer Responsibilities:</b> Accept delivery at the agreed time/place and complete payments on time.
+    """
+    story.append(Paragraph(p_text, style_normal))
 
-    # ---------- 6. Responsibilities ----------
-    write_line("5. Responsibilities of Both Parties", bold=True, gap=18)
+    # 6. Liability & Dispute Resolution
+    story.append(Paragraph("5. LEGAL & TERMINATION", style_section_head))
+    legal_text = """
+    In case of disputes, parties agree to amicable resolution. If unresolved, jurisdiction lies with the 
+    local district court of the farmer. Either party may terminate with prior written notice, subject to 
+    settlement of outstanding obligations.
+    """
+    story.append(Paragraph(legal_text, style_normal))
 
-    write_line("Farmer Responsibilities:", bold=True)
-    write_line("- Deliver the agreed crop in specified quantity and quality.")
-    write_line("- Inform buyer in case of any expected delay or issue.")
-    y -= 6
+    story.append(Spacer(1, 30))
 
-    write_line("Buyer Responsibilities:", bold=True)
-    write_line("- Pay the agreed amount as per the payment terms.")
-    write_line("- Accept delivery at the agreed time and place.")
-    y -= 10
-
-    # ---------- 7. Liability & Dispute Resolution ----------
-    write_line("6. Liability & Dispute Resolution", bold=True, gap=18)
-    write_line("In case of disputes, both parties agree to resolve the matter amicably.")
-    write_line(
-        "If unresolved, the issue will be handled under the jurisdiction of the "
+    # 7. Signatures
+    story.append(HRFlowable(width="100%", thickness=1, color=colors.black))
+    story.append(Spacer(1, 10))
+    
+    sig_data = [
+        [Paragraph("<b>FARMER SIGNATURE</b>", style_normal), Paragraph("<b>BUYER SIGNATURE</b>", style_normal)],
+        [Spacer(1, 40), Spacer(1, 40)], # Space for signing
+        [Paragraph(f"{farmer_name}", style_normal), Paragraph(f"{buyer_name}", style_normal)],
+        [Paragraph(f"Date: _________________", style_normal), Paragraph(f"Date: _________________", style_normal)]
+    ]
+    
+    sig_table = Table(sig_data, colWidths=[3.5*inch, 3.5*inch])
+    sig_table.setStyle(TableStyle([
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+    ]))
+    story.append(sig_table)
+    
+    # Footer Text
+    story.append(Spacer(1, 30))
+    footer = Paragraph(
+        "This is a computer-generated document. Greenpact facilitates the connection but is not a party to the direct trade.",
+        ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, textColor=colors.grey, alignment=TA_CENTER)
     )
-    write_line("local district court where the farmer resides.")
-    y -= 10
+    story.append(footer)
 
-    # ---------- 8. Termination Clause ----------
-    write_line("7. Termination Clause", bold=True, gap=18)
-    write_line(
-        "Either party may terminate the contract with prior written notice, "
-    )
-    write_line("subject to settlement of any outstanding obligations.")
-    write_line(
-        "The contract automatically terminates after full delivery and payment."
-    )
-    y -= 10
-
-    # ---------- 9. Signatures ----------
-    write_line("8. Signatures", bold=True, gap=18)
-    write_line("Farmer:", bold=True)
-    write_line(f"  Name: {farmer_name}")
-    write_line("  Signature: ____________________________")
-    write_line(f"  Date: {contract.created_at.date()}")
-    y -= 10
-
-    write_line("Buyer / Contractor:", bold=True)
-    write_line(f"  Name: {buyer_name}")
-    write_line("  Signature: ____________________________")
-    write_line(f"  Date: {contract.created_at.date()}")
-
-    p.showPage()
-    p.save()
-
+    # Build the PDF
+    doc.build(story)
+    
     buffer.seek(0)
     return buffer.getvalue()
-
-
-# def attach_contract_pdf(contract: Contract) -> None:
-#     """
-#     Generate the PDF and save it into contract.pdf_document.
-#     """
-#     pdf_bytes = generate_contract_pdf_bytes(contract)
-#     filename = f"contract_{contract.contract_id}.pdf"
-#     contract.pdf_document.save(filename, ContentFile(pdf_bytes), save=True)

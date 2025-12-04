@@ -11,8 +11,8 @@ uvicorn greenpact.asgi:application --port 5000 --workers 4 --log-level debug --r
 # for docker containers and image
 docker-compose up -d --build
 docker-compose down
-docker-compose -t docker_username/greenpact
-docker-compose push docker_username/greenpact
+docker build -t docker_username/greenpact:latest
+docker push docker_username/greenpact:latest
 
 # To make database migrations
 python manage.py makemigrations
